@@ -1,0 +1,332 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+{% load polls_tags %}
+{% load humanize %}
+{# |intcomma #}
+
+{% block title %}Поиск | One Bit - интернет-магазин{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/search.css' %}">
+<style>
+    {% if page_obj.paginator.num_pages > 1 %}
+        .right-main .tovar-srch:nth-last-child(2) hr{display: none}
+    {% else %}
+        .right-main .tovar-srch:nth-last-child(1) hr{display: none}
+        .right-main{margin-bottom:50px}
+    {% endif %}
+</style>
+{% endblock css %}
+
+
+{% block scripts %}
+<script>
+    let minPrice = {{ min_price }};
+    let maxPrice = {{ max_price }};
+</script>
+<script src="{% static 'js/search.js' %}"></script>
+<script> 
+    // галочка в выбраном фильтре
+    var text = "{{ sorting }}";
+    // Находим все элементы <a> внутри <ul> с указанным классом
+    var links = document.querySelectorAll(".uk-nav-filter a");
+    // Проходимся по каждому найденному элементу
+    links.forEach(function(link) {
+        // Проверяем, совпадает ли текст ссылки с переменной
+        if (link.textContent.trim() === text) {
+            // Создаем элемент <span> с указанными стилями и атрибутами
+            var spanElement = document.createElement("span");
+            spanElement.setAttribute("style", "color: var(--color-all-full);margin-left:15px");
+            spanElement.setAttribute("uk-icon", "check");
+
+            // Добавляем <span> внутрь найденной ссылки
+            link.appendChild(spanElement);
+        }
+    });
+  </script>
+{% endblock scripts %}
+    
+
+
+{% block content %}
+{% if request.resolver_match.url_name == "category" %}
+<nav aria-label="Breadcrumb">
+    <ul class="uk-breadcrumb bc" style="margin-top:10px;margin-bottom:0;margin-left:25px">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li class="uk-disabled"><a>{{ category.Gl_category }}</a></li>
+        <li><a>{{ category.category|capfirst }}</a></li>
+    </ul>
+</nav>
+{% else %}
+<nav aria-label="Breadcrumb">
+    <ul class="uk-breadcrumb bc" style="margin-top:10px;margin-bottom:0;margin-left:25px">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li><a>Поиск</a></li>
+    </ul>
+</nav>
+{% endif %}
+<div class="count-search">
+    {% if request.resolver_match.url_name == "category" %}
+        По категории <b>{{ category.category }}</b>
+    {% else %}
+        По запросу <b>{{ search }}</b>
+    {% endif %}
+
+    {% if count_tov != 0 %}
+        {% if count_tov == 1 %}найден {% else %}найдено {% endif %}
+        {{ count_tov }} {{ count_tov|pluralize_goods  }}
+    {% else %}
+        товаров не найдено
+    {% endif %}
+</div>
+<div class="main">
+    {% if tovars %}
+        {% include "html/filters.html" %}
+    {% endif %}
+    
+    <div class="right-main">
+        {% if tovars %}
+        <div class="filter-sort uk-inline">
+            <a href="#offcanvas-slide" class="uk-button uk-button-onebit btn-fiter" uk-toggle><span uk-icon="settings"></span> Фильтры</a>
+            <div>
+                <button class="uk-button uk-button-onebit" type="button">{{ sorting }}<span uk-drop-parent-icon></span></button>
+                <div uk-dropdown="animation: reveal-top; animate-out: true; duration: 300; auto-update:false; delay-hide: 100; mode: hover" style="padding:0; z-index:100">
+                    {% if request.resolver_match.url_name == "category" %}
+                        {% if selected_avtors %}
+                            <ul class="uk-nav uk-dropdown-nav uk-nav-filter">
+                                <li class="uk-active"><a href="?category={{ category }}&page=1&sort=pop&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}">По релевантности</a></li>
+                                <li class="uk-nav-divider"></li>
+                                <li><a href="?category={{ category }}&page=1&sort=exp&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}">По возрастанию цены</a></li>
+                                <li class="uk-nav-divider"></li>
+                                <li><a href="?category={{ category }}&page=1&sort=low&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}">По убыванию цены</a></li>
+                                <li class="uk-nav-divider"></li>
+                                <li><a href="?category={{ category }}&page=1&sort=new&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}">По новинкам</a></li>
+                            </ul>
+                        {% else %}
+                        <ul class="uk-nav uk-dropdown-nav uk-nav-filter">
+                            <li class="uk-active"><a href="?category={{ category }}&page=1&sort=pop&min_price={{min_price}}&max_price={{max_price}}">По релевантности</a></li>
+                            <li class="uk-nav-divider"></li>
+                            <li><a href="?category={{ category }}&page=1&sort=exp&min_price={{min_price}}&max_price={{max_price}}">По возрастанию цены</a></li>
+                            <li class="uk-nav-divider"></li>
+                            <li><a href="?category={{ category }}&page=1&sort=low&min_price={{min_price}}&max_price={{max_price}}">По убыванию цены</a></li>
+                            <li class="uk-nav-divider"></li>
+                            <li><a href="?category={{ category }}&page=1&sort=new&min_price={{min_price}}&max_price={{max_price}}">По новинкам</a></li>
+                        </ul>
+                        {% endif %}
+                    {% else %}
+                        {% if selected_avtors %}
+                            <ul class="uk-nav uk-dropdown-nav uk-nav-filter">
+                                {% if selected_categories %}
+                                    <li class="uk-active"><a href="?search={{ search }}&page=1&sort=pop&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}&category={{ selected_categories.0 }}">По релевантности</a></li>
+                                {% else %}
+                                    <li class="uk-active"><a href="?search={{ search }}&page=1&sort=pop&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}">По релевантности</a></li>
+                                {% endif %}
+                                <li class="uk-nav-divider"></li>
+                                {% if selected_categories %}
+                                    <li><a href="?search={{ search }}&page=1&sort=exp&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}&category={{ selected_categories.0 }}">По возрастанию цены</a></li>
+                                {% else %}
+                                    <li><a href="?search={{ search }}&page=1&sort=exp&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}">По возрастанию цены</a></li>
+                                {% endif %}
+                                <li class="uk-nav-divider"></li>
+                                {% if selected_categories %}
+                                    <li><a href="?search={{ search }}&page=1&sort=low&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}&category={{ selected_categories.0 }}">По убыванию цены</a></li>
+                                {% else %}
+                                    <li><a href="?search={{ search }}&page=1&sort=low&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}">По убыванию цены</a></li>
+                                {% endif %}
+                                <li class="uk-nav-divider"></li>
+                                {% if selected_categories %}
+                                    <li><a href="?search={{ search }}&page=1&sort=new&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}&category={{ selected_categories.0 }}">По новинкам</a></li>
+                                {% else %}
+                                    <li><a href="?search={{ search }}&page=1&sort=new&min_price={{min_price}}&max_price={{max_price}}&avtor={{selected_avtors.0}}">По новинкам</a></li>
+                                {% endif %}
+                            </ul>
+                        {% else %}
+                        <ul class="uk-nav uk-dropdown-nav uk-nav-filter">
+                            <li class="uk-active"><a href="?search={{ search }}&page=1&sort=pop&min_price={{min_price}}&max_price={{max_price}}">По релевантности</a></li>
+                            <li class="uk-nav-divider"></li>
+                            <li><a href="?search={{ search }}&page=1&sort=exp&min_price={{min_price}}&max_price={{max_price}}">По возрастанию цены</a></li>
+                            <li class="uk-nav-divider"></li>
+                            <li><a href="?search={{ search }}&page=1&sort=low&min_price={{min_price}}&max_price={{max_price}}">По убыванию цены</a></li>
+                            <li class="uk-nav-divider"></li>
+                            <li><a href="?search={{ search }}&page=1&sort=new&min_price={{min_price}}&max_price={{max_price}}">По новинкам</a></li>
+                        </ul>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="filter-sort uk-inline back">
+            <a onclick="window.history.back()"><span>➔</span> назад</a>
+        </div>
+        {% endif %}
+        {% for tovar, specs in tovars.items %}
+            <div class="tovar-srch">
+                <div>
+                    <a href="{{ tovar.get_absolute_url }}">
+                        <div class="t-img images">
+                            {% tovar_img_all as tovar_img %}
+                            {% define 1 as count %}
+                            {% for img in tovar_img %}
+                                {% if img.tovar == tovar and not img.is_video and count <= 10 %}
+                                    {% summ 1 count as count %}
+                                    <img src="{{ img.img.url }}" alt="{{ tovar.slug }}_img_{{ img.id }}.{{ forloop.counter0 }}"> 
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </a>
+                    <div class="t-t-rght">
+                    <a href="{{ tovar.get_absolute_url }}">
+                        <div class="t-cntr-name">
+                            {{tovar.name}}
+                        </div>
+                    </a>
+                    <div class="t-center">
+                        <div>
+                            <div class="t-s-char">
+                                {% for char in specs %}
+                                    <div class="s-char">
+                                        <span>{{ char.category.category }}: </span>
+                                        <span>{{ char.description }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if tovar.rating %}
+                            <div class="t-b-info">
+                                <div class="star">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 16 15" fill="none">
+                                        <path d="M7.04894 0.92705C7.3483 0.00573921 8.6517 0.00573969 8.95106 0.92705L10.0206 4.21885C10.1545 4.63087 10.5385 4.90983 10.9717 4.90983H14.4329C15.4016 4.90983 15.8044 6.14945 15.0207 6.71885L12.2205 8.75329C11.87 9.00793 11.7234 9.4593 11.8572 9.87132L12.9268 13.1631C13.2261 14.0844 12.1717 14.8506 11.388 14.2812L8.58778 12.2467C8.2373 11.9921 7.7627 11.9921 7.41221 12.2467L4.61204 14.2812C3.82833 14.8506 2.77385 14.0844 3.0732 13.1631L4.14277 9.87132C4.27665 9.4593 4.12999 9.00793 3.7795 8.75329L0.979333 6.71885C0.195619 6.14945 0.598395 4.90983 1.56712 4.90983H5.02832C5.46154 4.90983 5.8455 4.63087 5.97937 4.21885L7.04894 0.92705Z" fill="#FFB800" />
+                                    </svg>
+                                    <div>{{ tovar.rating|make_list|slice:':3'|join:'' }}</div>
+                                </div>
+                                <div class="t-b-otz">
+                                    <img src="{% static 'img/icon-aktuelles.png' %}" alt="комент">
+                                    <div>
+                                        {{ tovar.count_com }} {{ tovar.count_com|review_word }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="t-b-info">
+                                <div class="t-b-otz">
+                                    <img src="{% static 'img/icon-aktuelles.png' %}" alt="комент">
+                                    <div>Отзывов пока нет</div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="right-top">
+                            <div class="cost">
+                                {% if not tovar.skidka_cost %}
+                                    <span>{{ tovar.cost|intcomma }}</span>
+                                {% else %}
+                                    <span>{{ tovar.skidka_cost|intcomma }}</span>
+                                    <span>{{ tovar.cost|intcomma }}</span>
+                                    <span>-{{ tovar.skidka|floatformat:0 }}</span> {# floatformat - сколько цифр после запятой #}
+                                {% endif %}
+                            </div>
+                            <div class="p-buttons">
+                                {% if tovar.name in if_basket_all %}
+                                    <button class="uk-button button-buy-p b-buy-searh" id="{{ tovar.id }}">
+                                        <span uk-icon="icon: cart; ratio: 1"></span>
+                                        <div>В&nbsp;корзине</div>
+                                    </button>
+                                {% else %}
+                                    <button class="uk-button uk-button-onebit button-buy-p b-buy-searh" id="{{ tovar.id }}">
+                                        <span uk-icon="icon: cart; ratio: 1"></span>
+                                        <div>Добавить в&nbsp;корзину</div>
+                                    </button>
+                                {% endif %}
+                                {% if user.is_authenticated %}
+                                    <div class="but-heart">
+                                        <input 
+                                        type="checkbox" 
+                                        id="heart-clip-{{ tovar.id }}"
+                                        class="heart-clip-t" 
+                                        data-product="{{ tovar.id }}"
+                                        {% count_favorites_tovar user.id tovar as count_fav_t %}
+                                        {% if count_fav_t != 0 %} checked {% endif %}>
+                                        <svg class="heart-main" viewBox="0 0 512 512" width="40" title="heart">
+                                            <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
+                                        </svg>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <hr>
+            </div>
+        {% endfor %}
+
+        {# пагинация #}
+        {% if page_obj.paginator.num_pages > 1 %}
+        <nav aria-label="Pagination"  class="uk-margin-medium-top">
+            <ul class="uk-pagination uk-flex-center" uk-margin>
+
+                {% if page_obj.has_previous %}
+                    <li>
+                        {% if sort_option %}
+                        <a href="?search={{ search }}&page={{ page_obj.previous_page_number }}&sort={{ sort_option }}" class="uk-icon-button">
+                            <span uk-pagination-previous></span>
+                        </a>
+                        {% else %}
+                        <a href="?search={{ search }}&page={{ page_obj.previous_page_number }}" class="uk-icon-button">
+                            <span uk-pagination-previous></span>
+                        </a>
+                        {% endif %}
+                    </li>
+                {% else %}
+                    <li class="uk-disabled" class="uk-icon-button"><span uk-pagination-previous></span></li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="uk-active"><span aria-current="page" class="uk-icon-button">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+                        {% if sort_option %}
+                            <li><a href="?search={{ search }}&page={{ num }}&sort={{ sort_option }}">{{ num }}</a></li>
+                        {% else %}
+                            <li><a href="?search={{ search }}&page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                        {% if sort_option %}
+                            <li><a href="?search={{ search }}&page={{ num }}&sort={{ sort_option }}">{{ num }}</a></li>
+                        {% else %}
+                            <li><a href="?search={{ search }}&page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
+                        <li class="uk-disabled"><span>…</span></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li>
+                        {% if sort_option %}
+                            <a href="?search={{ search }}&page={{ page_obj.next_page_number }}&sort={{ sort_option }}" class="uk-icon-button">
+                                <span uk-pagination-next></span>
+                            </a>
+                        {% else %}
+                            <a href="?search={{ search }}&page={{ page_obj.next_page_number }}" class="uk-icon-button">
+                                <span uk-pagination-next></span>
+                            </a>
+                        {% endif %}
+                    </li>
+                {% else %}
+                    <li class="uk-disabled" class="uk-icon-button"><span uk-pagination-next></span></li>
+                {% endif %}
+
+            </ul>
+        </nav>
+        {% endif %}
+
+
+
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block header %}{% include "html/header.html" %}{% endblock %}
+{% block footer %}{% include "html/footer.html" %}{% endblock %}

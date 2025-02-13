@@ -1,0 +1,28 @@
+{% extends "layout/layout.html" %}
+
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+<link rel="stylesheet" href="{% static 'css/bg_aut.css' %}">
+{% comment %} <script src="https://unpkg.com/imask"></script> {# https://imask.js.org/ #} {% endcomment %}
+{% endblock css %}
+
+{% block content %}
+<div id="bg"></div>
+
+<div id="aut">
+<div class="logo-auth"><a href="{% url 'home' %}"><img src="{% static 'img/logo1.png' %}" alt="logo1" height="50"></a></div>
+<div class="aut-menu">
+ <form method="post" novalidate> {% csrf_token %}
+    
+    {% block auth_content %}
+    
+    {% endblock auth_content %}
+
+ </form>
+</div>
+</div>
+
+{% endblock %}
+

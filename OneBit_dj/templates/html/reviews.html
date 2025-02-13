@@ -1,0 +1,105 @@
+{% load static %}
+{% load polls_tags %}
+
+<div class="reviews" id="reviews">
+    <h2>Отзывы</h2>
+    {% if not user_comments and user.is_authenticated and if_buy != 0 %}
+        <button class="uk-button uk-button-onebit uk-button-small" uk-toggle="target: #add-comment-modal">Добавить отзыв</button>
+    {% endif %}
+    {% if comments %}
+        <ul class="uk-comment-list">
+            {% for com in comments %}
+            <li id="com-{{com.id}}">
+                <article class="uk-comment uk-comment-primary" role="comment">
+                    <div class="uk-comment-header"
+                    {% if not com.comment and not com.baned %}
+                    style="margin-bottom:0"
+                    {% endif %}
+                    >
+                        <div class="uk-grid-medium uk-flex-middle" uk-grid>
+                            <div class="uk-width-auto">
+                                {% avatar_img com.user as img_ava %}
+                                {% if img_ava %}
+                                <img class="uk-comment-avatar" src="/{{img_ava}}" width="80" height="80" alt="">
+                                {% else %}
+                                <span class="uk-icon" uk-icon="icon: user; ratio: 4" style="max-width: 80px"></span>
+                                {% endif %}
+                            </div>
+                            <div class="uk-width-expand">
+                                <h4 class="uk-comment-title uk-margin-remove"><a class="uk-link-reset">{{ com.user.username }}</a></h4>
+                                <ul class="uk-comment-meta uk-subnav uk-subnav-divider uk-margin-remove-top">
+                                    <li>
+                                        <a>{{ com.created_at|timesince }} назад</a>
+                                        <div class="p-score">
+                                            <div class="rater-com" id="rater_com_{{com.id}}"></div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <span class="uk-text-muted">
+                                    {% if com.update_at != com.created_at %}
+                                        изменено
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    {% if com.comment or com.baned %}
+                    <div class="uk-comment-body">
+                        {% if com.baned %}
+                        <span class="uk-label uk-label-danger">Коментарий скрыт</span>
+                        <div class="uk-text-danger">Причина блокировки: {{ com.baned_com }}</div>
+                        {% endif %}
+                        <p class="collapsible">{{ com.comment }}</p>
+                        <a class="uk-link-muted toggle-button">Читать далее</a>
+                        
+                    </div>
+                    {% endif %}
+                    {% if com.user == user %}
+                    <button class="uk-button uk-button-default uk-button-small but-edit"
+                    uk-toggle="target: #edit-comment-modal"
+                        data-id="{{com.id}}"
+                        data-text="{{com.comment}}"
+                        data-score="{{com.star}}">Изменить</button>
+                    {% endif %}
+                </article>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="noComments">
+            <h3 class="uk-h3">Отзывов пока нет.</h3>
+        </div>
+    {% endif %}
+</div>
+
+
+<!-- Модальное окно для добавления комментария -->
+<div id="add-comment-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body" style="border-radius:10px">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <h2 class="uk-modal-title uk-text-center">Добавить комментарий</h2>
+        <form id="add-comment-form" method="post">
+            {% csrf_token %}
+            <div class="p-score">
+                <div class="rater-com rc-s" id="rater_com_add"></div>
+            </div>
+            <textarea class="uk-textarea uk-margin" id="comm_text_add" name="comment" rows="4" placeholder="Ваш отзыв"></textarea>
+            <button type="submit" class="uk-button uk-button-onebit uk-button-small uk-margin-auto-left but-dis" id="comm_add" disabled>Сохранить</button>
+        </form>
+    </div>
+</div>
+<!-- Модальное окно для редактирования комментария -->
+<div id="edit-comment-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body" style="border-radius:10px">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <h2 class="uk-modal-title uk-text-center">Редактировать комментарий</h2>
+        <form id="edit-comment-form" method="post">
+            {% csrf_token %}
+            <div class="p-score">
+                <div class="rater-com rc-s" id="rater_com_edit"></div>
+            </div>
+            <textarea class="uk-textarea uk-margin" name="comment" id="comm_text_edit" rows="4" placeholder="Ваш отзыв"></textarea>
+            <button type="submit" class="uk-button uk-button-onebit uk-button-small uk-margin-auto-left but-dis" id="comm_edit" disabled>Сохранить</button>
+        </form>
+    </div>
+</div>

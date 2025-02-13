@@ -1,0 +1,162 @@
+main>.uk-h1, main>.uk-h4{
+    font-weight: 500;
+    padding: 0 20px
+}
+main>.uk-h4{
+    color: var(--color-all);
+    margin-left: 25px;
+    span{
+        display: inline-block;
+        -moz-transform: scale(-1, 1);
+        -webkit-transform: scale(-1, 1);
+        -o-transform: scale(-1, 1);
+        -ms-transform: scale(-1, 1);
+        transform: scale(-1, 1);
+    }
+}
+.collect,
+.goes,
+.delivered
+{background-color: var(--color-all-border)}
+.received{background-color: var(--color-all-light)}
+.cancelled{background-color: #A6A6A6}
+
+.collect-info{background-color: #6600c5}
+.goes-info{background-color: #3b0479}
+.delivered-info{background-color: #4CAF50}
+.received-info{background-color: var(--color-all-flah)}
+.cancelled-info{background-color: #686868}
+
+.collect-color,
+.goes-color,
+.delivered-color
+{color: var(--color-all-border)}
+.received-color{color: var(--color-all-light)}
+.cancelled-color{color: #A6A6A6}
+
+/* errors */
+.ord-error{
+    margin-bottom: 10px;
+    
+}
+.ord-error-img{
+    background-color: #ff9494 !important;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border-radius: 50%;
+    opacity: .7;
+    span{color: red}
+}
+.ord-err{
+    font-weight: 500;
+    color: #B00000;
+}
+/* /errors/ */
+
+.ord-all{
+    display: flex;
+    margin-top: 10px;
+    gap: 25px;
+}
+.ord-block{
+    box-shadow:0 2px 10px 0 rgba(0, 0, 0, .12);
+    border-radius: 10px;
+    color: #fff;
+    margin: 0 0 10px 45px;
+    padding: 15px;
+    h3{margin: 0 0 10px}
+    h4{margin: 0 0 10px}
+}
+.dost-info-det{
+    border-radius: 10px;
+    max-width: max-content;
+    padding: 5px 10px;
+}
+.dost-img{
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 10px;
+    opacity: .7;
+    span{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+    }
+}
+.dost{
+    display: flex;
+    gap: 5px;
+    align-items: center
+}
+.dost-info span{font-weight: 500}
+
+.ord-tovars>div:not(:nth-last-child(1)){margin-bottom: 10px}
+.ord-tovar{
+    display: flex;
+    gap: 5px;
+}
+.ord-tov-img{
+    height: 84px;
+    width: 84px;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img{
+        max-height: 84px;
+        max-width: 84px;
+    }
+}
+.ord-tov-info{
+    padding: 10px 0;
+    font-weight: 500;
+    color: #fff;
+}
+.ord-tov-cost{
+    display: flex;
+    align-items: baseline;
+    span.b-cost{font-size: 1.2em}
+    span.b-cost::after,
+    span.o-cost::after{content: '\20BD'}
+    span.o-cost{opacity: .9}
+}
+.ord-tov-but{
+    margin-left: auto;
+}
+.ord-tov-but{
+    background-color: var(--color-all-flah);
+    border-radius: 10px;
+    height: 40px;
+    width: 40px;
+    padding: 5px;
+    div{
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+.ord-right{
+    margin: 0;
+    height: max-content;
+    flex: 1;
+    margin-right: 45px;
+    font-weight: 500;
+}
+.ord-r-all{
+    justify-content: space-between;
+    align-items: baseline
+}
+.ord-r-l h4{margin: 0}
+.ord-r-l span{font-size: .9em}
+.ord-r-r{font-size: 1.4em}
+.ord-r-r::after{content: '\20BD'}

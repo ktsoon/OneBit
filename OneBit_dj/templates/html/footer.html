@@ -1,0 +1,102 @@
+{% load static %}
+<a class="totop" href="#" uk-totop uk-scroll></a>
+<footer class="uk-background-muted">
+    <div class="uk-child-width-expand@s uk-text-start" uk-grid>
+        <div>
+            <div class="uk-card uk-padding">
+                <dl>
+                    {% if user.is_authenticated %}
+
+                    <dt class="uk-link-heading"><a>Мой профиль</a></dt>
+                    <dd class="uk-margin-small-top uk-link-muted">
+                        <a class="uk-flex icon-flex" href="{% url 'order' %}">
+                            <span uk-icon="bag"></span>
+                            <span>Заказы</span>
+                        </a>
+                    </dd>
+                    <dd class="uk-margin-small-top uk-link-muted">
+                        <a class="uk-flex icon-flex" href="{% url 'basket' %}">
+                            <span uk-icon="cart"></span>
+                            <span>Корзина</span>
+                        </a>
+                    </dd>
+                    <dd class="uk-margin-small-top uk-link-muted">
+                        <a class="uk-flex icon-flex" href="{% url 'favorites' %}">
+                            <span uk-icon="heart"></span>
+                            <span>Избранное</span>
+                        </a>
+                    </dd>
+
+                    {% else %}
+
+                    <dt class="uk-link-heading"><a>Моя учетная запись</a></dt>
+                    <dd class="uk-margin-small-top uk-link-muted">
+                        <a class="uk-flex icon-flex" href="{% url 'login' %}">
+                            <span uk-icon="user"></span>
+                            <span>Войти</span>
+                        </a>
+                    </dd>
+                    <dd class="uk-margin-small-top uk-link-muted">
+                        <a class="uk-flex icon-flex" href="{% url 'register' %}">
+                            <span uk-icon="users"></span>
+                            <span>Зарегистрироваться</span>
+                        </a>
+                    </dd>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+        <div>
+            <div class="uk-card uk-padding">
+                <dl>
+                    <dt class="uk-link-heading"><a>Тестовый Интернет-магазин OneBit</a></dt>
+                    <dd class="uk-margin-small-top uk-link-muted">
+                        <a class="uk-flex icon-flex" href="{% url 'faq' %}">
+                            <span uk-icon="question"></span>
+                            <span>Вопросы и ответы</span>
+                        </a>
+                    </dd>
+                    <dd class="uk-margin-small-top uk-link-muted">
+                        <a class="uk-flex icon-flex" href="{% url 'faq' %}">
+                            <span uk-icon="file-text"></span>
+                            <span>Документация (Сделать)</span>
+                        </a>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <div>
+            <div class="uk-card uk-padding">
+                <dl>
+                    <dt class="uk-link-heading"><a>Контакты</a></dt>
+                    <dd class="uk-margin-small-top">г. Москва, ул. Пушкина, дом 666, кв. 3</dd>
+                    <dd class="uk-margin-small-top uk-link-muted">
+                        <a class="uk-flex icon-flex tel" href="tel:+7 999 957-57-57">
+                            <span uk-icon="receiver"></span>
+                            <span>+7 999 957-57-57</span>
+                            <span class="uk-text-muted">(Пн-Вс 9.00 - 18.00)</span>
+                        </a>
+                    </dd>
+                    <dd class="uk-margin-small-top uk-link-muted">
+                        <a class="uk-flex icon-flex"
+                            href="mailto:faq@onebit.com">
+                            <span uk-icon="mail"></span>
+                            <span>faq@onebit.com</span>
+                        </a>
+                    </dd>
+                    <dd class="uk-margin-small-top">
+                        <a href="https://instagram.com/" 
+                            class="uk-icon-button uk-margin-small-right" 
+                            uk-icon="instagram"></a>
+                        <a href="https://facebook.com/" 
+                            class="uk-icon-button  uk-margin-small-right facebook" 
+                            uk-icon="facebook"></a>
+                        <a href="https://web.telegram.org/" 
+                            class="uk-icon-button telegram" 
+                            uk-icon="telegram"></a>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</footer>

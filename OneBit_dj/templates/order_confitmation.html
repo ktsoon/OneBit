@@ -1,0 +1,193 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+{% load humanize %}
+{% load polls_tags %}
+
+{% block title %}Заказ | One Bit - интернет-магазин{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/order_confitmation.css' %}">
+{% endblock css %}
+
+
+{% block scripts %}
+<script src="https://api-maps.yandex.ru/2.1/?apikey=31d73b27-f2be-4cc0-8f26-7cf923d7a52e&lang=ru_RU" type="text/javascript"></script> {# MAP #}
+<script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@latest/dist/js/jquery.suggestions.min.js"></script> {# suggestions JQuery #}
+<script src="{% static 'js/valid_card.js' %}"></script> {# валидация карты #}
+<script>
+  const pic = "{% static 'img/logo2.png' %}" {# метка магазина на карте #}
+  const DJANGO_STATIC_URL = '{{ STATIC_URL_CARD }}';
+</script>
+<script src="{% static 'js/order_confit.js' %}"></script>
+{% endblock scripts %}
+    
+
+{% block content %}
+{% comment %} <form id="delivery-form" method="POST"> {% csrf_token %}
+  <input type="radio" name="delivery" checked value="Pochta" id="Pochta" style="display: none;">
+  <input type="radio" name="delivery" value="pickup" id="pickup" style="display: none;">
+</form> {% endcomment %}
+<h1 class="uk-h1">Оформление заказа<sup>0</sup></h1>
+<div class="content_2">
+  <div class="form-section">
+    <hr>
+    <div class="dostavka">
+      <h2 class="step-title st1">Способ получения</h2>
+      <ul class="sposob uk-flex" uk-switcher>
+        <li><a data-value="Pochta" class="select_d">Почта России</a></li>
+        <li><a data-value="pickup">Самовывоз</a></li>
+      </ul>
+      <div class="uk-switcher">
+        <div class="uk-container uk-margin-small-top uk-padding-remove uk-position-relative">
+          <form id="dadata-zipcode-form" class="uk-form-stacked uk-grid-collapse"> {% csrf_token %}
+            <div>
+              <label class="uk-form-label" for="address-input">Введите ФИО:</label>
+              <input 
+                id="name" 
+                type="text" 
+                class="uk-input" 
+                placeholder="Фимилия Имя Отчество"
+                required 
+              />
+            </div>
+            <div>
+              <label class="uk-form-label" for="address-input">Введите адрес не забыв указать <b>дом</b> и <b>номер квартиры</b>:</label>
+              <input 
+                id="address-input" 
+                type="text" 
+                class="uk-select" 
+                placeholder="Начните вводить адрес..."
+                required 
+              />
+            </div>
+
+            <div>
+              <label class="uk-form-label" for="postal-unit-address">Почтовое отделение:</label>
+              <input 
+                id="postal-unit-address" 
+                type="text" 
+                class="uk-input" 
+                data-postal_code
+                placeholder="Адрес будет заполнен автоматически" 
+                readonly 
+              />
+              <div style="display:none" class="dadata-error" id="dadata-error"><span></span></div>
+            </div>
+          </form>
+        </div>
+        <div class="map">
+          <div id="map">
+            <div class="map-hour uk-text-muted">*Рабочее время магазинов с 8:00 до 21:00 с понедельника по субботу</div>
+          </div>
+          <div class="map_right" id="map-right"></div>
+        </div>
+      </div>
+    </div>
+    <div class="oplata">
+      <h2 class="step-title st2">Способ оплаты</h2>
+      <form method="POST" class="card" id="card"> {% csrf_token %}
+        <div class="card_front">
+            <div class="card_img">
+                <div>
+                    <img src="{% static 'img/card/mir.png' %}" alt="">
+                    <img src="{% static 'img/card/visa.png' %}" alt="">
+                    <img src="{% static 'img/card/mastercard.png' %}" alt="">
+                    <img src="{% static 'img/card/maestro.png' %}" alt="">
+                    <img src="{% static 'img/card/jcb.png' %}" alt="">
+                    <img src="{% static 'img/card/amex.png' %}" alt="">
+                </div>
+            </div>
+            <div class="card_namber">
+                <div>
+                    <label class="uk-form-label" for="card-number">Номер карты</label>
+                    <div class="uk-form-controls">
+                      <input class="uk-input uk-form-small" id="card-number" type="text" autocomplete="card-number" placeholder="0000 0000 0000 0000">
+                      <div id="card-hint" class="help_card_number opacity danger-red uk-input" style="color: gray; position: absolute;">Введите номер карты.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card_time">
+                <label class="uk-form-label" for="form-stacked-text">Действует до</label>
+                <div class="uk-form-controls uk-flex">
+                    <input class="uk-input uk-form-small" id="expiry-mm" autocomplete="expiry-mm" type="tel" placeholder="ММ">
+                    <span>/</span>
+                    <input class="uk-input uk-form-small" id="expiry-yy" autocomplete="expiry-yy" type="tel" placeholder="ГГ">
+                </div>
+            </div>
+        </div>
+        <div class="card_behind">
+            <div class="card_line"></div>
+            <div class="card_behind_text">
+                <span>CVV/CVC</span>
+                <input class="uk-input uk-form-small" id="cvv" autocomplete="current-password" type="password" placeholder="000">
+                <div>три цифры с обратной стороны карты</div>
+            </div>
+        </div>
+      </form>
+    </div>
+    <div class="t_list">
+      <h2 class="step-title st3">Ваш заказ</h2>
+      <div class="uk-flex uk-flex-between uk-flex-middle">
+        <span>Перед оплатой проверьте список выбранных товаров:</span>
+
+      </div>
+      <div id="product-container" class="list_tov grid-view" >
+        
+        {% for tov in tovars %}
+          <div class="tov" id="{{tov.tovar.id}}">
+            {% define 1 as count %}
+            {% for img in tovar_img %}
+              {% if img.tovar == tov.tovar and count == 1 %}
+                {% summ 1 count as count %}
+
+                <div class="images">
+                  <div class="ord-t-del" id="{{tov.tovar.id}}"><a uk-icon="close"></a></div>
+                  <img src="{{ img.img.url }}" alt="{{ tov.tovar.slug }}">
+                  <div class="count-t"><span>{{ tov.t_count }} шт.</span></div>
+                </div>
+                <div class="t-bottom">
+                  <div style="gap:0" class="cost">
+                    {% if not tov.tovar.skidka_cost %}
+                      <span data-cost='{{tov.tovar.cost}}'>{{ tov.tovar.cost|multiply:tov.t_count|intcomma }}</span>
+                    {% else %}
+                      <span data-cost='{{tov.tovar.skidka_cost}}' data-bes-skidkoi="{{tov.tovar.cost}}">{{ tov.tovar.skidka_cost|multiply:tov.t_count|intcomma }}</span>
+                    {% endif %}
+                    <div class="cost_all">
+                      {% if not tov.tovar.skidka_cost %}
+                      {{ tov.tovar.cost|intcomma }}
+                      {% else %}
+                      {{ tov.tovar.skidka_cost|intcomma }}
+                      {% endif %}
+                      &#8381;
+                      <sub style="font-weight:500">/шт.</sub>
+                    </div>
+                  </div>
+                  <span class="t-name">{{tov.tovar.name}}</span>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endfor %}
+
+      </div>
+    </div>
+  </div>
+  <div class="right-bar uk-position-z-index info-section" uk-sticky="end: !.content_2; offset: 20">
+    <div class="uk-card uk-card-default" id="zakaz">
+      <a href="{% url 'order_confirmation' %}"><button type='button' class="uk-button uk-button-large button-buy-p uk-button-onebit" id="basket_submit">Оформить</button></a>
+      <hr>
+      <div class="itogi">
+        <h4>Итого<sub>0</sub></h4>
+        <span class="cost1">0</span>
+        <span class="cost2">0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock content %}
+    
+
+{% block header %}{% include "html/header.html" %}{% endblock %}
+{% block footer %}{% include "html/footer.html" %}{% endblock %}

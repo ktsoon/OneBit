@@ -1,0 +1,111 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+
+{% block title %}FAQ | One Bit - интернет-магазин{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/faq.css' %}">
+{% endblock css %}
+
+
+{% block scripts %}
+<script src="{% static 'js/faq.js' %}" async></script>
+{% endblock scripts %}
+    
+    
+
+{% block content %}
+<h1 class="uk-h1">Вопросы и ответы (FAQ)</h1>
+<nav aria-label="Breadcrumb">
+    <ul class="uk-breadcrumb bc">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li class="uk-disabled">Вопросы и ответы (FAQ)</li>
+    </ul>
+</nav>
+
+<div class="uk-flex uk-flex-wrap uk-flex-wrap-around uk-margin-medium-left uk-margin-medium-right" uk-nav="targets:> ul > li.uk-parent">
+    <ul class="uk-width-1 uk-width-1-2@m" >
+        <li class="uk-card card-onebit uk-card-body uk-card-small uk-parent uk-margin-top">
+            <a class="uk-width uk-text-large">Как посмотреть статус заказа? <span uk-nav-parent-icon></span></a>
+            <ul class="show-faq uk-nav-sub">
+                <li class="order-status">
+                    Посмотреть статус заказа можно в личном кабинете в разделе <a class="uk-button-text" href="{% url 'order' %}">Заказы</a>. <br>
+                    <span class="collect white">Проверяется</span> - заказ проверяется и передаются в доставку. <br>
+                    <span class="goes white">Достовляется</span> - транспортировка товаров до пункта выдачи, магазина. <br>
+                    <span class="delivered white">Доставлен</span> - заказ готов к получению. <br>
+                    <span class="received white">Получен</span> - вы получили заказ в пункте выдачи или в нашем магазине. <br>
+                    <span class="cancelled white">Отменён</span> - заказ отменён. <br>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <ul class="uk-width-1 uk-width-1-2@m">
+        <li class="uk-card card-onebit uk-card-body uk-card-small uk-parent uk-margin-remove-left uk-margin-left@s uk-margin-top">
+            <a class="uk-width uk-text-large">Как получить заказ? <span uk-nav-parent-icon></span></a>
+            <ul class="show-faq uk-nav-sub">
+                <li>
+                    Для получения заказа в магазине покажите сотруднику <cite>номер заказа</cite> <br> (<var>Пример: № 20250121-212503-4</var>). <br><br>
+                    Для получения заказа в почтовом отделение вам нужно прийти в почтовое отделение по адресу который указан в деталях о заказе <br> (<var>Пример: Почтовый адрес: Ярославская обл, г Ростов, ул Северная, д 44, 152150</var>).
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <ul class="uk-width-1 uk-width-1-2@m">
+        <li class="uk-card card-onebit uk-card-body uk-card-small uk-parent uk-margin-top">
+            <a class="uk-width uk-text-large">Ошибки при оплате <span uk-nav-parent-icon></span></a>
+            <ul class="show-faq uk-nav-sub">
+                <li>
+                    <strong>Оплата может не пройти, если:</strong><br>
+                    <ul class="uk-list uk-list-collapse uk-list-hyphen">
+                        <li>Вы ввели неверные данные карты.</li>
+                        <li>У карты закончился срок действия.</li>
+                        <li>На карте недостаточно денег.</li>
+                        <li>Банк установил запрет на оплату в интернете.</li>
+                    </ul>
+                    <strong>Если оплата не прошла:</strong><br>
+                    <ul class="uk-list uk-list-collapse uk-list-hyphen">
+                        <li>Повторите попытку через 20 минут.</li>
+                        <li>Обратитесь в банк, выпустивший карту.</li>
+                        <li>Попробуйте оплатить другой картой.</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <ul class="uk-width-1 uk-width-1-2@m">
+        <li class="uk-card card-onebit uk-card-body uk-card-small uk-parent uk-margin-remove-left uk-margin-left@s uk-margin-top">
+            <a class="uk-width uk-text-large">Как отследить доставку товара? <span uk-nav-parent-icon></span></a>
+            <ul class="show-faq uk-nav-sub">
+                <li>
+                    Отследить доставку можно через статус товара или если вы заказывали доставку через почту то нажав на заказ и перейдя на страницу деталей заказа можно найти трек номер вашей посылки
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <div class="uk-width-1 uk-padding-remove-left">
+        <form class="uk-form-stacked uk-card card-onebit uk-card-body uk-card-small uk-margin-top uk-margin-large-bottom" id="question-form"> {% csrf_token %}
+            <h2 class="uk-width uk-text-large uk-margin-remove" style="font-weight:500">Задать свой вопрос</h2>
+            <div class="uk-margin">
+                <label class="uk-form-label" for="email">Email</label>
+                <div class="uk-form-controls"><input class="uk-input" id="email" name="email" maxlength="50" type="text" placeholder="Сюда придёт ответ на ваш вопрос"></div>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label" for="theme">Тема</label>
+                <div class="uk-form-controls"><input class="uk-input" id="theme" name="theme" maxlength="75" type="text" placeholder="Кратко опишите проблему"></div>
+            </div>
+            <div class="uk-margin">
+                <label class="uk-form-label" for="message">Сообщение</label>
+                <div class="uk-form-controls"><textarea  class="uk-textarea" rows="5" id="message" name="message" maxlength="3000" placeholder="Полностью опишите свою проблему"></textarea></div>
+            </div>
+            <div class="uk-margin uk-flex" style="justify-content: flex-end">
+                <input class="uk-button uk-button-onebit" type="submit" value="Отправить">
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block header %}{% include "html/header.html" %}{% endblock %}
+{% block footer %}{% include "html/footer.html" %}{% endblock %}

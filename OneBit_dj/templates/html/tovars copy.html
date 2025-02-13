@@ -1,0 +1,108 @@
+{% load static %}
+{% load humanize %}
+{% load polls_tags %}
+
+<div class="list-tovar">
+    <div class="t-title">
+        <span>{{ title.0 }}</span>
+        {% if title.1 %}
+            <a href="{{ title.1 }}"><div>Смотреть всё</div></a>
+        {% endif %}
+    </div>
+    <div class="tovars uk-position-relative uk-visible-toggle" tabindex="-1" id="my-slider" uk-slider="finite: true;">
+        <div class="slider-content" uk-slider="sets: true;">
+            <ul class="uk-slider uk-slider-items uk-grid-small">
+
+                {% if title.0 == "Недавно просмотреные" %} {# список истории товаров #}
+                    {% history_tovars_all user.id as tovars %}
+                {% endif %}
+                {% if title.0 == "Акции и скидки" %} {# список Акции и скидки товаров #}
+                    {% skidka_tovars_all as tovars %}
+                {% endif %}
+
+                {% for tovar_all in tovars %}
+                    {% define tovar_all as tovar %}
+                    {% if title.0 == "Недавно просмотреные" %} {# список истории товаров #}
+                        {% define tovar.tovar as tovar %}
+                    {% endif %}
+                    {% if product_exc != tovar %} {# чтобы на странице товара неповторялся этот-же товар #}
+                        <li><div class="tovar">
+                            {% if user.is_authenticated %}
+                                <div class="but-heart but-heart-tovar">
+                                    <input
+                                    type="checkbox"
+                                    id="heart-clip-{{ tovar.id }}"
+                                    class="heart-clip-t"
+                                    data-product="{{ tovar.id }}"
+                                    {% count_favorites_tovar user.id tovar as count_fav_t %}
+                                    {% if count_fav_t != 0 %} checked {% endif %}>
+                                    <svg class="heart-main" viewBox="0 0 512 512" width="25" title="heart">
+                                        <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
+                                    </svg>
+                                    <svg class="heart-main-2" viewBox="0 0 512 512" width="30" title="heart">
+                                        <path d="M 462.3 62.6 c -54.8 -46.7 -136.3 -38.3 -186.3 -5.6 l -19.7 20.3 l -19.7 -20.3 C 186.1 24.3 104.5 15.9 49.7 62.6 c -62.8 53.6 -66.1 149.8 -9.9 207.9 l 193.5 199.8 c 12.5 12.9 32.8 12.9 45.3 0 l 193.5 -199.8 c 56.3 -58.1 53 -154.3 -9.8 -207.9 z" />
+                                    </svg>
+                                </div>
+                            {% endif %}
+                            <a href="{{ tovar.get_absolute_url }}">
+                                <div class="t-img images">
+                                    {% tovar_img_all as tovar_img %}
+                                    {% define 1 as count %}
+                                    {% for img in tovar_img %}
+                                        {% if img.tovar == tovar and not img.is_video and count <= 5 %}
+                                            {% summ 1 count as count %}
+                                            <img src="{{ img.img.url }}" alt="{{ tovar.slug }}_img_{{ img.id }}"> 
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                {% define 1 as count %}
+                            </a>
+                            <div class="t-bottom">
+                                <a href="{% url 'product' tovar.slug %}">
+                                <div class="cost">
+                                    {% if not tovar.skidka_cost %}
+                                        <span>{{ tovar.cost|intcomma }}</span>
+                                    {% else %}
+                                        <span>{{ tovar.skidka_cost|intcomma }}</span>
+                                        <span>{{ tovar.cost|intcomma }}</span>
+                                        <span>-{{ tovar.skidka|floatformat:0 }}</span> {# floatformat - сколько цифр после запятой #}
+                                    {% endif %}
+                                </div>
+                                <div class="t-name">
+                                    {{tovar.name}}
+                                </div>
+                                {% if tovar_all.rating %}
+                                <div class="t-b-info">
+                                    <div class="star">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 16 15" fill="none">
+                                            <path d="M7.04894 0.92705C7.3483 0.00573921 8.6517 0.00573969 8.95106 0.92705L10.0206 4.21885C10.1545 4.63087 10.5385 4.90983 10.9717 4.90983H14.4329C15.4016 4.90983 15.8044 6.14945 15.0207 6.71885L12.2205 8.75329C11.87 9.00793 11.7234 9.4593 11.8572 9.87132L12.9268 13.1631C13.2261 14.0844 12.1717 14.8506 11.388 14.2812L8.58778 12.2467C8.2373 11.9921 7.7627 11.9921 7.41221 12.2467L4.61204 14.2812C3.82833 14.8506 2.77385 14.0844 3.0732 13.1631L4.14277 9.87132C4.27665 9.4593 4.12999 9.00793 3.7795 8.75329L0.979333 6.71885C0.195619 6.14945 0.598395 4.90983 1.56712 4.90983H5.02832C5.46154 4.90983 5.8455 4.63087 5.97937 4.21885L7.04894 0.92705Z" fill="#FFB800" />
+                                        </svg>
+                                        <div>{{ tovar_all.rating|make_list|slice:':3'|join:'' }}</div>
+                                    </div>
+                                    <div class="t-b-otz">
+                                        <img src="{% static 'img/icon-aktuelles.png' %}" alt="комент">
+                                        <div>
+                                            {{ tovar_all.count_com }} {{ tovar_all.count_com|review_word }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="t-b-info">
+                                    <div class="t-b-otz">
+                                        <img src="{% static 'img/icon-aktuelles.png' %}" alt="комент">
+                                        <div>Отзывов пока нет</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                </a>
+                            </div>
+                        </div></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    <a class="uk-position-center-left uk-position-small" href uk-slidenav-previous uk-slider-item="previous"></a>
+    <a class="uk-position-center-right uk-position-small" href uk-slidenav-next uk-slider-item="next"></a>
+    </div>
+    <hr>
+</div>

@@ -1,0 +1,15 @@
+.totop{
+    position: absolute;
+    right: 35px;
+    margin-top: -45px;
+}
+footer{
+    a:hover{color: #000 !important}
+    dd a:hover{color: var(--color-all) !important}
+    .icon-flex{gap:5px;align-items: center;width: max-content}
+    .facebook:hover{color: #3b5998 !important}
+    .telegram:hover{color: #27a7e7 !important}
+}
+@media (max-width: 1140px){
+    footer .tel{display: inline;width:auto}
+}

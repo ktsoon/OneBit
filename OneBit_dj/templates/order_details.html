@@ -1,0 +1,127 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+{% load humanize %}
+{% load polls_tags %}
+
+{% block title %}Заказ {{ order.order_number }} | One Bit - интернет-магазин{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/search.css' %}">
+<link rel="stylesheet" href="{% static 'css/order_details.css' %}">
+{% endblock css %}
+
+{% block scripts %}
+<script src="{% static 'js/order.js' %}"></script>
+{% endblock scripts %}
+
+{% block content %}
+<h1 class="uk-h1">Заказ от {{ order.date.date }}</h1>
+<nav aria-label="Breadcrumb">
+    <ul class="uk-breadcrumb bc">
+        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li><a href="{% url 'profile' %}">Профиль</a></li>
+        <li><a href="{% url 'order' %}">Заказы</a></li>
+        <li>Детали заказа № {{ order.order_number }}</li>
+    </ul>
+</nav>
+<a href="{% url 'order' %}" class="uk-h4"><span>&#10132;</span> К списку заказов</a>
+<div class="ord-all">
+    <div class="uk-width-3-4">
+        <div class="ord-block {{ order.dostavka }}">
+            <div class="uk-flex">
+                <h3 class="dost-info-det {{ order.dostavka }}-info">{{ order.get_dostavka_display }}</h3>
+                <h3 class="dost-info-det uk-margin-auto-left">№ {{ order.order_number }}</h3>
+            </div>
+            {% if order.errors %}
+            <div class="dost ord-error">
+                <div class="ord-error-img">
+                    <span uk-icon="warning"></span>
+                </div>
+                <div class="ord-err">
+                    <span class="uk-label uk-label-danger">{{ order.errors }}</span>
+                    {% comment %} <span>{{ order.errors }}</span> {% endcomment %}
+                </div>
+            </div>
+            {% endif %}
+            <div class="dost">
+                <div class="dost-img"><span class="{{ order.dostavka }}-color" uk-icon="icon: location; ratio: 1.5"></span></div>
+                <div>
+                {% if order.sposob_dostavka == 'Pochta' %}
+                    <div class="dost-info">
+                        <span>Доставка в почтовое отделение</span>
+                    </div>
+                    <div>
+                        {% if order.sposob_dostavka == 'Pochta' %}
+                            {% if order.dostavka == 'delivered' or order.dostavka == 'goes' %}
+                            <span>Трек-номер: <dfn style="font-weight:500">{{ order.track_numbers }}</dfn></span> <br>
+                            {% endif %}
+                        {% endif %}
+                        <span>Почтовый адрес: {{ order.adress_mail }}</span> <br>
+                        <span>Ваш ФИО: {{ order.FCs }}</span> <br>
+                        <span>Ваш адрес: {{ order.adress }}</span>
+                    </div>
+                {% else %}
+                    <div class="dost-info">
+                        <span>Доставка в магазин</span>
+                    </div>
+                    <div>
+                        <span>Адрес: {{ order.coords }}</span>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="ord-block {{ order.dostavka }}">
+            <h4>Товары:</h4>
+            <div class="ord-tovars">
+                {% for tov in order.tovar_order.all %}
+                    <div class="ord-tovar">
+                        {% define 1 as count %}
+                        {% for i in img %}
+                            {% if i.tovar == tov.tovar and count == 1 %}
+                                {% summ 1 count as count %}
+                                <div class="ord-tov-img"><a href="{% url 'product' tov.tovar.slug %}"><img src="{{ i.img.url }}" alt="{{ tov.tovar.slug }}"></a></div>
+                            {% endif %}
+                        {% endfor %}
+                        <a href="{% url 'product' tov.tovar.slug %}" class="ord-tov-info">
+                            <div class="ord-tov-cost">
+                                <span class="b-cost">{{tov.t_cost|multiply:tov.t_count|intcomma}}&nbsp;</span>
+                                {% if tov.t_count != 1 %}
+                                    <span class="o-cost">&nbsp;{{ tov.t_count }} x {{ tov.t_cost }}&nbsp;</span>
+                                {% endif %}
+                            </div>
+                            <div>{{ tov.tovar.name }}</div>
+                        </a>
+                        <div class="ord-tov-but">
+                            <div class="but-heart">
+                                <input 
+                                type="checkbox" 
+                                id="heart-clip-{{ tov.tovar.id }}"
+                                class="heart-clip-t" 
+                                data-product="{{ tov.tovar.id }}"
+                                {% count_favorites_tovar user.id tov.tovar as count_fav_t %}
+                                {% if count_fav_t != 0 %} checked {% endif %}>
+                                <svg class="heart-main" viewBox="0 0 512 512" width="40" title="heart">
+                                    <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="ord-block ord-right {{ order.dostavka }}">
+        <div class="uk-flex ord-r-all">
+            <div class="ord-r-l">
+                <h4>Ваш заказ</h4>
+                <span>{{results.total_count}} товаров</span>
+            </div>
+            <div class="ord-r-r">{{results.total_cost|intcomma}}&nbsp;</div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block header %}{% include "html/header.html" %}{% endblock %}
+{% block footer %}{% include "html/footer.html" %}{% endblock %}

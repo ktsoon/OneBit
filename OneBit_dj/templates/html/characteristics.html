@@ -1,0 +1,37 @@
+{% load static %}
+<div id="characteristics" class="characteristics">
+    <h2>Характеристики</h2>
+{% for i in specs_gl %}
+    <div class="char_gl">
+        <h3>{{ i }}</h3>
+        {% for j in specs %}
+            {% if i == j.category.gl_category %}
+                <div class="s-char-small">
+                    <div class="s-char-small-flex">
+
+                        {% if j.category.details %}
+                            <div class="uk-inline">
+                                <ul class="uk-iconnav">
+                                    <li><a class="uk-iconnav" uk-icon="icon: info; ratio: 1"></a></li>
+                                </ul>
+                                <div class="uk-card uk-card-body uk-card-small uk-card-default" uk-drop="pos: top; mode: click">{{ j.category.details }}</div>
+                            </div>
+                        {% endif %}
+                            {% comment %} 
+                            <div class="uk-grid-small s-char-small" uk-grid>
+                                <div class="uk-width-expand" uk-leader="media: @m">{{ j.category }}</div>
+                                <div>{{ j.description }}</div>
+                            </div> 
+                            {% endcomment %}
+                        <div class="s-char-small-ch" style="display:block">{{ j.category.category }}:
+                        <span style="color:black">{{ j.description }}</span></div>
+                    </div>
+                    <hr class="uk-divider">
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endfor %}
+<hr>
+</div>
+<script src="{% static 'js/characteristics.js' %}"></script>

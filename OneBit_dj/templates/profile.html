@@ -1,0 +1,107 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+{% load polls_tags %}
+
+{% block title %}Профиль | One Bit - интернет-магазин{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock css %}
+
+{% block scripts %}
+<script src="{% static 'js/profile.js' %}"></script>
+{% endblock scripts %}
+
+{% block content %}
+<nav aria-label="Breadcrumb">
+   <ul class="uk-breadcrumb bc">
+       <li><a href="{% url 'home' %}">Главная</a></li>
+       <li class="uk-disabled">Профиль</li>
+   </ul>
+</nav>
+<div class="main">
+   <div class="profile">
+
+      {% if form %}
+         <div class="avatar block_style">
+            <form action="" method="POST" enctype="multipart/form-data">   {% csrf_token %}
+               <div class="errors_ava">
+                  {% for field, errors in form.errors.items %}
+                     {% for error in errors %}
+                     <style>.errors_ava{display:unset}</style>
+                        <span>{{error}}</span>
+                     {% endfor %}
+                  {% endfor %}
+               </div>
+               <div class="fieldWrapper uk-inline">
+                  <div class="form_ava">
+                     {% if not avatar %}
+                        <span uk-icon="icon: user;ratio: 7"></span>
+                        <img>
+                     {% endif %}
+                     {{ form.avatar }}
+                  </div>
+                  <div class="uk-position-center">
+                     <span uk-icon="icon: plus;ratio: 4"></span>
+                     {# <span uk-overlay-icon></span> #}
+                  </div>
+               </div>
+               <h3>{{ user.username }}</h3>
+               <button type="submit" class="uk-button uk-button-onebit">Сохранить</button>
+            </form>
+         </div>
+      {% endif %}
+
+      <div class="exit block_style">
+         <a click_href="{% url 'logout' %}" id="exit_href">
+            <button class="uk-button uk-button-danger" uk-icon="sign-in" id="exit"><span>Выход</span></button>
+         </a>
+      </div>
+
+   </div>
+   <div class="profile b_t">
+      <a class="block_tov block_style" style="min-width: 215px" href="{% url 'order' %}">
+         {# считает и выводит количество заказов #}
+         {% define user.order_set.all.count as count_order %}
+         <h3>Заказы<sup> {% if count_order %}{{ count_order }}{% endif %}</sup></h3>
+         <span>Смотреть</span>
+         <div class="z_right" uk-icon="bag"></div>
+      </a>
+
+      <a class="block_tov block_style" style="min-width: 280px" href="{% url 'favorites' %}">
+         {# считает и выводит количество товаров в избранном #}
+         {% define user.favoritess_set.all.count as count_favoritess %}
+         <h3>Избранное<sup> {% if count_favoritess %}{{ count_favoritess }}{% endif %}</sup></h3>
+         <span>Смотреть</span>
+         <div class="z_right" uk-icon="heart"></div>
+      </a>
+
+      <a class="block_tov block_style" style="min-width: 250px" href="{% url 'basket' %}">
+         {# считает и выводит количество товаров в корзине #}
+         {% define user.basket_set.all.count as count_basket %}
+         <h3>Корзина<sup> {% if count_basket %}{{ count_basket }}{% endif %}</sup></h3>
+         <span>Смотреть</span>
+         <div class="z_right" uk-icon="cart"></div>
+      </a>
+
+      {% if comment_us %}
+      <div class="block_tov block_style bs_comm">
+         {# считает и выводит количество товаров в корзине #}
+         <h3>Оставте комментарий уже купленным товарам:</h3>
+         <div class="list_comm_t">
+            {% for i in comment_us %}
+               <a class="comm_t" href="{% url 'product' i.tovar.slug %}#reviews">
+                  {% tovar_img_first i.tovar as tov_img %}
+                  <img src="{{ tov_img }}" alt="i.tovar.slug">
+                  <span>{{ i.tovar.name }}</span>
+               </a>
+            {% endfor %}
+         </div>
+      </div>
+      {% endif %}
+   </div>
+</div>
+{% endblock content %}
+
+{% block header %}{% include "html/header.html" %}{% endblock %}
+{% block footer %}{% include "html/footer.html" %}{% endblock %}

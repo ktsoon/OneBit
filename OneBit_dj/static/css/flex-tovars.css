@@ -1,0 +1,28 @@
+.tovars-flex {
+    margin-top: 35px;
+    width: 100%;
+    display: grid;
+    grid-auto-flow: dense;
+    grid-template-columns: repeat(2, calc(50% - 4.5px));
+    gap: 24px 8px;
+    margin-bottom: 75px;
+}
+@media (min-width: 768px) {
+    .tovars-flex {
+        grid-template-columns: repeat(4, calc(25% - 6.3px));
+        row-gap: 32px;
+    }
+}
+@media (min-width: 1024px) {
+    .tovars-flex {
+        grid-template-columns: repeat(5, calc(20% - 6.67px));
+        row-gap: 40px;
+    }
+}
+@media (min-width: 1280px) {
+    .tovars-flex {
+        grid-template-columns: repeat(6, calc(16.6667% - 6.67px));
+        row-gap: 30px;
+    }
+}
+

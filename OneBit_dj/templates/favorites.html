@@ -1,0 +1,152 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+{% load humanize %}
+{% load polls_tags %}
+
+{% block title %}Избранное | One Bit - интернет-магазин{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/favorites.css' %}">
+<link rel="stylesheet" href="{% static 'css/flex-tovars.css' %}">
+{% comment %} <link rel="stylesheet" href="{% static 'css/search.css' %}"> {% endcomment %}
+{% endblock css %}
+
+{% block scripts %}
+  <script> // галочка в выбраном фильтре
+    var text = "{{ sorting }}";
+    // Находим все элементы <a> внутри <ul> с указанным классом
+    var links = document.querySelectorAll(".uk-nav.uk-dropdown-nav a");
+    // Проходимся по каждому найденному элементу
+    links.forEach(function(link) {
+        // Проверяем, совпадает ли текст ссылки с переменной
+        if (link.textContent.trim() === text) {
+            // Создаем элемент <span> с указанными стилями и атрибутами
+            var spanElement = document.createElement("span");
+            spanElement.setAttribute("style", "color: var(--color-all-full);margin-left:15px");
+            spanElement.setAttribute("uk-icon", "check");
+
+            // Добавляем <span> внутрь найденной ссылки
+            link.appendChild(spanElement);
+        }
+    });
+  </script>
+{% endblock scripts %}
+
+{% block content %}
+
+{% if tovars %}
+    <h1 class="uk-h1">Избранное<sup>{{ tovars|length }}</sup></h1>
+    <nav aria-label="Breadcrumb">
+        <ul class="uk-breadcrumb bc">
+            <li><a href="{% url 'home' %}">Главная</a></li>
+            <li><a href="{% url 'profile' %}">Профиль</a></li>
+            <li>Избранное</li>
+        </ul>
+    </nav>
+    <div style="margin:25px 45px" uk-dropnav="mode: click">
+        <button class="uk-button uk-button-small uk-button-onebit-transparent" >{{ sorting }} <span uk-drop-parent-icon></span></button>
+        <div class="uk-dropdown uk-nav-filter">
+            <ul class="uk-nav uk-dropdown-nav">
+                <li><a href="?sorting=new">Сначала новые</a></li>
+                <li class="uk-nav-divider"></li>
+                <li><a href="?sorting=old">Сначала старые</a></li>
+                <li class="uk-nav-divider"></li>
+                <li><a href="?sorting=low">Сначала дешёвые</a></li>
+                <li class="uk-nav-divider"></li>
+                <li><a href="?sorting=exp">Сначала дорогие</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="favorite-grid tovars-flex">
+        {% for tovar in tovars %}
+            <div class="tovar">
+                <a href="{{ tovar.tovar.get_absolute_url }}">
+                    <div class="but-heart but-heart-tovar">
+                        <input
+                        type="checkbox"
+                        id="heart-clip-{{ tovar.tovar.id }}"
+                        class="heart-clip-t"
+                        data-product="{{ tovar.tovar.id }}"
+                        {% count_favorites_tovar request.user.id tovar as count_fav_t %}
+                        {% if count_fav_t != 0 %} checked {% endif %}>
+                        <svg class="heart-main" viewBox="0 0 512 512" width="25" title="heart">
+                            <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
+                        </svg>
+                    </div>
+                    <div class="t-img images">
+                        {% define 1 as count %}
+                        {% for img in tovar_img %}
+                            {% if img.tovar == tovar.tovar and not img.is_video and count <= 7 %}
+                                {% summ 1 count as count %}
+                                <img src="{{ img.img.url }}" alt="{{ tovar.slug }}"> 
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </a>
+                <div class="t-bottom">
+                    <a href="{% url 'product' tovar.tovar.slug %}">
+                    <div class="cost">
+                        {% if not tovar.tovar.skidka_cost %}
+                            <span>{{ tovar.tovar.cost|intcomma }}</span>
+                        {% else %}
+                        <span>{{ tovar.tovar.skidka_cost|intcomma }}</span>
+                            <span>{{ tovar.tovar.cost|intcomma }}</span>
+                            <span>-{{ tovar.skidka|floatformat:0 }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="t-name">
+                        {{tovar.tovar.name}}
+                    </div>
+                    {% if tovar.rating %}
+                    <div class="t-b-info">
+                        <div class="star">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 16 15" fill="none">
+                                <path d="M7.04894 0.92705C7.3483 0.00573921 8.6517 0.00573969 8.95106 0.92705L10.0206 4.21885C10.1545 4.63087 10.5385 4.90983 10.9717 4.90983H14.4329C15.4016 4.90983 15.8044 6.14945 15.0207 6.71885L12.2205 8.75329C11.87 9.00793 11.7234 9.4593 11.8572 9.87132L12.9268 13.1631C13.2261 14.0844 12.1717 14.8506 11.388 14.2812L8.58778 12.2467C8.2373 11.9921 7.7627 11.9921 7.41221 12.2467L4.61204 14.2812C3.82833 14.8506 2.77385 14.0844 3.0732 13.1631L4.14277 9.87132C4.27665 9.4593 4.12999 9.00793 3.7795 8.75329L0.979333 6.71885C0.195619 6.14945 0.598395 4.90983 1.56712 4.90983H5.02832C5.46154 4.90983 5.8455 4.63087 5.97937 4.21885L7.04894 0.92705Z" fill="#FFB800" />
+                            </svg>
+                            <div>{{ tovar.rating|make_list|slice:':3'|join:'' }}</div>
+                        </div>
+                        <div class="t-b-otz">
+                            <img src="{% static 'img/icon-aktuelles.png' %}" alt="комент">
+                            <div>{{ tovar.count_com }} {{ tovar.count_com|review_word }}</div>
+                        </div>
+                    </div>
+                    {% else %}
+                        <div class="t-b-info">
+                            <div class="t-b-otz">
+                                <img src="{% static 'img/icon-aktuelles.png' %}" alt="комент">
+                                <div>Отзывов пока нет</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </a>
+                </div>
+                {% if tovar.tovar.name in if_basket_all %}
+                    <button class="uk-button button-buy-f" id="{{tovar.tovar.id}}">
+                        <span uk-icon="icon: cart; ratio: 1.2"></span>
+                        <div>В&nbsp;корзинe</div>
+                    </button>
+                {% else %}
+                    <button class="uk-button uk-button-onebit button-buy-f" id="{{tovar.tovar.id}}">
+                        <span uk-icon="icon: cart; ratio: 1.2"></span>
+                        <div>Добавить в&nbsp;корзину</div>
+                    </button>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+{% else %}
+
+<div class="ifnotfavorite">
+    <img src="{% static 'img/1bit_black2.png' %}" width="250" alt="лого_всё">
+    <h4>В избранном пусто</h4>
+    <p>Добавляйте товары с помощью ❤</p>
+</div>
+{% endif %}
+
+
+{% endblock content %}
+
+{% block header %}{% include "html/header.html" %}{% endblock %}
+{% block footer %}{% include "html/footer.html" %}{% endblock %}

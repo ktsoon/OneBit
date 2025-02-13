@@ -1,0 +1,3 @@
+tovar.favoritess_set.all
+favoritess - таблица бд
+tovar - столбик таблицы favoritess 

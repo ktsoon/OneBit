@@ -1,0 +1,42 @@
+{% extends "layout/authlayout.html" %}
+
+   
+{% block auth_content %}
+
+{% comment %} <div class="auth-input-text">
+   <input type="text" name="p1" id="p1" required>
+   <div class="auth-labelline">Логин</div>
+</div>
+<div class="auth-input-text">
+   <input type="email" name="p2" id="p2" placeholder="" required>
+   <div class="auth-labelline">Email</div>
+</div>
+<div class="auth-input-text">
+   <input type="password" name="p3" id="p3" required>
+   <div class="auth-labelline">Пароль</div>
+</div>
+<div class="auth-input-text">
+   <input type="password" name="p4" id="p4" required>
+   <div class="auth-labelline">Повтор пароля</div>
+</div> {% endcomment %}
+
+{% for field in form %}
+   <div class="auth-input-text">
+      {{ field }}
+      <div class="auth-labelline">{{ field.label_tag }}</div>
+   </div>
+
+   {% if field.errors %}
+         {% for error in field.errors %}
+         <p class="auth-error">{{ error }}</p>
+         {% endfor %}
+   {% endif %}
+
+{% endfor %}
+<div class="auth-btn">
+   <button class="btn uk-button uk-button-onebit" type="submit">Создать&nbsp;аккаунт</button>
+   <div><a href="{% url 'login' %}">Войти</a></div>
+   <div style="margin-left:auto"><a href="{% url 'home' %}">Назад</a></div>
+</div>
+
+{% endblock auth_content %}

@@ -1,0 +1,184 @@
+{% load static %}
+{% load polls_tags %}
+
+{% if user.is_superuser == 1 %} {# для коректного отображения администратора на телефоне #}
+<style>@media screen and (max-width:600px){.catalog{width:20%}.h_right{width:80%;margin-left:20%}}</style>
+{% endif %}
+
+<header>
+<a href="{% url 'home' %}"><img id="logo" src="{% static 'img/logo2.png' %}" alt="лого" height="70"></a> {# логотип сайта #}
+{# каталог #}
+<div class="catalog">
+    <button class="uk-button uk-button-default"><img id="catalog" src="{% static 'img/palochki2.svg' %}" alt="палочки" style="vertical-align:middle">
+        <div>Каталог</div>
+    </button>
+    <div uk-dropdown="mode: click; target: !header; flip: false; animation: reveal-top; duration: 500; animate-out: true" class="head-drop">
+        <div class="uk-drop-grid uk-child-width-auto@m" uk-grid>
+            {% specifications as spec %}
+            {% Gl_specifications as gl_spec %}
+            {% for gl_s in gl_spec %}
+            <div>
+                <ul class="uk-nav uk-dropdown-nav">
+                <li class="uk-nav-header">{{ gl_s }}</li>
+                {% for s in spec %}
+                    {% if gl_s == s.Gl_category %}
+                    <li><a href="{% url 'category' s.slug %}">{{ s }} {# <sub>({{ spec|length }})</sub> #}</a></li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+            <div style="padding:1px"></div>
+        </div>
+    </div>
+</div>
+{# /каталог/ #}
+
+{# поиск #}
+<div class="search">
+    <form class="uk-search uk-search-default" id="autocomplete" action="{% url 'search' %}">
+        <button class="uk-search-toggle" type="submit" uk-search-icon></button>
+        <input
+            class="uk-search-input"
+            type="search" name='search'
+            placeholder="Поиск"
+            maxlength="80"
+        />
+        <ul class="autocomplete-result-list"></ul>
+    </form>
+</div>
+{# /поиск/ #}
+
+<div class="h_right">
+    {% if user.is_authenticated  %} {# проверка на авторизированого пользователя #}
+        {% if user.is_superuser == 1 %} {# проверка на админа #}
+        <a href="/admin">
+            <div>
+                <span uk-icon="icon: server; ratio: 1.5"></span>
+                <span class="h-admin2">админ&nbsp;панель</span>
+            </div>
+        </a>
+        <a href="{% url 'profile' %}">
+            <div>
+                {% avatar_img user as user_id %}
+                    {% if user_id %}
+                        <img style="
+                        margin-top:2.5px;
+                        object-fit: contain;
+                        border-radius:10px;
+                        max-width:80px" 
+                        src="/{{user_id}}" 
+                        alt="{{user}}" 
+                        height="30">
+                    {% else %}
+                        <span uk-icon="icon: user; ratio: 1.5"></span>
+                    {% endif %}
+                <span>{{ user.username }}</span>
+            </div>
+        </a>
+        {% else %} {# если пользователь уже авторизирован #}
+            <a href="{% url 'profile' %}">
+                <div>
+                    {% avatar_img user as user_id %}
+                    {% if user_id %}
+                        <img class="user-auth-img"
+                        style="
+                        margin-top:2.5px;
+                        object-fit: contain;
+                        border-radius:10px;
+                        max-width:80px" 
+                        src="/{{user_id}}" 
+                        alt="{{user}}" 
+                        height="30">
+                        <span class="user-auth-icon" uk-icon="icon: user; ratio: 1.5"></span>
+                    {% else %}
+                        <span uk-icon="icon: user; ratio: 1.5"></span>
+                    {% endif %}
+                    <span>{{ user.username }}</span>
+                </div>
+            </a>
+        {% endif %}
+    {% else %} {# если пользователь ещё не авторизирован #}
+        <a href="{% url 'login' %}">
+            <div>
+                <span uk-icon="icon: user; ratio: 1.5"></span>
+                <span>&nbsp;&nbsp;Войти&nbsp;&nbsp;</span>
+            </div>
+        </a>
+    {% endif %}
+
+    <a href="{% url 'favorites' %}"> {# Избранное #}
+        <div>
+            <span uk-icon="icon: heart; ratio: 1.5"></span>
+            <span>Избранное</span>
+        </div>
+        {# считает и выводит количество избранных #}
+        {% define user.favoritess_set.all.count as count_fav %}
+        <span class="uk-badge favorit" id="count_favorites">
+            {{ count_fav }}
+        </span>
+        {% if count_fav == 0 or not user.is_authenticated %}
+            <style>.favorit{display:none}</style>
+        {% endif %}
+    </a>
+    <a href="{% url 'basket' %}"> {# Корзина #}
+        <div>
+            <span uk-icon="icon: cart; ratio: 1.5"></span>
+            <span>Корзина</span>
+        </div>
+        {# считает и выводит количество товаров в корзине #}
+        {% define user.basket_set.all.count as count_bask %}
+        <span class="uk-badge bask" id="count_basket">
+            {{ count_bask }}
+        </span>
+        {% if count_bask == 0 or not user.is_authenticated %}
+            <style>.bask{display:none}</style>
+        {% endif %}
+    </a>
+</div>
+</header>
+<div class="dropdown-bg"></div> {# тег который перекрывает все элементы от случайного нажатия при открытии каталога #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Получаем элементы
+        var dropGrid = document.querySelector('.uk-drop-grid');
+        var dropdownBg = document.querySelector('.dropdown-bg');
+    
+        // Функция для добавления класса dropdown-bg-active
+        function addDropdownBgActive() {
+            dropdownBg.classList.add('dropdown-bg-active');
+        }
+    
+        // Функция для удаления класса dropdown-bg-active
+        function removeDropdownBgActive() {
+            dropdownBg.classList.remove('dropdown-bg-active');
+        }
+    
+        // Функция, которая будет вызываться при изменении класса uk-drop-grid
+        function handleDropGridClassChange() {
+            // Проверяем, есть ли у элемента класс uk-grid-stack
+            if (dropGrid.classList.contains('uk-grid-stack')) {
+                removeDropdownBgActive();
+            } else {
+                addDropdownBgActive();
+            }
+        }
+    
+        // Создаем экземпляр MutationObserver
+        var observer = new MutationObserver(function(mutationsList, observer) {
+            // Проходимся по всем мутациям
+            for (var mutation of mutationsList) {
+                // Если класс uk-drop-grid был изменен, вызываем функцию для обработки изменения
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    handleDropGridClassChange();
+                }
+            }
+        });
+    
+        // Настраиваем наблюдатель на отслеживание изменений в атрибутах целевого узла (uk-drop-grid)
+        observer.observe(dropGrid, { attributes: true });
+    
+        // Вызываем функцию при загрузке страницы
+        handleDropGridClassChange();
+    });
+</script>

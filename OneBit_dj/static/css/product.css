@@ -1,0 +1,217 @@
+.product{
+    margin: 10px 20px 25px 20px;
+    a:hover{color: var(--color-all-border)}
+}
+.p-name-tovar{
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.p-tovar{
+    margin-top: 20px;
+    display: flex;
+    gap: 25px;
+}
+.uk-lightbox-panel{background-color: rgba(0, 0, 0, 0.9)}
+/* -----slider img----- */
+.slider {
+    display: flex;
+    position: relative;
+}
+.main-image {
+    width: 500px;
+    height: 500px;
+    display: block;
+    margin-left: 20px;
+    border-radius: 20px;
+}
+.main-image img,
+.main-image video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 20px;
+}
+
+/* Стили для пагинации */
+.pagg{
+    overflow: hidden;
+    border-radius: 10px;
+    position: relative;
+    height: 480px;
+}
+.pagination {
+    transition: transform 0.2s ease;
+    display: block;
+}
+.pagination>div{
+    position: relative;
+    width: 75px;
+    height: 75px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    border: 3px solid transparent;
+}
+.pagination>div:hover{
+    border-color:#b960e562;
+}
+.pagination>div:not(:last-child){
+    margin-bottom: 5px;
+}
+.act{
+    border-color:var(--color-all) !important;
+}
+.pagination img,
+.pagination video {
+    border-radius: 10px;
+    overflow-clip-margin: unset;
+    margin: auto;
+    width: 70px;
+    height: 70px;
+    object-fit:cover;
+    cursor: pointer;
+    display: block;
+}
+.play-is_video{
+    position: absolute;
+    top: 19.5px;
+    background-color: var(--color-all);
+    color: var(--color-all-border);
+
+    pointer-events: none;
+    opacity: 0.9;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border-radius: 500px;
+    vertical-align: middle;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: .1s ease-in-out;
+    transition-property: color, background-color;
+}
+
+/* Стили для кнопок переключения слайдов */
+.slider-product{
+    position: absolute;
+    cursor: default;
+    z-index: 2;
+    div{
+        position: absolute;
+        background: #B860E5;
+        width: 80px;
+        height: 30px;
+    }
+    span{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        cursor: pointer;
+        user-select: none;
+        svg{
+            width: 30px;
+            height: 30px;
+        }
+    }
+}
+.slider-product>div:nth-child(1){
+    /* border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px; */
+    border-radius: 100px;
+}
+.slider-product>div:nth-last-child(1){
+    /* border-top-right-radius: 10px;
+    border-top-left-radius: 10px; */
+    border-radius: 100px;
+    margin-top: 470px;
+}
+/* -----/slider img/----- */
+/* ----product right---- */
+.p-t-info-score{
+    display: inline-flex;
+    gap: 5px;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+.p-score-com{
+    color: var(--color-all);
+    font-weight:700;
+    position: relative;
+    right: -10px;
+    a{
+        position: relative;
+        left: -6px;
+        color: var(--color-all);
+    }
+}
+.short-char{
+    max-width: 700px;
+    font-size: 18px;
+}
+.uk-leader-fill::after {
+    font-size: 7px;
+    border-bottom: 1px dotted rgba(204, 214, 228, .6);
+    color: #b6b6b6;
+}
+.s-char-2 div:nth-child(1),
+.a_char a{
+    font-weight: 600;
+}
+/* .s-char-2 div:nth-last-child(1){
+    padding-left: 10px;
+    display: flex;  
+    align-items: flex-end;
+} */
+.a_char{
+    margin: 10px 0;
+    width: 300px;
+    a{
+        color: var(--color-all);
+    }
+}
+.p_pokupka{
+    margin-top: 40px;
+}
+.p-cost>span:nth-child(1){
+    font-size: 32px;
+}
+.p-cost>span:nth-child(2),
+.p-cost>span:nth-child(3){
+    font-size: 24px;
+}
+.p-buttons{
+    display: inline-flex;
+}
+.button-buy-p{
+    margin-top: 10px;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    div{
+        margin-left: 5px;
+    }
+}
+.button-buy-p:not(.uk-button-onebit){
+    border:1px #ccc solid;
+    background-color: #ededed;
+    &:hover{background-color: #e4e4e4}
+    &:active{background-color: #dbdbdb}
+}
+/* ----/product right/---- */
+
+
+
+
+/* descr */
+.descr{
+    width: 85%;
+    margin: 0 auto;
+    /* p{word-break: break-all} */
+}
+/* /descr/ */

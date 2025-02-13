@@ -1,0 +1,217 @@
+sup{
+    color: gray;
+    font-size: 1.875rem;
+}
+label{
+    cursor: pointer;
+    font-weight: 500;
+    input{cursor: pointer}
+}
+input.uk-checkbox{border-radius: 3px}
+main>h1{
+    padding: 0 20px;
+    font-weight: 500 !important
+}
+/* modal */
+.uk-modal-dialog{
+    border-radius: 10px;
+    button{
+        border-radius: 10px;
+        padding: 10px;
+    }
+}
+.uk-modal-footer{padding: 15px 0}
+#modal-close-default-ch .uk-modal-body ul li{
+    font-weight: 500;
+    display: flex;
+    img{max-width: 100px}
+}
+#modal-close-default-ch .uk-modal-close{margin-right: 15px}
+/* /modal/ */
+
+.main{
+    padding: 0 20px 0 45px;
+    display: flex;
+    position: relative;
+    min-height: 100vh;
+    
+}
+.select-bask{
+    background-color: #f7f7f7;
+    display: inline-flex;
+    border: 1px solid #ccc;
+    gap: 10px;
+    padding: 10px;
+    margin-left: 45px;
+    z-index: 2;
+    
+    span{
+        margin-left:10px;
+        font-weight: 500;
+        cursor:pointer
+    }
+    label span{color: var(--color-all)}
+}
+/* left-bar */
+.left-bar{
+    pointer-events: none;
+    margin-right: auto;
+    margin-top: -10vh;
+    width: 100%;
+    z-index: 100;
+}
+.heart-clip-t{
+    width: 40px !important;
+    height: 40px !important
+}
+.cost{justify-content: flex-end}
+.tovar-srch>div>input:checked ~ a .t-img{border-left: 2px var(--color-all-light) solid}
+.t-img{
+    border-left: 2px transparent solid;
+}
+.tovar-srch>div>input{
+    margin: auto 0;
+    margin-right: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+.tovar-srch{
+    padding: 10px;
+}
+.t-t-rght{width: 100%}
+.p-buttons{align-items: flex-end}
+.p-buttons>.del-bask{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    padding: 5px;
+    margin-left: auto;
+}
+.but-heart{
+    margin-left: 25px;
+}
+.b-tovar>div:nth-last-child(1){
+    padding-left: 10px;
+    font-weight: 500;
+    font-size: 1.225em;
+    a{color: black}
+}
+.p-b-count{
+    display: flex;
+    justify-content: flex-end;
+    &>*{border-width: 2px}
+    button{
+        transition: .2s ease-in-out;
+        border-color: var(--color-all-light);
+        color: var(--color-all);
+        padding: 0 5px;
+        z-index: 1;
+        &:hover svg{transform: scale(1.03)}
+        &:hover{
+            color:var(--color-all-full);
+            border-color: var(--color-all-bord);
+        }
+    }
+    input{
+        text-align: center;
+        font-size: 1.2em;
+        font-weight: 500;
+        border-color: var(--color-all-flah);
+        &:focus{border-color: var(--color-all-light);}
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+	    display: none;
+    }
+}
+.uk-b-minus{
+    margin-right: -2px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.uk-b-plus{
+    margin-left: -2px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+/* /left-bar/ */
+
+/* right-bar */
+.right-bar{
+    height: 30px;
+    padding-left: 25px;
+
+    .uk-card:nth-child(1){margin-bottom: 10px}
+    h4{
+        margin-top:0;
+        margin-bottom: 10px;
+    }
+    .uk-card{
+        color: black;
+        min-width: 300px;
+        background-color: #f7f7f7;
+        padding: 10px;
+        border: 1px solid #ccc;
+        hr{border-color: #ccc;}
+    }
+}
+.button-buy-p{
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: 600;
+    width: 100%;
+}
+.itogi{
+    display: flex;
+    align-items: baseline;
+    h4{
+        margin-bottom: 0;
+        margin-right: auto;
+        sub{color: gray}
+    }
+    span{
+        font-weight: 700;
+        &::after{content:' \20BD'} /* ₽ */
+    }
+    .cost1{
+        font-size: 1.287em;
+        margin-right: 5px;
+    }
+    .cost2{
+        text-decoration: line-through;
+        color: grey;
+    }
+}
+/* /right-bar/ */
+
+.ifnotbasket{
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    height: calc(90vh - var(--height-bottom-menu));
+    width: 100vw;
+    h4{margin:0.875em}
+}
+.ifnotbasket>div{
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+
+    button{
+        border-radius: 10px;
+        padding: 5px;
+        margin-left: 10px;
+    }
+}
+#basket-container{
+    margin-top: 10vh;
+    text-align: center;
+}
+.dis_but{
+    margin-top: 0;
+    color: grey;
+    opacity: 0.7;
+    border: 1px #ccc solid;
+    cursor: default !important;
+}

@@ -1,0 +1,68 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+
+{% block title %}
+{% if specs_tip %}
+{{specs_tip.0.description}} 
+{% endif %}
+{{tovar.name}}
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/product.css' %}">
+<link rel="stylesheet" href="{% static 'css/characteristics.css' %}">
+<link rel="stylesheet" href="{% static 'css/reviews.css' %}">
+
+<link rel="stylesheet" href="{% static 'star/style.css' %}">
+{% endblock css %}
+
+{% block scripts %}
+<script src="{% static 'js/slider_img_product.js' %}"></script> {# slider img in tovar #}
+<script src="{% static 'star/star.js' %}"></script>
+<script src="{% static 'js/reviews.js' %}"></script>
+<script>
+  raterJs( {
+    max:5, 
+    readOnly:true, 
+    starSize:28,
+    rating:{{ avg_star }}, 
+    element:$("#rater").get(0),
+  });
+  {% for c in comments %}
+    {% if not c.baned or c.user == user %}
+      raterJs( {
+        max:5, 
+        readOnly:true, 
+        starSize:20,
+        rating:{{c.star}}, 
+        element:$('#rater_com_{{c.id}}').get(0),
+      });
+    {% endif %}
+  {% endfor %}
+</script>
+
+{% endblock scripts %}
+
+{% block content %}
+
+    {% include "html/product.html" %}
+    
+    {% if user.is_authenticated and c_history %}
+        {% include "html/tovars.html" with title=title product_exc=tovar %}
+    {% endif %}
+
+    {% include "html/characteristics.html" %}
+
+    {% if tovar.descr %}
+    <div class="descr">
+      <h2>Описание</h2>
+      <p>{{ tovar.descr|safe }}</p>
+    </div>
+    {% endif %}
+
+    {% include "html/reviews.html" %}
+    
+{% endblock content %}
+
+{% block header %}{% include "html/header.html" %}{% endblock %}
+{% block footer %}{% include "html/footer.html" %}{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+
+{% block title %}One Bit - интернет-магазин{% endblock title %}
+
+{% block css %}
+  <style>.fon{background: linear-gradient(180deg, var(--color-all) 20%, rgba(184, 184, 184, 0) 60%);height: 400px}</style>
+  <link rel="stylesheet" href="{% static 'css/flex-tovars.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+{# сообщение об успешной регистрации/аунтификации #}
+  {% if messages %}
+      <div class="messages">
+      {% for message in messages %}
+        <script>
+          UIkit.notification({
+            message: '{{ message }}',
+            status: 'success'
+            })
+        </script>
+      {% endfor %}
+      </div>
+  {% endif %}
+
+  {% include "html/baner.html" %}
+
+  {% for i in t1 %}
+    {% if i.0 == "Популярные товары" %}
+      {% include "html/flex-tovars.html" with title=i %}
+    {% else %}
+      {% include "html/tovars.html" with title=i %}
+    {% endif %}
+  {% endfor %}
+  
+{% endblock content %}
+
+{% block header %}{% include "html/header.html" %}{% endblock %}
+{% block footer %}{% include "html/footer.html" %}{% endblock %}

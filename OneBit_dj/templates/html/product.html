@@ -1,0 +1,98 @@
+{% load static %}
+{% load humanize %}
+{% load polls_tags %}
+<div class="product">
+
+    <nav aria-label="Breadcrumb">
+        <ul class="uk-breadcrumb">
+            <li><a href="{% url 'home' %}">Главная</a></li>
+            <li class="uk-disabled"><a>{{ tovar.category.Gl_category }}</a></li>
+            <li><a href="{% url 'category' tovar.category.slug %}">{{ tovar.category.category }}</a></li>
+            <li class="uk-disabled">{{ tovar }}</li>
+        </ul>
+    </nav>
+    <div class="p-tovar">
+        <div class="slider">
+            <div class="pagg">
+                <div class="pagination" id="pagination">
+                    {% for img in img_tovar_p %}
+                        <div class="slide">
+                            {% if img.is_video %}
+                                <!-- Если изображение является видео -->
+                                <video style="opacity: 0.7;" src="{{ img.img.url }}" complete></video>
+                                <div class="play-is_video" uk-icon="play-circle"></div>
+                            {% else %}
+                                <!-- Если изображение является изображением -->
+                                <img src="{{ img.img.url }}" alt="{{ tovar.slug }}"> 
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="slider-product" id="bottomSlider">
+                <div><span href class="prev" uk-icon="chevron-up"></span></div>
+                <div><span href class="next" uk-icon="chevron-down"></span></div>
+            </div>
+            <div class="main-image uk-inline-clip uk-transition-toggle" tabindex="0" uk-lightbox>
+                <a><!-- Картинка --></a>
+            </div>
+        </div>
+        <div class="p-t-info">
+            <h1 class="p-name-tovar" style="margin-top:0">
+                {{ tovar.name }}
+            </h1>
+            <div class="p-t-info-score">
+                <div id="p-score">
+                    <div id="rater"></div>
+                </div>
+                <li class="p-score-com"><a href="#reviews" class="uk-button-text" uk-scroll>{{ comments|length }} {{ comments|length|review_word }}</a></li>
+            </div>
+            <div class="short-char">
+				{% for char in specs|slice:":6" %}
+                    <div class="uk-grid-small s-char-2" uk-grid>
+                        {% comment %} <div class="uk-width-expand" uk-leader="media: @m">{{ char.category.category }}</div>
+                        <span>{{ char.description }}</span> {% endcomment %}
+                        <div class="s-char-small-ch">
+                            <span>{{ char.category.category }}:</span>
+                            <span style="color:black">{{ char.description }}</span>
+                        </div>
+                    </div>
+				{% endfor %}
+				<div class="a_char"><a href="#characteristics" class="uk-button-text" uk-scroll>Перейти к описанию</a></div>
+            </div>
+      <div class="p_pokupka">
+        <div class="cost p-cost">
+            {% if not tovar.skidka_cost %}
+                <span>{{ tovar.cost|intcomma }}</span>
+            {% else %}
+                <span>{{ tovar.skidka_cost|intcomma }}</span>
+                <span>{{ tovar.cost|intcomma }}</span>
+                <span>-{{ tovar.skidka|floatformat:0 }}</span>
+            {% endif %}
+        </div>
+        <div class="p-buttons">
+            {% if if_basket == 1 %}
+                <button class="uk-button uk-button-large button-buy-p" id="add_basket">
+                    <span uk-icon="icon: cart; ratio: 2"></span>
+                    <div>В&nbsp;корзине</div>
+                </button>
+            {% else %}
+                <button class="uk-button uk-button-large uk-button-onebit button-buy-p" id="add_basket">
+                    <span uk-icon="icon: cart; ratio: 2"></span>
+                    <div>Добавить в&nbsp;корзину</div>
+                </button>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <div class="but-heart">
+                    <input type="checkbox" class="heart-clip" {% if favorite != 0 %} checked {% endif %}>
+                    <svg class="heart-main" viewBox="0 0 512 512" width="55" title="heart">
+                        <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
+                    </svg>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/star.js' %}"></script>

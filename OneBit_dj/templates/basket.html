@@ -1,0 +1,248 @@
+{% extends "layout/layout.html" %}
+{% load static %}
+{% load humanize %}
+{% load polls_tags %}
+
+{% block title %}Корзина | One Bit - интернет-магазин{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/search.css' %}">
+<link rel="stylesheet" href="{% static 'css/basket.css' %}">
+{% endblock css %}
+
+{% block scripts %}
+<script src="{% static 'js/jquery/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'js/jquery/jquery.easing.min.js' %}"></script>
+
+<script src="{% static 'js/basket.js' %}" async></script>
+{% endblock scripts %}
+
+{% block content %}
+
+<!-- modal delete tovar basket -->
+<div id="modal-close-default" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical uk-width-large">
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+      <h2 class="uk-modal-title">Удалить товар</h2>
+      <p>Вы точно хотите удалить выбранный товар? Отменить данное действие будет невозможно.</p>
+      <button class="uk-button uk-button-danger uk-modal-close" type="button">Удалить</button>
+  </div>
+</div>
+
+<!-- modal delete tovar basket checkbox -->
+<div id="modal-close-default-ch" uk-modal>
+  <div class="uk-modal-dialog" style="border-radius:10px; overflow: hidden">
+
+      <button class="uk-modal-close-default" type="button" uk-close></button>
+
+      <div class="uk-modal-header">
+          <h2 class="uk-modal-title">Удалить товары</h2>
+      </div>
+
+      <div class="uk-modal-body" uk-overflow-auto>
+
+        <p>Вы точно хотите удалить выбранные товары? Отменить данное действие будет невозможно.</p>
+
+        <p>Из корзины будут удалены следующие товары:</p>
+
+        <ul uk-margin>
+          {% comment %} 
+          пример находящегося тут кода
+          <li>
+            <img src="${itemImgSrc}" alt="${itemName}">
+            <span class="uk-margin-small-left">${itemName}</span>
+          </li>
+          {% endcomment %}
+        </ul>
+
+      </div>
+
+      <div class="uk-modal-footer uk-text-right">
+          <button class="uk-button uk-button-danger uk-modal-close" type="button">Удалить</button>
+      </div>
+  </div>
+</div>
+
+{% if tovars %}
+<h1 class="uk-h1">Корзина<sup>{{ tovars|length }}</sup></h1>
+<nav aria-label="Breadcrumb">
+  <ul class="uk-breadcrumb bc">
+      <li><a href="{% url 'home' %}">Главная</a></li>
+      <li><a href="{% url 'profile' %}">Профиль</a></li>
+      <li>Корзина</li>
+  </ul>
+</nav>
+<div class="select-bask uk-card uk-card-default">
+  <label class="uk-text-middle">
+    <input class="uk-checkbox" type="checkbox" name="set_all" id="set_all">
+    <span>Выбрать всё</span>
+  </label>
+  <span class="uk-text-danger" id="delete-selected">Удалить выбранное</span>
+</div>
+
+  <div class="main">
+    <div class="left-bar">
+      <h1 class="uk-h1" id="basket-container"></h1>
+      {% for tovar, specs in tovars.items %}
+        <div class="tovar-srch" id="bask-{{tovar.id}}">
+          <div>
+              <input class="uk-checkbox tovar_b" type="checkbox" 
+              name="check_tovar" 
+              {% for t in tovars_if_select %}
+              {% if t.tovar == tovar and t.if_select %}
+                  checked
+                {% endif %}
+              {% endfor %}
+              value="{{ tovar.id }}">
+              <a href="{{ tovar.get_absolute_url }}">
+                  <div class="t-img images">
+                      {% define 1 as count %}
+                      {% for img in tovar_img %}
+                          {% if img.tovar == tovar and count <= 10 %}
+                              {% summ 1 count as count %}
+                              <img src="{{ img.img.url }}" alt="{{ tovar.slug }}"> 
+                          {% endif %}
+                      {% endfor %}
+                  </div>
+              </a>
+              <div class="t-t-rght">
+                <a href="{{ tovar.get_absolute_url }}">
+                    <div class="t-cntr-name">
+                      {{tovar.name}}
+                    </div>
+                </a>
+                <div class="t-center">
+                    <div>
+                        <div class="t-s-char">
+                            {% for char in specs %}
+                                <div class="s-char">
+                                    <span>{{ char.category.category }}: </span>
+                                    <span>{{ char.description }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if tovar.rating %}
+                        <div class="t-b-info">
+                            <div class="star">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 16 15" fill="none">
+                                    <path d="M7.04894 0.92705C7.3483 0.00573921 8.6517 0.00573969 8.95106 0.92705L10.0206 4.21885C10.1545 4.63087 10.5385 4.90983 10.9717 4.90983H14.4329C15.4016 4.90983 15.8044 6.14945 15.0207 6.71885L12.2205 8.75329C11.87 9.00793 11.7234 9.4593 11.8572 9.87132L12.9268 13.1631C13.2261 14.0844 12.1717 14.8506 11.388 14.2812L8.58778 12.2467C8.2373 11.9921 7.7627 11.9921 7.41221 12.2467L4.61204 14.2812C3.82833 14.8506 2.77385 14.0844 3.0732 13.1631L4.14277 9.87132C4.27665 9.4593 4.12999 9.00793 3.7795 8.75329L0.979333 6.71885C0.195619 6.14945 0.598395 4.90983 1.56712 4.90983H5.02832C5.46154 4.90983 5.8455 4.63087 5.97937 4.21885L7.04894 0.92705Z" fill="#FFB800" />
+                                </svg>
+                                <div>{{ tovar.rating|make_list|slice:':3'|join:'' }}</div>
+                            </div>
+                            <div class="t-b-otz">
+                                <img src="{% static 'img/icon-aktuelles.png' %}" alt="комент">
+                                <div>
+                                  {{ tovar.count_com }} {{ tovar.count_com|review_word }}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="t-b-info">
+                            <div class="t-b-otz">
+                                <img src="{% static 'img/icon-aktuelles.png' %}" alt="комент">
+                                <div>Отзывов пока нет</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="right-top">
+                        <div class="p-b-count">
+                          <button 
+                          class="uk-button-default uk-b-minus" 
+                          uk-icon="icon:minus;ratio: 1.2"
+                          onclick="this.nextElementSibling.stepDown()"
+                          ></button>
+
+                          <input 
+                          class="uk-input uk-form-width-xsmall" 
+                          inputmode="numeric" 
+                          type="number" 
+                          min="1" max="100"
+                          id="inp_count"
+                          name="tov_count"
+                          data-id="{{ tovar.id }}"
+                          value="{% bask_count tovar.id user.id %}">
+                          
+                          <button 
+                          class="uk-button-default uk-b-plus" 
+                          uk-icon="icon:plus;ratio: 1.2"
+                          onclick="this.previousElementSibling.stepUp()"
+                          ></button>
+                        </div>
+                        <div class="cost">
+                            {% if not tovar.skidka_cost %}
+                                <span id="n-cost">{{ tovar.cost|intcomma }}</span>
+                            {% else %}
+                                <span id="n-cost">{{ tovar.skidka_cost|intcomma }}</span>
+                                <span  id="s-cost">{{ tovar.cost|intcomma }}</span>
+                                <span id="prochent-cost">-{{ tovar.skidka|floatformat:0 }}</span> {# floatformat - сколько цифр после запятой #}
+                            {% endif %}
+                        </div>
+                        <div class="p-buttons">
+                            <button id="t-{{tovar.id}}" class="del-bask uk-button uk-button-danger" uk-toggle="target: #modal-close-default">
+                              <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 0 24 24" fill="none">
+                                <path d="M10 11V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M14 11V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M4 7H20" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                              </svg>
+                            </button>
+                            <div class="but-heart">
+                                <input 
+                                type="checkbox" 
+                                id="heart-clip-{{ tovar.id }}"
+                                class="heart-clip-t" 
+                                data-product="{{ tovar.id }}"
+                                {% count_favorites_tovar user.id tovar as count_fav_t %}
+                                {% if count_fav_t != 0 %} checked {% endif %}>
+                                <svg class="heart-main" viewBox="0 0 512 512" width="40" title="heart">
+                                    <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+
+
+    <div class="right-bar uk-position-z-index" uk-sticky="end: !.main; offset: 20">
+      {% comment %} <form class="uk-card uk-card-default" id="dostavka" style="display: none;">
+        <h4>Способ доставки</h4>
+        <label><input class="uk-radio" type="radio" checked name="dostavka" value="Pickup"> Самовывоз</label>
+        <br>
+        <label><input class="uk-radio" type="radio" name="dostavka" value="Mail"> Почта Росси</label>
+      </form> {% endcomment %}
+
+      <div class="uk-card uk-card-default" id="zakaz">
+        <a href="{% url 'order_confirmation' %}"><button class="uk-button uk-button-large button-buy-p dis_but">Выберите товары</button></a>
+        <hr style="display: none;">
+        <div class="itogi" style="display: none">
+          <h4>Итого<sub>0</sub></h4>
+          <span class="cost1">0</span>
+          <span class="cost2">0</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% else %}
+
+<div class="ifnotbasket">
+    <img src="{% static 'img/1bit_black2.png' %}" width="250" alt="лого_всё">
+    <h4>В корзине пусто</h4>
+    <div>
+      Добавляйте товары в корзину с помощью кнопки:  
+      <button class="uk-button uk-button-onebit">Добавить в корзину</button>
+    </div>
+</div>
+{% endif %}
+
+{% endblock content %}
+
+{% block header %}{% include "html/header.html" %}{% endblock %}
+{% block footer %}{% include "html/footer.html" %}{% endblock %}

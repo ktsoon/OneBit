@@ -1,0 +1,27 @@
+{% extends "layout/authlayout.html" %}
+
+   
+{% block auth_content %}
+
+{% for field in form %}
+   <div class="auth-input-text">
+      {{ field }}
+      <div class="auth-labelline">{{ field.label_tag }}</div>
+   </div>
+{% endfor %}
+
+{% if messages %}
+   <div class="messages">
+   {% for message in messages %}
+   <p class="auth-error">{{ message }}</p>
+   {% endfor %}
+   </div>
+{% endif %}
+
+ <div class="auth-btn">
+ <button class="btn uk-button uk-button-onebit" type="submit">Войти</button>
+ <div><a href="{% url 'register' %}">Создать&nbsp;аккаунт</a></div>
+ <div style="margin-left:auto"><a href="{% url 'home' %}">Назад</a></div>
+ </div>
+
+{% endblock auth_content %}

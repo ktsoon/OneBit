@@ -1,0 +1,70 @@
+.reviews{
+    width: 85%;
+    margin: 0 auto;
+    .uk-h3{color: grey}
+}
+.uk-comment-list>:nth-child(n+2) {
+    margin-top: 30px;
+}
+.uk-button.uk-button-onebit{border-radius: 10px}
+.p-score{
+    display: flex;
+    margin-left: 10px;
+}
+.uk-comment-meta.uk-subnav{margin-bottom: 0}
+.uk-comment{border-radius: 15px}
+.uk-comment-avatar{
+    object-fit: cover;
+    border-radius: 10px;
+    image-rendering: optimizeSpeed;
+}
+.collapsible {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-height: 72px; /* Примерная высота для 3 строк текста */
+    transition: max-height 0.3s ease-out;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.collapsible.expanded {
+    -webkit-line-clamp: unset;
+    max-height: 500px; /* Достаточно большая высота для полного текста */
+}
+article.uk-comment{position: relative}
+.uk-text-danger{font-weight: 500}
+.but-edit{
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    border-radius: 10px;
+}
+.rater-com:not(.rc-s){height: 19px !important}
+.rater-com.rc-s{
+    height: 31px !important;
+    .star-value{background-size: 33px !important}
+}
+
+/* modal */
+.uk-modal-dialog.uk-modal-body .p-score{
+    align-items:center;
+    justify-content: center;
+    background-color: rgb(0, 0, 0, .03);
+    border-radius: 10px;
+    padding: 10px;
+    margin: 0;
+}
+.uk-modal-dialog.uk-modal-body .uk-textarea{
+    border-radius: 10px;
+    min-width: 100%;
+    min-height: 78px;
+    font-weight: 500;
+}
+.but-dis{
+    opacity: .7;
+    cursor: default;
+    &:hover{background-color: var(--color-all);}
+}
+/* /modal/ */

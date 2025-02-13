@@ -1,0 +1,255 @@
+:root{
+    --filter: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2214%22%20fill%3D%22none%22%3E%3Cpath%20fill%3D%22%23fff%22%20fill-rule%3D%22evenodd%22%20d%3D%22M12%20.5c.406%200%20.735.332.735.74v9.732l2.01-2.027a.73.73%200%200%201%201.04%200%20.745.745%200%200%201%200%201.047l-3.265%203.291a.73.73%200%200%201-1.033.007l-.007-.007-3.265-3.291a.745.745%200%200%201%200-1.047.73.73%200%200%201%201.04%200l2.01%202.027V1.24c0-.41.33-.741.735-.741ZM4%2013.5a.738.738%200%200%200%20.735-.74V3.027l2.01%202.027a.73.73%200%200%200%201.04%200%20.745.745%200%200%200%200-1.047L4.52.717a.73.73%200%200%200-1.04%200L.215%204.008a.745.745%200%200%200%200%201.047.73.73%200%200%200%201.04%200l2.01-2.027v9.731c0%20.41.33.741.735.741Z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E);
+    --checkbox: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23fff%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%20%2F%3E%0A%3C%2Fsvg%3E%0A);
+}
+hr{margin: 10px 0}
+.back{font-size: large}
+.back a span{
+    display: inline-block;
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    -ms-transform: scale(-1, 1);
+    transform: scale(-1, 1);
+}
+.category ul.uk-nav-sub::-webkit-scrollbar {
+    width: 10px;                                /* ширина scrollbar */
+}
+.category ul.uk-nav-sub::-webkit-scrollbar-track {
+    background: var(--color-all-flah);          /* цвет дорожки */
+    border-radius: 20px;
+}
+.category ul.uk-nav-sub::-webkit-scrollbar-thumb {
+    background-color: var(--color-all-border);  /* цвет плашки */
+    border-radius: 20px;                        /* закругления плашки */
+    border: 2px solid var(--color-all-flah);    /* padding вокруг плашки */
+}
+.uk-offcanvas-bar::-webkit-scrollbar {
+    width: 12px;                                /* ширина scrollbar */
+}
+.uk-offcanvas-bar::-webkit-scrollbar-track {
+    background: var(--color-all-light);          /* цвет дорожки */
+}
+.uk-offcanvas-bar::-webkit-scrollbar-thumb {
+    background-color: var(--color-all-border);  /* цвет плашки */
+    border-radius: 20px;                        /* закругления плашки */
+    border: 3px solid var(--color-all-light);    /* padding вокруг плашки */
+}
+/* main{min-height: calc(1000px + 100vh - var(--height-bottom-menu));} */
+.count-search,
+main>h1.uk-h1{margin: 10px 25px}
+.count-search{font-size: 1.275rem}
+main>h1.uk-h1 sub{
+    color: gray;
+    font-size: 1.875rem;
+}
+.heart-clip-t{
+    width: 40px !important;
+    height: 40px !important
+}
+.main{
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    width: 100%;
+    padding: 40px 24px 0;
+    /* padding-top: ; */
+}
+.filter-sort{
+    position: absolute;
+    top: 0;
+    display: flex;
+    gap: 25px;
+    button{
+        position: relative;
+        padding: 5px 10px 5px 35px;
+        border-radius: 10px;
+        &::before{
+            content: '';
+            position: absolute;
+            display: block;
+            width: 16px;
+            height: 13px;
+            top: 11px;
+            left: 13px;
+            background-image: var(--filter);
+            background-position: 50%;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+    }
+    .uk-nav-filter{
+        padding: 0;
+        a{
+            padding: 7px 10px !important;
+            color: black !important;
+        }
+        a:hover{
+            color: var(--color-all-full) !important;
+        }
+        .uk-nav-divider{
+            margin: 0;
+            padding: 0;
+        }
+    }
+    .btn-fiter{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+}
+/* -----left----- */
+.uk-offcanvas-bar{
+    scrollbar-gutter: stable;
+    padding: 12px;
+    padding-right: 0;
+    background-color: var(--color-all-light);
+    overflow-y: auto;
+    form{margin-bottom: 95px}
+    h2{
+        text-align: center;
+        color: #000;
+    }
+    .left-block{
+        max-height: 270px;
+        &>a{
+            font-weight: 500;
+            font-size: 1.056rem;
+            color: #000;
+            &:hover{color: #000}
+        }
+    }
+    .category_radio input{
+        border-radius: 100% !important;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Ccircle%20fill%3D%22%23fff%22%20cx%3D%228%22%20cy%3D%228%22%20r%3D%226%22%20%2F%3E%0A%3C%2Fsvg%3E") !important
+        /* ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-- ширина кружка  */
+    }
+    .left-block .nav-form{font-weight: 500}
+    .left-block .nav-form label{color: #999 !important}
+    .left-block .nav-form input{
+        border: 2px solid #e5e5e5;
+        border-radius: 10px;
+        color: #000;
+        &:focus{
+            border: 2px solid var(--color-all);
+            color: #000;
+        }
+        &::placeholder{color: #999}
+    }
+    .category ul.uk-nav-sub{
+        overflow: auto;
+        max-height: 225px;
+    }
+    .raiting{margin-top: -115px}
+    .raiting div{
+        font-weight: 500;
+        color: #000;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+    }
+    .category .nav-form label{cursor: pointer; padding-left: 5px}
+    .category .nav-form{font-size: 1.1em}
+    .category .nav-form input{
+        min-height: 22px;
+        min-width: 22px;
+        border-radius: 5px;
+        margin: 2px 0 0;
+        &:checked ~ label{color: #727272 !important}
+        &:checked{
+            background-color: var(--color-all) !important;
+            border-color: transparent;
+            background-image: var(--checkbox);
+        }
+        &:hover:not(:checked){border-color: #727272}
+        &:focus:not(:checked){border-color: #e5e5e5}
+    }
+    .offsubmit{
+        border: 1px solid var(--color-all-light);
+        border-radius: 25px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    .offsubmit button{
+        padding: 5px 10px;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: large;
+    }
+}
+/* -----/left/----- */
+
+/* -----right----- */
+.heart-clip{
+    width: 40px !important;
+    height: 40px !important;
+}
+.right-main{width: 100%}
+.t-cntr-name:hover,
+.tovar-srch>div>a:hover ~ .t-t-rght .t-cntr-name{
+    color: var(--color-all);
+}
+.tovar-srch>div{
+    display: flex;
+    max-height: 200px;
+}
+.t-cntr-name{
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-weight: 500;
+    font-size: 1.225em;
+    padding-bottom: 5px;
+    color: black;
+}
+.t-t-rght{
+    padding-left: 10px;
+    width: 100%;
+}
+.t-center{
+    display: flex;
+    min-width: 620px;
+    gap: 25px;
+    .s-char{
+        line-height: 25px;
+        font-weight: 500;
+        /* max-width: ; */
+        & span:nth-child(1){color: grey}
+    }
+    .t-b-info{
+        svg, img{
+            text-align: center;
+            width: 15px;
+            height: 15px;
+        }
+    }
+    .right-top{
+        min-width: 250px;
+        margin-left: auto;
+        margin-top: auto;
+    }
+}
+.cost{justify-content: flex-end}
+.p-buttons{
+    display: flex;
+    align-items: center;
+}
+.button-buy-p{
+    margin-left: auto;
+    margin-top: 10px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 10px;
+    max-height: 45px;
+    div{
+        margin-left: 5px;
+    }
+}
+/* -----/right/----- */
