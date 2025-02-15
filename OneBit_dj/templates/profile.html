@@ -60,7 +60,7 @@
 
    </div>
    <div class="profile b_t">
-      <a class="block_tov block_style" style="min-width: 215px" href="{% url 'order' %}">
+      <a class="block_tov block_style" href="{% url 'order' %}">
          {# считает и выводит количество заказов #}
          {% define user.order_set.all.count as count_order %}
          <h3>Заказы<sup> {% if count_order %}{{ count_order }}{% endif %}</sup></h3>
@@ -68,7 +68,7 @@
          <div class="z_right" uk-icon="bag"></div>
       </a>
 
-      <a class="block_tov block_style" style="min-width: 280px" href="{% url 'favorites' %}">
+      <a class="block_tov block_style href="{% url 'favorites' %}">
          {# считает и выводит количество товаров в избранном #}
          {% define user.favoritess_set.all.count as count_favoritess %}
          <h3>Избранное<sup> {% if count_favoritess %}{{ count_favoritess }}{% endif %}</sup></h3>
@@ -76,7 +76,7 @@
          <div class="z_right" uk-icon="heart"></div>
       </a>
 
-      <a class="block_tov block_style" style="min-width: 250px" href="{% url 'basket' %}">
+      <a class="block_tov block_style href="{% url 'basket' %}">
          {# считает и выводит количество товаров в корзине #}
          {% define user.basket_set.all.count as count_basket %}
          <h3>Корзина<sup> {% if count_basket %}{{ count_basket }}{% endif %}</sup></h3>

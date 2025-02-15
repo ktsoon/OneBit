@@ -1,8 +1,29 @@
 .baner{
     margin: 50px 0;
     width: 100%;
+    .uk-slider{margin-left: -30px}
+    .baner .uk-panel{height: 100%}
+    .uk-position-center h2, 
+    .uk-position-center p {
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+        color: white;
+    }
+    .uk-position-center {
+        background: rgba(0, 0, 0, 0.5);
+        padding: 10px;
+        border-radius: 8px;
+    }
 }
-.baner>img{
+.baner img{
     border-radius: 25px;
     width: 100%;
+    max-height: 450px;
+    object-fit: cover;
+    height: 100%;
+}
+@media screen and (max-width:768px){
+    .baner .uk-position-center h2, 
+    .baner .uk-position-center p {
+        font-size: 0.81em;
+    }
 }

@@ -6,10 +6,11 @@
 {% endif %}
 
 <header>
-<a href="{% url 'home' %}"><img id="logo" src="{% static 'img/logo2.png' %}" alt="лого" height="70"></a> {# логотип сайта #}
+<a href="{% url 'home' %}" class="logo"><img id="logo" src="{% static 'img/logo2.png' %}" alt="лого" height="60"></a> {# логотип сайта #}
 {# каталог #}
 <div class="catalog">
-    <button class="uk-button uk-button-default"><img id="catalog" src="{% static 'img/palochki2.svg' %}" alt="палочки" style="vertical-align:middle">
+    <button class="uk-button uk-button-default">
+        <img id="catalog" src="{% static 'img/palochki2.svg' %}" alt="палочки" style="vertical-align:middle">
         <div>Каталог</div>
     </button>
     <div uk-dropdown="mode: click; target: !header; flip: false; animation: reveal-top; duration: 500; animate-out: true" class="head-drop">
@@ -36,12 +37,11 @@
 
 {# поиск #}
 <div class="search">
-    <form class="uk-search uk-search-default" id="autocomplete" action="{% url 'search' %}">
-        <button class="uk-search-toggle" type="submit" uk-search-icon></button>
+    <form class="uk-search" id="autocomplete" action="{% url 'search' %}">
         <input
             class="uk-search-input"
             type="search" name='search'
-            placeholder="Поиск"
+            placeholder="Поиск по OneBit"
             maxlength="80"
         />
         <ul class="autocomplete-result-list"></ul>

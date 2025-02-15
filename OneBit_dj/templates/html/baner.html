@@ -1,4 +1,41 @@
 {% load static %}
 <div class="baner">
-    <img src="{% static 'img/baaner.png' %}" alt="baner">
+    {% comment %} <img src="{% static 'img/baaner.png' %}" alt="baner"> {% endcomment %}
+    <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slider>
+        <div class="uk-slider-items uk-grid uk-child-width-1-1">
+            <div>
+                <div class="uk-panel">
+                    <img src="{% static 'img/baneer/p1.jpg' %}" alt="p1">
+                    <div class="uk-position-center uk-text-center">
+                        <h2 uk-slider-parallax="x: 100,-100">Быстродействие в каждом гигабайте!</h2>
+                        <p uk-slider-parallax="x: 200,-200">Ускорьте работу вашего ПК с высокоскоростной оперативной памятью! Больше возможностей для игр, работы и творчества.</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="uk-panel">
+                    <img src="{% static 'img/baneer/p2.webp' %}" alt="p2">
+                    <div class="uk-position-center uk-text-center">
+                        <h2 uk-slider-parallax="x: 100,-100">Мощность без границ!</h2>
+                        <p uk-slider-parallax="x: 200,-200">Разблокируйте потенциал вашего ПК с новейшими процессорами! Высокая производительность, энергоэффективность и поддержка передовых технологий.
+
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="uk-panel">
+                    <img src="{% static 'img/baneer/p3.jpg' %}" alt="p3">
+                    <div class="uk-position-center uk-text-center">
+                        <h2 uk-slider-parallax="x: 100,-100">Графика нового уровня!</h2>
+                        <p uk-slider-parallax="x: 200,-200">Погрузитесь в мир высоких FPS и реалистичной графики! Игровые и профессиональные видеокарты для максимальной производительности.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <a class="uk-position-center-left uk-position-small uk-hidden-hover" href uk-slidenav-previous uk-slider-item="previous"></a>
+        <a class="uk-position-center-right uk-position-small uk-hidden-hover" href uk-slidenav-next uk-slider-item="next"></a>
+    </div>
+    
 </div>
