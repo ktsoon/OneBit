@@ -33,8 +33,6 @@ INSTALLED_APPS = [
     # https://docs.djangoproject.com/en/5.0/ref/contrib/humanize/
     'django.contrib.humanize', # числовые фильтры {% load humanize %}
 
-    'debug_toolbar',  # Дебаг тулбар
-
     'ckeditor', # описание товара
 ]
 
@@ -50,7 +48,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',  # Дебаг тулбар
 ]
 
 ROOT_URLCONF = 'OneBit_dj.urls'

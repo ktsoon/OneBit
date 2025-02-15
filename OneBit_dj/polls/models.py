@@ -11,13 +11,13 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import User
 
 """ путь сохранения картинок к производителям """
-def img_avtor(instance, fullname):  return f'static/img/Avtor/{instance.avtor}/{fullname}'
+def img_avtor(instance, fullname):  return f'static/img/Avtor/{instance.avtor.id}/{fullname}'
 
 """ путь сохранения картинок к товару """
-def img_tovar(instance, fullname):  return f'static/img/tovar/{instance.tovar}/{fullname}'
+def img_tovar(instance, fullname):  return f'static/img/tovar/{instance.tovar.id}/{fullname}'
 
 """ путь сохранения аватарок пользователя """
-def img_users(instance, fullname):  return f'static/img/users/{instance.user.username}/{fullname}'
+def img_users(instance, fullname):  return f'static/img/users/{instance.user.id}/{fullname}'
 
 class TovarsSkidka(models.Manager): # для скидки товара
     def get_queryset(self):
