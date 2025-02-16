@@ -58,7 +58,7 @@
                 <span class="h-admin2">админ&nbsp;панель</span>
             </div>
         </a>
-        <a href="{% url 'profile' %}">
+        <a class="h_user" href="{% url 'profile' %}">
             <div>
                 {% avatar_img user as user_id %}
                     {% if user_id %}
@@ -77,7 +77,7 @@
             </div>
         </a>
         {% else %} {# если пользователь уже авторизирован #}
-            <a href="{% url 'profile' %}">
+            <a class="h_user" href="{% url 'profile' %}">
                 <div>
                     {% avatar_img user as user_id %}
                     {% if user_id %}
@@ -105,36 +105,56 @@
                 <span>&nbsp;&nbsp;Войти&nbsp;&nbsp;</span>
             </div>
         </a>
-    {% endif %}
+        <a class="h_home" href="{% url 'home' %}"> {# Заказы #}
+            <div><span uk-icon="icon: home; ratio: 1.5"></span><span></span></div>
+        </a>
+    {% endif %} {# если пользователь уже авторизирован #}
+        <a class="h_home" href="{% url 'home' %}"> {# Заказы #}
+            <div><span uk-icon="icon: home; ratio: 1.5"></span><span></span></div>
+        </a>
+        <a class="h_order" href="{% url 'order' %}"> {# Заказы #}
+            <div>
+                <span uk-icon="icon: bag; ratio: 1.5"></span>
+                <span>Заказы</span>
+            </div>
+            {# считает и выводит количество товаров в корзине #}
+            {% define user.order_set.all.count as count_ord %}
+            <span class="uk-badge zack" id="count_ord">
+                {{ count_ord }}
+            </span>
+            {% if count_ord == 0 or not user.is_authenticated %}
+                <style>.zack{display:none}</style>
+            {% endif %}
+        </a>
 
-    <a href="{% url 'favorites' %}"> {# Избранное #}
-        <div>
-            <span uk-icon="icon: heart; ratio: 1.5"></span>
-            <span>Избранное</span>
-        </div>
-        {# считает и выводит количество избранных #}
-        {% define user.favoritess_set.all.count as count_fav %}
-        <span class="uk-badge favorit" id="count_favorites">
-            {{ count_fav }}
-        </span>
-        {% if count_fav == 0 or not user.is_authenticated %}
-            <style>.favorit{display:none}</style>
-        {% endif %}
-    </a>
-    <a href="{% url 'basket' %}"> {# Корзина #}
-        <div>
-            <span uk-icon="icon: cart; ratio: 1.5"></span>
-            <span>Корзина</span>
-        </div>
-        {# считает и выводит количество товаров в корзине #}
-        {% define user.basket_set.all.count as count_bask %}
-        <span class="uk-badge bask" id="count_basket">
-            {{ count_bask }}
-        </span>
-        {% if count_bask == 0 or not user.is_authenticated %}
-            <style>.bask{display:none}</style>
-        {% endif %}
-    </a>
+        <a class="h_fav" href="{% url 'favorites' %}"> {# Избранное #}
+            <div>
+                <span uk-icon="icon: heart; ratio: 1.5"></span>
+                <span>Избранное</span>
+            </div>
+            {# считает и выводит количество избранных #}
+            {% define user.favoritess_set.all.count as count_fav %}
+            <span class="uk-badge favorit" id="count_favorites">
+                {{ count_fav }}
+            </span>
+            {% if count_fav == 0 or not user.is_authenticated %}
+                <style>.favorit{display:none}</style>
+            {% endif %}
+        </a>
+        <a class="h_bask" href="{% url 'basket' %}"> {# Корзина #}
+            <div>
+                <span uk-icon="icon: cart; ratio: 1.5"></span>
+                <span>Корзина</span>
+            </div>
+            {# считает и выводит количество товаров в корзине #}
+            {% define user.basket_set.all.count as count_bask %}
+            <span class="uk-badge bask" id="count_basket">
+                {{ count_bask }}
+            </span>
+            {% if count_bask == 0 or not user.is_authenticated %}
+                <style>.bask{display:none}</style>
+            {% endif %}
+        </a>
 </div>
 </header>
 <div class="dropdown-bg"></div> {# тег который перекрывает все элементы от случайного нажатия при открытии каталога #}

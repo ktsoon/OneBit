@@ -87,7 +87,7 @@ window.addEventListener('DOMContentLoaded', function() {
       var windowWidth = window.innerWidth;
 
       // Проверяем ширину окна
-      if (windowWidth < 600) {
+      if (windowWidth < 700) {
           // Получаем элементы
           var hRightElements = document.querySelectorAll('div.h_right');
           var catalogElements = document.querySelectorAll('div.catalog');
@@ -107,9 +107,9 @@ window.addEventListener('DOMContentLoaded', function() {
       }
   }
 
-  // Удаление выпадающего списка при max-width: 600px
+  // Удаление выпадающего списка при max-width: 700px
   var dropdownDiv = document.querySelector('.uk-dropdown');
-  var mq = window.matchMedia('(max-width: 600px)');
+  var mq = window.matchMedia('(max-width: 700px)');
   // function handleWidthChange(mq) {
   //     if (mq.matches) {
   //         // Удаляем найденный элемент
@@ -119,9 +119,9 @@ window.addEventListener('DOMContentLoaded', function() {
   //     }
   // }
 
-  // Удаление и изменение классов для слайдера при max-width: 600px
+  // Удаление и изменение классов для слайдера при max-width: 700px
   const ulElements = document.querySelectorAll('ul.uk-slider');
-  const maxWidth = 600;
+  const maxWidth = 700;
 
   function removeClasses(element) {
       element.removeAttribute('class');
@@ -142,7 +142,6 @@ window.addEventListener('DOMContentLoaded', function() {
   // handleWidthChange(mq); // Проверяем ширину при загрузке страницы
   handleResize(); // Проверяем и добавляем атрибуты при загрузке страницы
   window.addEventListener('resize', handleResize); // Проверяем и добавляем атрибуты при изменении размера окна
-  mq.addEventListener('change', handleWidthChange); // Проверяем ширину при изменении размера окна
 });
 
 

@@ -1,11 +1,17 @@
 {% extends "layout/layout.html" %}
 {% load static %}
 
-{% block title %}One Bit - интернет-магазин{% endblock title %}
+{% block title %}OneBit — интернет-магазин{% endblock title %}
 
 {% block css %}
   <style>.fon{background: linear-gradient(180deg, var(--color-all) 20%, rgba(184, 184, 184, 0) 60%);height: 400px}</style>
   <link rel="stylesheet" href="{% static 'css/flex-tovars.css' %}">
+  <style>
+    @media screen and (max-width:700px){
+      .h_home{margin-top:-10px !important}
+      .h_home div{border: 2px solid violet}
+    }
+  </style>
 {% endblock css %}
 
 {% block content %}

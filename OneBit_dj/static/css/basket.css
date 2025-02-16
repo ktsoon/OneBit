@@ -7,11 +7,7 @@ label{
     font-weight: 500;
     input{cursor: pointer}
 }
-input.uk-checkbox{border-radius: 3px}
-main>h1{
-    padding: 0 20px;
-    font-weight: 500 !important
-}
+.main{padding: 0}
 /* modal */
 .uk-modal-dialog{
     border-radius: 10px;
@@ -29,55 +25,37 @@ main>h1{
 #modal-close-default-ch .uk-modal-close{margin-right: 15px}
 /* /modal/ */
 
-.main{
-    padding: 0 20px 0 45px;
-    display: flex;
-    position: relative;
-    min-height: 100vh;
-    
-}
 .select-bask{
     background-color: #f7f7f7;
     display: inline-flex;
     border: 1px solid #ccc;
     gap: 10px;
     padding: 10px;
-    margin-left: 45px;
     z-index: 2;
-    
+    input{margin: 0 !important}
     span{
-        margin-left:10px;
         font-weight: 500;
         cursor:pointer
     }
-    label span{color: var(--color-all)}
+    label{color: var(--color-all)}
 }
 /* left-bar */
-.left-bar{
-    pointer-events: none;
-    margin-right: auto;
-    margin-top: -10vh;
-    width: 100%;
-    z-index: 100;
-}
-.heart-clip-t{
-    width: 40px !important;
-    height: 40px !important
-}
+.left-bar{width: 100%}
 .cost{justify-content: flex-end}
-.tovar-srch>div>input:checked ~ a .t-img{border-left: 2px var(--color-all-light) solid}
-.t-img{
-    border-left: 2px transparent solid;
+.t-img{border-left: 2px transparent solid}
+.tovar-srch>div>input:checked ~ a .t-img{
+    border-image: linear-gradient(to top, #fff 0%, var(--color-all-light)  30%, var(--color-all-border)  50%, var(--color-all-light)  70%, #fff 100%) 1
 }
-.tovar-srch>div>input{
+input.uk-checkbox{
     margin: auto 0;
     margin-right: 10px;
     padding: 10px;
-    border-radius: 4px;
+    border-radius: 5px;
 }
-.tovar-srch{
-    padding: 10px;
+.t-img{
+    width: 170px;
 }
+.tovar-srch{padding: 10px 0}
 .t-t-rght{width: 100%}
 .p-buttons{align-items: flex-end}
 .p-buttons>.del-bask{
@@ -88,15 +66,7 @@ main>h1{
     padding: 5px;
     margin-left: auto;
 }
-.but-heart{
-    margin-left: 25px;
-}
-.b-tovar>div:nth-last-child(1){
-    padding-left: 10px;
-    font-weight: 500;
-    font-size: 1.225em;
-    a{color: black}
-}
+.but-heart{margin-left: 25px}
 .p-b-count{
     display: flex;
     justify-content: flex-end;
@@ -141,8 +111,6 @@ main>h1{
 .right-bar{
     height: 30px;
     padding-left: 25px;
-
-    .uk-card:nth-child(1){margin-bottom: 10px}
     h4{
         margin-top:0;
         margin-bottom: 10px;
@@ -204,9 +172,12 @@ main>h1{
         margin-left: 10px;
     }
 }
-#basket-container{
+#basket-container{display: none}
+.clear_all{
+    display: block;
     margin-top: 10vh;
     text-align: center;
+    pointer-events: none;
 }
 .dis_but{
     margin-top: 0;
@@ -214,4 +185,13 @@ main>h1{
     opacity: 0.7;
     border: 1px #ccc solid;
     cursor: default !important;
+}
+
+
+
+
+@media screen and (max-width:700px){
+    .h_bask{margin-top: -10px !important}
+    .h_bask div{border: 2px solid violet}
+    .bask{display:none}
 }

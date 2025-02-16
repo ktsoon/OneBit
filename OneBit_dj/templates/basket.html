@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load polls_tags %}
 
-{% block title %}Корзина | One Bit - интернет-магазин{% endblock %}
+{% block title %}Корзина — OneBit{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/search.css' %}">
@@ -64,7 +64,7 @@
 </div>
 
 {% if tovars %}
-<h1 class="uk-h1">Корзина<sup>{{ tovars|length }}</sup></h1>
+<h1 class="title-h1">Корзина<sup>{{ tovars|length }}</sup></h1>
 <nav aria-label="Breadcrumb">
   <ul class="uk-breadcrumb bc">
       <li><a href="{% url 'home' %}">Главная</a></li>
@@ -73,10 +73,8 @@
   </ul>
 </nav>
 <div class="select-bask uk-card uk-card-default">
-  <label class="uk-text-middle">
-    <input class="uk-checkbox" type="checkbox" name="set_all" id="set_all">
-    <span>Выбрать всё</span>
-  </label>
+  <input class="uk-checkbox" type="checkbox" name="set_all" id="set_all">
+  <label class="uk-text-middle" for="set_all">Выбрать всё</label>
   <span class="uk-text-danger" id="delete-selected">Удалить выбранное</span>
 </div>
 

@@ -182,10 +182,6 @@ main>h1.uk-h1 sub{
 /* -----/left/----- */
 
 /* -----right----- */
-.heart-clip{
-    width: 40px !important;
-    height: 40px !important;
-}
 .right-main{width: 100%}
 .t-cntr-name:hover,
 .tovar-srch>div>a:hover ~ .t-t-rght .t-cntr-name{
@@ -193,7 +189,7 @@ main>h1.uk-h1 sub{
 }
 .tovar-srch>div{
     display: flex;
-    max-height: 200px;
+    /* max-height: 200px; */
 }
 .t-cntr-name{
     display: -webkit-box;

@@ -4,7 +4,7 @@
 {% load humanize %}
 {# |intcomma #}
 
-{% block title %}Поиск | One Bit - интернет-магазин{% endblock %}
+{% block title %}Поиск — OneBit{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/search.css' %}">
@@ -72,7 +72,7 @@
         По запросу <b>{{ search }}</b>
     {% endif %}
 
-    {% if count_tov != 0 %}
+    {% if count_tov %}
         {% if count_tov == 1 %}найден {% else %}найдено {% endif %}
         {{ count_tov }} {{ count_tov|pluralize_goods  }}
     {% else %}

@@ -17,25 +17,17 @@ button.uk-button-onebit-transparent:hover{
 .fav-filter:active ~ button.uk-button-onebit-transparent{
     background-color: var(--color-all-border);
 }
-.t-name {-webkit-line-clamp: 2}
 .uk-nav-filter{
     padding: 0;
     a{
         padding: 7px 10px !important;
         color: black !important;
     }
-    a:hover{
-        color: var(--color-all-full) !important;
-    }
+    a:hover{color: gray !important}
     .uk-nav-divider{
         margin: 0;
         padding: 0;
     }
-}
-main>h1{
-    padding: 0 20px;
-    font-weight: 500 !important;
-    margin: 10px 25px !important;
 }
 sup{
     color: gray;
@@ -44,12 +36,13 @@ sup{
 /* /фильтры/ */
 
 /* товары */
-.t-bottom{margin-bottom: 10px}
+.t-bottom{margin-bottom: 5px}
 .button-buy-f{
     margin-top: auto;
     border-radius: 10px;
     width: 100%;
     font-weight: 600;
+    font-size: .923rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -65,3 +58,11 @@ sup{
     height: calc(90vh - var(--height-bottom-menu));
     width: 100vw;
 }
+
+@media screen and (max-width:700px){
+    .h_fav{margin-top: -10px !important}
+    .h_fav div{border: 2px solid violet}
+    .favorit{display:none}
+}
+@media screen and (max-width:850px){.button-buy-f{font-size: .8rem}}
+@media screen and (max-width:768px){.button-buy-f{font-size: 1rem}}

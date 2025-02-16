@@ -2,10 +2,10 @@
 {% load static %}
 
 {% block title %}
-{% if specs_tip %}
-{{specs_tip.0.description}} 
-{% endif %}
-{{tovar.name}}
+  {% if specs_tip %}
+    {{specs_tip.0.description}} 
+  {% endif %}
+  {{tovar.name}} — OneBit
 {% endblock %}
 
 {% block css %}

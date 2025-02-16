@@ -50,20 +50,14 @@ main .list-tovar:nth-last-child(1) hr {
   display: flex;
   align-items: baseline;
 }
-.t-title span {
-  font-size: 40px;
-  color: black;
-}
+.t-title span {color: black}
 .t-title a {
   margin-left: auto;
   font-weight: 500;
   &:hover {color: var(--color-all-full)}
 }
 
-.tovars {
-  margin-top: 35px;
-  width: 100%;
-}
+.tovars {width: 100%}
 .tovar {
   flex: 1;
   width: 100%;
@@ -85,15 +79,13 @@ main .list-tovar:nth-last-child(1) hr {
 .t-img {
   background: none;
   /* background: #f3f3f3; */
-  border-radius: 10px;
   display: flex;
   overflow: hidden;
-  height: 290px;
+  height: 200px;
 }
 .t-img > img {
   height: 100%;
   width: 100%;
-  border-radius: 10px;
   object-fit: contain;
 }
 .t-bottom > a {
@@ -158,27 +150,29 @@ main .list-tovar:nth-last-child(1) hr {
 }
 
 /* slider */
-.slider-content {
-  overflow: hidden;
-  margin-top: 35px;
-  margin: 0 auto;
-  border-radius: 10px;
-}
-.uk-slider-items {
-  margin: 0 auto !important;
+.list-tovar{
+  .slider-content {
+    overflow: hidden;
+    margin-top: 35px;
+    margin: 0 auto;
+    border-radius: 10px;
+  }
+  .uk-slider-items {
+    margin: 0 auto !important;
+  }
 }
 .skidka{
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    z-index: 100;
-    font-weight: 500;
-    font-size: 12px;
-    background-color: rgb(226, 0, 53);
-    color: #fff;
-    padding: 2px 5px;
-    border-radius: 8px;
-    ::after{content: " \0025"; /* % */}
+  position: absolute;
+  bottom: 13px;
+  left: 0;
+  z-index: 100;
+  font-weight: 500;
+  font-size: 12px;
+  background-color: rgb(226, 0, 53);
+  color: #fff;
+  padding: 2px 5px;
+  border-radius: 8px;
+  ::after{content: " \0025"; /* % */}
 }
 /* /slider/ */
 
@@ -188,25 +182,16 @@ main .list-tovar:nth-last-child(1) hr {
     width: calc(25% + 8px);
     padding-right: 32px;
   }
-  .tovar .t-img {
-    height: 200px;
-  }
 }
 @media (min-width: 1024px) {
   .uk-slider > .tovar {
     width: calc(20% + 8px);
     padding-right: 40px;
   }
-  .tovar .t-img {
-    height: 150px;
-  }
 }
 @media (min-width: 1280px) {
   .uk-slider > .tovar {
     width: calc(16.6667% + 5px);
     padding-right: 30px;
-  }
-  .tovar .t-img {
-    height: 200px;
   }
 }

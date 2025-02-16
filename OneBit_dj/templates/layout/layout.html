@@ -166,7 +166,7 @@
         }
     }
     function if_basket_clear_all(){
-        $('#basket-container').html('Ваша корзина пуста.');
+        $('#basket-container').html('Ваша корзина пуста.').addClass('clear_all');
         $('.cost1').text('0');
         $('.cost2').text('0');
         $('.itogi h4 sub').text('0');
@@ -415,7 +415,7 @@
                 },
                 success: function(data){
                   // Обработка успешного ответа от сервера
-                  window.location.replace("{% url 'profile' %}");
+                  window.location.replace("{% url 'order' %}");
                 },
                 error: function(xhr, status, error){
                     // Обработка ошибки

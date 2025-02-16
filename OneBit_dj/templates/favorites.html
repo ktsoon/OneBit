@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load polls_tags %}
 
-{% block title %}Избранное | One Bit - интернет-магазин{% endblock %}
+{% block title %}Избранное — OneBit{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/favorites.css' %}">
@@ -35,7 +35,7 @@
 {% block content %}
 
 {% if tovars %}
-    <h1 class="uk-h1">Избранное<sup>{{ tovars|length }}</sup></h1>
+    <h1 class="title-h1">Избранное<sup>{{ tovars|length }}</sup></h1>
     <nav aria-label="Breadcrumb">
         <ul class="uk-breadcrumb bc">
             <li><a href="{% url 'home' %}">Главная</a></li>
@@ -43,7 +43,7 @@
             <li>Избранное</li>
         </ul>
     </nav>
-    <div style="margin:25px 45px" uk-dropnav="mode: click">
+    <div uk-dropnav="mode: click">
         <button class="uk-button uk-button-small uk-button-onebit-transparent" >{{ sorting }} <span uk-drop-parent-icon></span></button>
         <div class="uk-dropdown uk-nav-filter">
             <ul class="uk-nav uk-dropdown-nav">
@@ -58,22 +58,27 @@
         </div>
     </div>
 
-    <div class="favorite-grid tovars-flex">
+    <div class="tovars-flex">
         {% for tovar in tovars %}
             <div class="tovar">
-                <a href="{{ tovar.tovar.get_absolute_url }}">
+                <a href="{{ tovar.tovar.get_absolute_url }}" class="but-heart-div">
                     <div class="but-heart but-heart-tovar">
                         <input
                         type="checkbox"
                         id="heart-clip-{{ tovar.tovar.id }}"
                         class="heart-clip-t"
                         data-product="{{ tovar.tovar.id }}"
-                        {% count_favorites_tovar request.user.id tovar as count_fav_t %}
+                        {% count_favorites_tovar user.id tovar as count_fav_t %}
                         {% if count_fav_t != 0 %} checked {% endif %}>
                         <svg class="heart-main" viewBox="0 0 512 512" width="25" title="heart">
                             <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
                         </svg>
                     </div>
+                    {% if tovar.tovar.skidka_cost %}
+                        <div class="skidka">
+                            <span>-{{ tovar.skidka|floatformat:0 }}</span> {# floatformat - сколько цифр после запятой #}
+                        </div>
+                    {% endif %}
                     <div class="t-img images">
                         {% define 1 as count %}
                         {% for img in tovar_img %}
@@ -92,7 +97,6 @@
                         {% else %}
                         <span>{{ tovar.tovar.skidka_cost|intcomma }}</span>
                             <span>{{ tovar.tovar.cost|intcomma }}</span>
-                            <span>-{{ tovar.skidka|floatformat:0 }}</span>
                         {% endif %}
                     </div>
                     <div class="t-name">

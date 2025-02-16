@@ -9,7 +9,7 @@
     --desktop-screen: 1280px;
     --shadow-black: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     --background: linear-gradient(135deg, var(--color-all-flah) 10%, var(--color-all-light) 50%, rgba(211,170,232,1) 100%);
-    --heart-size: 30px;
+    --heart-size: 40px;
 }
 /* scroll */
 body::-webkit-scrollbar {
@@ -24,7 +24,6 @@ body::-webkit-scrollbar-thumb {
     border: 3px solid var(--color-all-flah);    /* padding вокруг плашки */
 }
 
-.bc{margin-left: 45px}
 a{
     text-decoration: none;
     color: var(--color-all);
@@ -63,6 +62,11 @@ main{
 }
 @media screen and (max-width:600px){
     .fon{background: linear-gradient(180deg, var(--color-all) 60%, rgba(184, 184, 184, 0) 100%)}
+}
+.title-h1{
+    color: #333;
+    margin: 10px 0;
+    font-weight: 500;
 }
 /* -----heard----- */
 .but-heart-tovar{
@@ -112,8 +116,8 @@ input:checked ~ .heart-main{stroke: #fff}
     .heart-main path{transition: transform .1s ease}
     .heart-clip,
     .heart-clip-t{
-        width: 55px;
-        height: 55px;
+        width: var(--heart-size) !important;
+        height: var(--heart-size) !important;
     }
     .heart-clip:checked + .heart-main path,
     .heart-clip-t:checked + .heart-main path{
@@ -134,10 +138,6 @@ input:checked ~ .heart-main{stroke: #fff}
         fill: var(--color-all);
         stroke: var(--color-all);
     }
-}
-@media (max-width: 767.778px) {
-    :root{--heart-size: 50px}
-    .but-heart-tovar{right:50px}
 }
 @media (min-width: 768px) {
     :root{--heart-size: 40px}

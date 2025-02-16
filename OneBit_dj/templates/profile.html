@@ -2,7 +2,7 @@
 {% load static %}
 {% load polls_tags %}
 
-{% block title %}Профиль | One Bit - интернет-магазин{% endblock %}
+{% block title %}Профиль {{ user.username }} — OneBit{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
@@ -43,10 +43,12 @@
                   </div>
                   <div class="uk-position-center">
                      <span uk-icon="icon: plus;ratio: 4"></span>
-                     {# <span uk-overlay-icon></span> #}
                   </div>
                </div>
                <h3>{{ user.username }}</h3>
+               <span 
+                  style="text-align:center; margin-bottom:5px"
+               >{{ user.email }}</span>
                <button type="submit" class="uk-button uk-button-onebit">Сохранить</button>
             </form>
          </div>
@@ -68,7 +70,7 @@
          <div class="z_right" uk-icon="bag"></div>
       </a>
 
-      <a class="block_tov block_style href="{% url 'favorites' %}">
+      <a class="block_tov block_style" href="{% url 'favorites' %}">
          {# считает и выводит количество товаров в избранном #}
          {% define user.favoritess_set.all.count as count_favoritess %}
          <h3>Избранное<sup> {% if count_favoritess %}{{ count_favoritess }}{% endif %}</sup></h3>
@@ -76,7 +78,7 @@
          <div class="z_right" uk-icon="heart"></div>
       </a>
 
-      <a class="block_tov block_style href="{% url 'basket' %}">
+      <a class="block_tov block_style" href="{% url 'basket' %}">
          {# считает и выводит количество товаров в корзине #}
          {% define user.basket_set.all.count as count_basket %}
          <h3>Корзина<sup> {% if count_basket %}{{ count_basket }}{% endif %}</sup></h3>
