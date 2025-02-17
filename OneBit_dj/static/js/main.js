@@ -110,14 +110,6 @@ window.addEventListener('DOMContentLoaded', function() {
   // Удаление выпадающего списка при max-width: 700px
   var dropdownDiv = document.querySelector('.uk-dropdown');
   var mq = window.matchMedia('(max-width: 700px)');
-  // function handleWidthChange(mq) {
-  //     if (mq.matches) {
-  //         // Удаляем найденный элемент
-  //         if (dropdownDiv) {
-  //             dropdownDiv.parentNode.removeChild(dropdownDiv);
-  //         }
-  //     }
-  // }
 
   // Удаление и изменение классов для слайдера при max-width: 700px
   const ulElements = document.querySelectorAll('ul.uk-slider');
@@ -142,7 +134,22 @@ window.addEventListener('DOMContentLoaded', function() {
   // handleWidthChange(mq); // Проверяем ширину при загрузке страницы
   handleResize(); // Проверяем и добавляем атрибуты при загрузке страницы
   window.addEventListener('resize', handleResize); // Проверяем и добавляем атрибуты при изменении размера окна
+
+
+
+
 });
+
+// category
+function closeDrop(button) {
+  // Находим родительский uk-drop
+  const dropElement = button.closest(".drop-min-category");
+  if (dropElement) {
+    const drop = UIkit.drop(dropElement); // Получаем объект drop
+    console.log(drop)
+    drop.hide(0); // Закрываем через UIkit API
+  }
+}
 
 
 // кнопка очистить

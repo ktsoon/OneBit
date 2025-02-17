@@ -2,35 +2,44 @@
 {% load polls_tags %}
 
 {% if user.is_superuser == 1 %} {# для коректного отображения администратора на телефоне #}
-<style>@media screen and (max-width:600px){.catalog{width:20%}.h_right{width:80%;margin-left:20%}}</style>
+<style>@media screen and (max-width:700px){.catalog{width:16.9% !important}.h_right{width:83.334%;left:16.667%}}</style>
 {% endif %}
 
 <header>
 <a href="{% url 'home' %}" class="logo"><img id="logo" src="{% static 'img/logo2.png' %}" alt="лого" height="60"></a> {# логотип сайта #}
 {# каталог #}
 <div class="catalog">
-    <button class="uk-button uk-button-default">
+    <button class="uk-button uk-button-default" uk-toggle="target: #model-category">
         <img id="catalog" src="{% static 'img/palochki2.svg' %}" alt="палочки" style="vertical-align:middle">
         <div>Каталог</div>
     </button>
-    <div uk-dropdown="mode: click; target: !header; flip: false; animation: reveal-top; duration: 500; animate-out: true" class="head-drop">
-        <div class="uk-drop-grid uk-child-width-auto@m" uk-grid>
+</div>
+<div id="model-category" uk-offcanvas="overlay: true; delay-hide: 30000">
+    <div class="uk-offcanvas-bar uk-flex uk-flex-column off-bar-category">
+        <button class="uk-offcanvas-close uk-font btn-close" type="button" uk-close></button>
+        <h2 class="uk-card-default uk-padding-small uk-margin-remove-top">Категории</h2>
+        <ul class="uk-nav">
             {% specifications as spec %}
             {% Gl_specifications as gl_spec %}
             {% for gl_s in gl_spec %}
-            <div>
-                <ul class="uk-nav uk-dropdown-nav">
-                <li class="uk-nav-header">{{ gl_s }}</li>
-                {% for s in spec %}
-                    {% if gl_s == s.Gl_category %}
-                    <li><a href="{% url 'category' s.slug %}">{{ s }} {# <sub>({{ spec|length }})</sub> #}</a></li>
-                    {% endif %}
-                {% endfor %}
-                </ul>
-            </div>
+                <li>
+                    <a href="#">{{ gl_s }} <span uk-icon="chevron-right"></span></a>
+                    <div class="uk-card uk-card-body uk-card-default drop-min-category" uk-drop="animation: reveal-left; animate-out: true;">
+                        <a class="btn-close" onclick="closeDrop(this)" uk-icon="close"></a>
+                        <div>
+                    {% for s in spec %}
+                        {% if forloop.first %}
+                            <span>{{ gl_s }}</span>
+                        {% endif %}
+                        {% if gl_s == s.Gl_category %}
+                        <a href="{% url 'category' s.slug %}">{{ s }} {# <sub>({{ spec|length }})</sub> #}</a>
+                        {% endif %}
+                    {% endfor %}
+                        </div>
+                    </div>
+                </li>
             {% endfor %}
-            <div style="padding:1px"></div>
-        </div>
+        </ul>
     </div>
 </div>
 {# /каталог/ #}
@@ -104,9 +113,6 @@
                 <span uk-icon="icon: user; ratio: 1.5"></span>
                 <span>&nbsp;&nbsp;Войти&nbsp;&nbsp;</span>
             </div>
-        </a>
-        <a class="h_home" href="{% url 'home' %}"> {# Заказы #}
-            <div><span uk-icon="icon: home; ratio: 1.5"></span><span></span></div>
         </a>
     {% endif %} {# если пользователь уже авторизирован #}
         <a class="h_home" href="{% url 'home' %}"> {# Заказы #}

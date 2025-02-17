@@ -1,7 +1,3 @@
-sup{
-    color: gray;
-    font-size: 1.875rem;
-}
 label{
     cursor: pointer;
     font-weight: 500;
@@ -52,10 +48,10 @@ input.uk-checkbox{
     padding: 10px;
     border-radius: 5px;
 }
-.t-img{
-    width: 170px;
+.tovar-srch{
+    padding: 10px 0;
+    padding-left: 10px;
 }
-.tovar-srch{padding: 10px 0}
 .t-t-rght{width: 100%}
 .p-buttons{align-items: flex-end}
 .p-buttons>.del-bask{
@@ -191,7 +187,7 @@ input.uk-checkbox{
 
 
 @media screen and (max-width:700px){
-    .h_bask{margin-top: -10px !important}
+    .h_bask{margin-top: 2.5px !important}
     .h_bask div{border: 2px solid violet}
     .bask{display:none}
 }

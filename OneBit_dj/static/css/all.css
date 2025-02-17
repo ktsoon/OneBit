@@ -67,28 +67,27 @@ main{
     color: #333;
     margin: 10px 0;
     font-weight: 500;
+    sup, span{color: gray}
+    h1,h2{font-weight: 500}
+}
+.title-h1.title-flex{
+    display: flex;
+    align-items: baseline
 }
 /* -----heard----- */
 .but-heart-tovar{
     position: absolute !important;
     top: 5px;
     right: 40px;
-    input{
-        width: var(--heart-size) !important;
-        height: var(--heart-size) !important;
-        margin-left: -2.5px !important;
-        margin-top: -2.8px !important;
-        z-index: 99;
-    }
-    .heart-main{
-        position: absolute;
-        stroke-width: 50px;
-        width: calc(var(--heart-size) - 5px);
-        z-index: 98;
-        margin: 0;
-        overflow: visible;
-        fill:rgba(255, 255, 255, 0.8);
-    }
+}
+.heart-main{
+    position: absolute;
+    stroke-width: 50px;
+    width: calc(var(--heart-size) - 5px);
+    z-index: 98;
+    margin: 0;
+    overflow: visible;
+    fill:rgba(255, 255, 255, 0.8);
 }
 input:checked ~ .heart-main{stroke: #fff}
 .but-heart {
@@ -107,23 +106,26 @@ input:checked ~ .heart-main{stroke: #fff}
     }
     input{
         appearance: none;
-        margin: 0;
         position: absolute;
-        width: 40px;
-        height: 40px;
         cursor: pointer;
-    }
-    .heart-main path{transition: transform .1s ease}
-    .heart-clip,
-    .heart-clip-t{
         width: var(--heart-size) !important;
         height: var(--heart-size) !important;
-    }
-    .heart-clip:checked + .heart-main path,
-    .heart-clip-t:checked + .heart-main path{
-        animation: stroke-animation .3s ease-in-out forwards;
+        margin-left: -2.5px !important;
+        margin-top: -2.8px !important;
+        z-index: 99;
     }
 }
+.heart-main path{transition: transform .1s ease}
+.heart-clip,
+.heart-clip-t{
+    width: var(--heart-size) !important;
+    height: var(--heart-size) !important;
+}
+.heart-clip:checked + .heart-main path,
+.heart-clip-t:checked + .heart-main path{
+    animation: stroke-animation .3s ease-in-out forwards;
+}
+
 @keyframes stroke-animation {
     0% {
         fill: rgba(255, 255, 255, 0.8);
