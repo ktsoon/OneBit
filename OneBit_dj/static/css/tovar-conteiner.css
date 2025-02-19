@@ -119,7 +119,7 @@ main .list-tovar:nth-last-child(1) hr {
 }
 
 .t-name {
-  font-size: 1.275em;
+  font-size: 1em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -177,6 +177,8 @@ main .list-tovar:nth-last-child(1) hr {
 /* /slider/ */
 
 /* Медиа-запросы */
+
+@media (min-width: 500px) {.t-name{font-size: 1.275em}}
 @media (min-width: 768px) {
   .uk-slider > .tovar {
     width: calc(25% + 8px);

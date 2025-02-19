@@ -85,12 +85,8 @@ def index(request):
 
     tovars = Tovars.objects.annotate(rating=Avg('comments__star'), count_com=Count('comments'))
 
-    if request.user.is_authenticated:
-        bask = history_tovars.objects.filter(user=request.user).count()
-        if bask > 5: t1 = title_list
-        else: t1 = title_list[1:]
-    else:
-        t1 = title_list[1:]
+    t1 = title_list if request.user.is_authenticated and history_tovars.objects.filter(user=request.user).count() > 5 else title_list[1:]
+
     data = {
         't1': t1,
         "tovars": tovars

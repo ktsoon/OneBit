@@ -46,6 +46,7 @@ sup{
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid transparent;
     gap: 5px;
     padding: 10px;
 }

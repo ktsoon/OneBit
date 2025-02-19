@@ -10,10 +10,10 @@
 .main{
     display: flex;
     align-items: flex-start;
+    gap: 15px;
 }
 .profile{
     padding-top: 15px;
-    padding-left: 25px;
     gap: 25px;
     display: inline-grid;
     color: #fff;
@@ -96,8 +96,8 @@
 .b_t{
     display:flex;
     flex-wrap: wrap;
+    padding-top: 25px;
     width: calc(100% - 50px);
-    padding-right: 25px;
 }
 .block_tov{
     flex: 1 0 auto;
@@ -166,7 +166,7 @@
         display: block;
         margin-bottom: 65px;
     }
-    .profile{width: calc(100% - 50px)}
+    .profile{width: 100%}
     .avatar form{width: 100%}
     .exit{
         a{flex: 1}

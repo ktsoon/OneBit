@@ -67,7 +67,7 @@
 </div>
 {% if request.resolver_match.url_name == "category" %}
 <nav aria-label="Breadcrumb">
-    <ul class="uk-breadcrumb bc" style="margin-top:10px;margin-bottom:0;margin-left:25px">
+    <ul class="uk-breadcrumb bc">
         <li><a href="{% url 'home' %}">Главная</a></li>
         <li class="uk-disabled"><a>{{ category.Gl_category }}</a></li>
         <li>{{ category.category|capfirst }}</li>
@@ -186,7 +186,7 @@
                     <div class="t-t-rght">
                     <a href="{{ tovar.get_absolute_url }}">
                         <div class="t-name">
-                            {{tovar.name}}
+                            <span>{{tovar.name}}</span>
                         </div>
                     </a>
                     <div class="t-center">

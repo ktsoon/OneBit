@@ -136,8 +136,6 @@ window.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('resize', handleResize); // Проверяем и добавляем атрибуты при изменении размера окна
 
 
-
-
 });
 
 // category

@@ -9,7 +9,7 @@
     --desktop-screen: 1280px;
     --shadow-black: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     --background: linear-gradient(135deg, var(--color-all-flah) 10%, var(--color-all-light) 50%, rgba(211,170,232,1) 100%);
-    --heart-size: 40px;
+    --heart-size: 30px;
 }
 /* scroll */
 body::-webkit-scrollbar {
@@ -140,18 +140,6 @@ input:checked ~ .heart-main{stroke: #fff}
         fill: var(--color-all);
         stroke: var(--color-all);
     }
-}
-@media (min-width: 768px) {
-    :root{--heart-size: 40px}
-    .but-heart-tovar{right:40px}
-}
-@media (min-width: 1024px) {
-    :root{--heart-size: 35px}
-    .but-heart-tovar{right:35px}
-}
-@media (min-width: 1280px) {
-    :root{--heart-size: 30px}
-    .but-heart-tovar{right: 30px}
 }
 
 
