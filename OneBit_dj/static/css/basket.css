@@ -20,11 +20,12 @@ label{
 }
 #modal-close-default-ch .uk-modal-close{margin-right: 15px}
 /* /modal/ */
-
+.uk-card-default{
+    box-shadow:none;
+    background-color: #f8f8f8;
+}
 .select-bask{
-    background-color: #f7f7f7;
     display: inline-flex;
-    border: 1px solid #ccc;
     gap: 10px;
     padding: 10px;
     z-index: 2;
@@ -36,33 +37,32 @@ label{
     label{color: var(--color-all)}
 }
 /* left-bar */
-.left-bar{width: 100%}
-.cost{justify-content: flex-end}
-.t-img{border-left: 2px transparent solid}
-.tovar-srch>div>input:checked ~ a .t-img{
-    border-image: linear-gradient(to top, #fff 0%, var(--color-all-light)  30%, var(--color-all-border)  50%, var(--color-all-light)  70%, #fff 100%) 1
+.left-bar{
+    flex: 1 0 auto;
+    padding-left: 10px;
 }
-input.uk-checkbox{
+.t-img{border-left: 2px transparent solid}
+.cheachbox-t{
     margin: auto 0;
     margin-right: 10px;
+}
+input.uk-checkbox{
     padding: 10px;
     border-radius: 5px;
 }
-.tovar-srch{
-    padding: 10px 0;
-    padding-left: 10px;
-}
+.tovar-srch{padding: 10px 0}
 .t-t-rght{width: 100%}
-.p-buttons{align-items: flex-end}
 .p-buttons>.del-bask{
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    padding: 5px;
-    margin-left: auto;
+    padding: 2.5px;
 }
-.but-heart{margin-left: 25px}
+.charc{max-width: 400px}
+.right-top{min-width: auto !important}
+.uk-flex.uk-flex-right{gap: 10px}
+.but-heart{margin-left: 12.5px}
 .p-b-count{
     display: flex;
     justify-content: flex-end;
@@ -80,6 +80,7 @@ input.uk-checkbox{
         }
     }
     input{
+        height: auto;
         text-align: center;
         font-size: 1.2em;
         font-weight: 500;
@@ -114,9 +115,7 @@ input.uk-checkbox{
     .uk-card{
         color: black;
         min-width: 300px;
-        background-color: #f7f7f7;
         padding: 10px;
-        border: 1px solid #ccc;
         hr{border-color: #ccc;}
     }
 }
@@ -183,10 +182,66 @@ input.uk-checkbox{
     cursor: default !important;
 }
 
+@media (max-width: 1220px) {
+    .main{flex-direction: column-reverse}
+    .uk-flex-right{justify-content: flex-start}
+    .right-bar{
+        height: 0;
+        padding: 0;
+        z-index: 777;
+        width: calc(100% + 30px);
+        margin-left: -15px;
+        border-bottom-left-radius:0;
+        border-bottom-right-radius:0;
+    }
+    .left-bar{margin-bottom: 80px}
+    .main:has(.right-bar>div>a>button:not(.dis_but)) .left-bar{margin-bottom: 145px !important}
+}
 
-
+@media (min-width: 768px) {
+    .tovar-srch:has(input.tovar_b:checked) a .t-img{
+        border-image: linear-gradient(to top, #fff 0%, var(--color-all-light)  30%, var(--color-all-border)  50%, var(--color-all-light)  70%, #fff 100%) 1
+    }
+}
+@media (max-width: 768px) {
+    .cheachbox-t{
+        margin: 0;
+        position: absolute;
+        visibility: visible;
+        z-index: 8;
+        top: -1px;
+        left: 0;
+        background-color: #fff;
+        padding: 4px;
+        border-end-end-radius: 5px;
+        input{z-index: 14}
+        &::before, &::after{
+            content: "";
+            position: absolute;
+            height: 8px;
+            width: 8px;
+            background-color: transparent;
+            border-top-left-radius: 8px;
+            box-shadow: -2px -2px 0 2px #fff;
+        }
+        &::before{
+            right: -8px;
+            top: 1px;
+        }
+        &::after{
+            bottom: -8px;
+            left: 2px;
+        }
+    }
+}
 
 @media screen and (max-width:700px){
+    .right-bar .uk-card:not(.uk-active){
+        opacity: 0;
+    }
+    .h_right{border-top-right-radius:0}
+    .catalog{border-top-left-radius:0}
+
     .h_bask{margin-top: 2.5px !important}
     .h_bask div{border: 2px solid violet}
     .bask{display:none}

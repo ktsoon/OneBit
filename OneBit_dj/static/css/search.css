@@ -183,7 +183,10 @@ hr{margin: 10px 0}
 .tovar-srch>div>a:hover ~ .t-t-rght .t-name{
     color: var(--color-all);
 }
-.tovar-srch>div{display: flex}
+.tovar-srch>div{
+    display: flex;
+    position: relative;
+}
 .t-name{
     color: black;
     font-weight: 500;
@@ -235,6 +238,7 @@ hr{margin: 10px 0}
     margin-left: 10px;
     transform: translateY(calc(var(--heart-size) * -1))
 }
+.but-heart-div{height: 200px}
 /* -----/right/----- */
 
 

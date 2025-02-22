@@ -84,6 +84,7 @@
       {% for tovar, specs in tovars.items %}
         <div class="tovar-srch" id="bask-{{tovar.id}}">
           <div>
+            <div class="cheachbox-t">
               <input class="uk-checkbox tovar_b" type="checkbox" 
               name="check_tovar" 
               {% for t in tovars_if_select %}
@@ -92,7 +93,14 @@
                 {% endif %}
               {% endfor %}
               value="{{ tovar.id }}">
-              <a href="{{ tovar.get_absolute_url }}">
+            </div>
+
+              <a href="{{ tovar.get_absolute_url }}" class="but-heart-div">
+                {% if tovar.skidka_cost %}
+                  <div class="skidka">
+                    <span>-{{ tovar.skidka|floatformat:0 }}</span> {# floatformat - сколько цифр после запятой #}
+                  </div>
+                {% endif %}
                   <div class="t-img images">
                       {% define 1 as count %}
                       {% for img in tovar_img %}
@@ -105,21 +113,21 @@
               </a>
               <div class="t-t-rght">
                 <a href="{{ tovar.get_absolute_url }}">
-                    <div class="t-cntr-name">
+                    <div class="t-name">
                       {{tovar.name}}
                     </div>
                 </a>
                 <div class="t-center">
-                    <div>
+                    <div class="charc">
                         <div class="t-s-char">
-                            {% for char in specs %}
-                                <div class="s-char">
-                                    <span>{{ char.category.category }}: </span>
-                                    <span>{{ char.description }}</span>
-                                </div>
-                            {% endfor %}
-                        </div>
-                        {% if tovar.rating %}
+                          {% for char in specs %}
+                              <div class="s-char">
+                                  <span>{{ char.category.category }}: </span>
+                                  <span>{{ char.description }}</span>
+                              </div>
+                          {% endfor %}
+                      </div>
+                      {% if tovar.rating %}
                         <div class="t-b-info">
                             <div class="star">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 16 15" fill="none">
@@ -144,61 +152,62 @@
                         {% endif %}
                     </div>
                     <div class="right-top">
-                        <div class="p-b-count">
-                          <button 
-                          class="uk-button-default uk-b-minus" 
-                          uk-icon="icon:minus;ratio: 1.2"
-                          onclick="this.nextElementSibling.stepDown()"
-                          ></button>
-
-                          <input 
-                          class="uk-input uk-form-width-xsmall" 
-                          inputmode="numeric" 
-                          type="number" 
-                          min="1" max="100"
-                          id="inp_count"
-                          name="tov_count"
-                          data-id="{{ tovar.id }}"
-                          value="{% bask_count tovar.id user.id %}">
-                          
-                          <button 
-                          class="uk-button-default uk-b-plus" 
-                          uk-icon="icon:plus;ratio: 1.2"
-                          onclick="this.previousElementSibling.stepUp()"
-                          ></button>
-                        </div>
                         <div class="cost">
-                            {% if not tovar.skidka_cost %}
-                                <span id="n-cost">{{ tovar.cost|intcomma }}</span>
-                            {% else %}
-                                <span id="n-cost">{{ tovar.skidka_cost|intcomma }}</span>
-                                <span  id="s-cost">{{ tovar.cost|intcomma }}</span>
-                                <span id="prochent-cost">-{{ tovar.skidka|floatformat:0 }}</span> {# floatformat - сколько цифр после запятой #}
-                            {% endif %}
+                          {% if not tovar.skidka_cost %}
+                              <span id="n-cost">{{ tovar.cost|intcomma }}</span>
+                          {% else %}
+                              <span id="n-cost">{{ tovar.skidka_cost|intcomma }}</span>
+                              <span  id="s-cost">{{ tovar.cost|intcomma }}</span>
+                          {% endif %}
                         </div>
-                        <div class="p-buttons">
-                            <button id="t-{{tovar.id}}" class="del-bask uk-button uk-button-danger" uk-toggle="target: #modal-close-default">
-                              <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 0 24 24" fill="none">
-                                <path d="M10 11V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M14 11V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M4 7H20" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                              </svg>
-                            </button>
-                            <div class="but-heart">
-                                <input 
-                                type="checkbox" 
-                                id="heart-clip-{{ tovar.id }}"
-                                class="heart-clip-t" 
-                                data-product="{{ tovar.id }}"
-                                {% count_favorites_tovar user.id tovar as count_fav_t %}
-                                {% if count_fav_t != 0 %} checked {% endif %}>
-                                <svg class="heart-main" viewBox="0 0 512 512" width="40" title="heart">
-                                    <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
+                        <div class="uk-flex uk-flex-right">
+                          <div class="p-b-count">
+                            <button 
+                            class="uk-button-default uk-b-minus" 
+                            uk-icon="icon:minus;ratio: 1.2"
+                            onclick="this.nextElementSibling.stepDown()"
+                            ></button>
+
+                            <input 
+                            class="uk-input uk-form-width-xsmall" 
+                            inputmode="numeric" 
+                            type="number" 
+                            min="1" max="100"
+                            id="inp_count"
+                            name="tov_count"
+                            data-id="{{ tovar.id }}"
+                            value="{% bask_count tovar.id user.id %}">
+                            
+                            <button 
+                            class="uk-button-default uk-b-plus" 
+                            uk-icon="icon:plus;ratio: 1.2"
+                            onclick="this.previousElementSibling.stepUp()"
+                            ></button>
+                          </div>
+                          <div class="p-buttons">
+                              <button id="t-{{tovar.id}}" class="del-bask uk-button uk-button-danger" uk-toggle="target: #modal-close-default">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 0 24 24" fill="none">
+                                  <path d="M10 11V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M14 11V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M4 7H20" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
-                            </div>
-                        </div>
+                              </button>
+                              <div class="but-heart">
+                                  <input 
+                                  type="checkbox" 
+                                  id="heart-clip-{{ tovar.id }}"
+                                  class="heart-clip-t" 
+                                  data-product="{{ tovar.id }}"
+                                  {% count_favorites_tovar user.id tovar as count_fav_t %}
+                                  {% if count_fav_t != 0 %} checked {% endif %}>
+                                  <svg class="heart-main" viewBox="0 0 512 512" width="40" title="heart">
+                                      <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
+                                  </svg>
+                              </div>
+                          </div>
+                      </div>
                     </div>
                 </div>
             </div>
@@ -208,7 +217,7 @@
     </div>
 
 
-    <div class="right-bar uk-position-z-index" uk-sticky="end: !.main; offset: 20">
+    <div class="right-bar uk-position-z-index" {# uk-sticky="end: !.main; offset: 20" #} >
       {% comment %} <form class="uk-card uk-card-default" id="dostavka" style="display: none;">
         <h4>Способ доставки</h4>
         <label><input class="uk-radio" type="radio" checked name="dostavka" value="Pickup"> Самовывоз</label>

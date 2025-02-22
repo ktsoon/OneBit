@@ -128,4 +128,67 @@ $(document).ready(function() {
             UIkit.modal('#modal-close-default-ch').show(); // Открытие модального окна
         }
     });
+
+
+    // Функция для перемещения .cost и .t-b-info в .t-t-rght > a
+    function moveCostAndTInfoToTTRight() {
+        $('.tovar-srch').each(function() {
+            var $cost = $(this).find('.cost');
+            var $tBInfo = $(this).find('.t-b-info');
+            var $tTRightA = $(this).find('.t-t-rght > a');
+            
+            if ($cost.length && $tBInfo.length && $tTRightA.length) {
+            $tTRightA.append($cost); // Перемещаем .cost в .t-t-rght > a
+            $tTRightA.append($tBInfo); // Перемещаем .t-b-info в .t-t-rght > a
+            }
+        });
+        }
+    
+        // Проверка ширины окна при изменении размера
+        $(window).resize(function() {
+        if ($(window).width() <= 600) {
+            moveCostAndTInfoToTTRight();
+        }
+        });
+    
+        // Начальная проверка
+        if ($(window).width() <= 600) {
+        moveCostAndTInfoToTTRight();
+        }
+
+
+    // uk-sticky bottom
+    function forceStickyUpdate() {
+        UIkit.update(); // Принудительно обновляем UIkit, чтобы он пересчитал позиционирование
+    }
+
+    // Отслеживание изменений внутри .right-bar (изменение высоты)
+    var observer = new MutationObserver(function () {
+        forceStickyUpdate();
+    });
+
+    observer.observe($('.right-bar')[0], { childList: true, subtree: true, attributes: true });
+
+    updateSticky(); // Вызываем при загрузке
+    $(window).on('resize', updateSticky); // Отслеживаем изменение размера экрана
+
 });
+// uk-sticky bottom
+function updateSticky() {
+    if ($(window).width() <= 700) {
+        $('.right-bar .uk-card').attr('uk-sticky', 'position: bottom; end: !body; offset: -70; show-on-up: true; animation: uk-animation-slide-bottom');
+        UIkit.sticky(inactive, '.right-bar')
+        UIkit.sticky('.right-bar .uk-card'); // Обновляем поведение
+    }else if ($(window).width() <= 1220) {
+        $('.right-bar .uk-card').attr('uk-sticky', 'position: bottom; end: !main; animation: uk-animation-slide-bottom');
+        UIkit.sticky(inactive, '.right-bar')
+        UIkit.sticky('.right-bar .uk-card'); // Обновляем поведение
+    }else {
+        $('.right-bar').attr('uk-sticky', 'end: !.main; offset: 20');
+        UIkit.sticky(inactive, '.right-bar .uk-card')
+        UIkit.sticky('.right-bar'); // Обновляем поведение
+    }
+}
+
+updateSticky(); // Вызываем при загрузке
+$(window).on('resize', updateSticky); // Отслеживаем изменение размера экрана

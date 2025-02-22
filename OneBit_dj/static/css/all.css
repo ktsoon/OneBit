@@ -9,6 +9,7 @@
     --desktop-screen: 1280px;
     --shadow-black: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     --background: linear-gradient(135deg, var(--color-all-flah) 10%, var(--color-all-light) 50%, rgba(211,170,232,1) 100%);
+    --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.1));
     --heart-size: 30px;
 }
 /* scroll */
@@ -54,7 +55,7 @@ body{
     min-height: 100%;
 }
 main{
-    min-height: calc(100vh - var(--height-bottom-menu) - 10px);
+    min-height: calc(100vh - 380px);
     max-width: var(--desktop-screen);
     padding: 0 16px;
     margin: 0 auto;
