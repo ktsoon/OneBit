@@ -62,7 +62,10 @@ main{
     margin-bottom: 10px;
 }
 @media screen and (max-width:600px){
-    .fon{background: linear-gradient(180deg, var(--color-all) 60%, rgba(184, 184, 184, 0) 100%)}
+    .fon{
+        background: linear-gradient(180deg, var(--color-all) 60%, rgba(184, 184, 184, 0) 100%);
+        height: 100px;
+    }
 }
 .title-h1{
     color: #333;
@@ -75,6 +78,7 @@ main{
     display: flex;
     align-items: baseline
 }
+.bc li{white-space: nowrap}
 /* -----heard----- */
 .but-heart-tovar{
     position: absolute !important;

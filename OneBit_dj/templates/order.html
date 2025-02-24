@@ -15,7 +15,7 @@
 {% endblock scripts %}
 
 {% block content %}
-<h1 class="uk-h1">Заказы</h1>
+<h1 class="title-h1">Заказы</h1>
 <nav aria-label="Breadcrumb">
     <ul class="uk-breadcrumb bc">
         <li><a href="{% url 'home' %}">Главная</a></li>
@@ -32,7 +32,7 @@
         <li uk-filter-control="[data-dost*='cancelled']"><a href="#">Отменённые</a></li>
     </ul>
 
-    <div class="js-filter uk-flex uk-flex-column uk-margin-medium-left order-all">
+    <div class="js-filter uk-flex uk-flex-column order-all">
         
         {% for ord in order %}
             <div class="order" id="order" data-dost="{{ ord.dostavka }}">
@@ -54,7 +54,7 @@
                 </a>
                 </div>
                 <div class="or-bot">
-                    <div class="ord-l uk-width-2-3">
+                    <div class="ord-l">
                         {% if ord.errors %}
                             <div class="ord-error">
                                 <span uk-icon="warning"></span>

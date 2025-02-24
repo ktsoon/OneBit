@@ -61,10 +61,11 @@ sup{
 }
 
 @media screen and (max-width:700px){
-    .h_fav{margin-top: 2.5px !important}
     .h_fav div{border: 2px solid violet}
     .favorit{display:none}
 }
+@media screen and (max-width: 380px) {.h_fav{margin-top: 2.5px !important}}
+
 @media screen and (max-width:850px){.button-buy-f{font-size: .8rem}}
 @media screen and (max-width:768px){.button-buy-f{font-size: 1rem}}
 @media screen and (max-width:450px){.button-buy-f{font-size: 3vw}}

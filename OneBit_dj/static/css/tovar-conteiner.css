@@ -145,22 +145,16 @@ main .list-tovar:nth-last-child(1) hr {
   align-items: center;
 }
 
-.t-b-otz > img {
-  height: 17px;
-}
+.t-b-otz > img {height: 17px}
 
 /* slider */
-.list-tovar{
-  .slider-content {
-    overflow: hidden;
-    margin-top: 35px;
-    margin: 0 auto;
-    border-radius: 10px;
-  }
-  .uk-slider-items {
-    margin: 0 auto !important;
-  }
+.list-tovar .slider-content {
+  overflow: hidden;
+  margin-top: 35px;
+  margin: 0 auto;
+  border-radius: 10px;
 }
+.list-tovar .uk-slider-items {margin: 0 auto !important}
 .skidka{
   position: absolute;
   bottom: 13px;

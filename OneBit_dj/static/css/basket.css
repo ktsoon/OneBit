@@ -204,6 +204,7 @@ input.uk-checkbox{
     }
 }
 @media (max-width: 768px) {
+    .select-bask{margin-left: 4px}
     .cheachbox-t{
         margin: 0;
         position: absolute;
@@ -236,13 +237,11 @@ input.uk-checkbox{
 }
 
 @media screen and (max-width:700px){
-    .right-bar .uk-card:not(.uk-active){
-        opacity: 0;
-    }
+    .right-bar .uk-card:not(.uk-active){opacity: 0}
     .h_right{border-top-right-radius:0}
     .catalog{border-top-left-radius:0}
 
-    .h_bask{margin-top: 2.5px !important}
     .h_bask div{border: 2px solid violet}
     .bask{display:none}
 }
+@media screen and (max-width: 380px) {.h_bask{margin-top: 2.5px !important}}

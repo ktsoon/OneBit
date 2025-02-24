@@ -6,7 +6,6 @@
 {% block title %}Заказ {{ order.order_number }} — OneBit{% endblock %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/search.css' %}">
 <link rel="stylesheet" href="{% static 'css/order_details.css' %}">
 {% endblock css %}
 
@@ -15,7 +14,7 @@
 {% endblock scripts %}
 
 {% block content %}
-<h1 class="uk-h1">Заказ от {{ order.date.date }}</h1>
+<h1 class="title-h1">Заказ от {{ order.date.date }}</h1>
 <nav aria-label="Breadcrumb">
     <ul class="uk-breadcrumb bc">
         <li><a href="{% url 'home' %}">Главная</a></li>
@@ -24,13 +23,13 @@
         <li>Детали заказа № {{ order.order_number }}</li>
     </ul>
 </nav>
-<a href="{% url 'order' %}" class="uk-h4"><span>&#10132;</span> К списку заказов</a>
+<a href="{% url 'order' %}" class="back"><span>&#10132;</span> К списку заказов</a>
 <div class="ord-all">
-    <div class="uk-width-3-4">
+    <div class="ord-left">
         <div class="ord-block {{ order.dostavka }}">
-            <div class="uk-flex">
+            <div class="uk-flex ord-title">
                 <h3 class="dost-info-det {{ order.dostavka }}-info">{{ order.get_dostavka_display }}</h3>
-                <h3 class="dost-info-det uk-margin-auto-left">№ {{ order.order_number }}</h3>
+                <span class="dost-info-det ord-number">№ {{ order.order_number }}</span>
             </div>
             {% if order.errors %}
             <div class="dost ord-error">

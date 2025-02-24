@@ -33,7 +33,7 @@
     <hr>
     <div class="dostavka">
       <h2 class="step-title st1">Способ получения</h2>
-      <ul class="sposob uk-flex" uk-switcher>
+      <ul class="sposob uk-flex" uk-switcher="swiping: false">
         <li><a data-value="Pochta" class="select_d">Почта России</a></li>
         <li><a data-value="pickup">Самовывоз</a></li>
       </ul>
@@ -76,9 +76,8 @@
           </form>
         </div>
         <div class="map">
-          <div id="map">
-            <div class="map-hour uk-text-muted">*Рабочее время магазинов с 8:00 до 21:00 с понедельника по субботу</div>
-          </div>
+          <div class="map-hour uk-text-muted">*Рабочее время магазинов с 8:00 до 21:00 с понедельника по субботу</div>
+          <div id="map"></div>
           <div class="map_right" id="map-right"></div>
         </div>
       </div>

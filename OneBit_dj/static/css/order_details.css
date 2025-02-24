@@ -1,10 +1,7 @@
-main>.uk-h1, main>.uk-h4{
+.back{
     font-weight: 500;
-    padding: 0 20px
-}
-main>.uk-h4{
+    font-size: large;
     color: var(--color-all);
-    margin-left: 25px;
     span{
         display: inline-block;
         -moz-transform: scale(-1, 1);
@@ -31,14 +28,12 @@ main>.uk-h4{
 .goes-color,
 .delivered-color
 {color: var(--color-all-border)}
+
 .received-color{color: var(--color-all-light)}
 .cancelled-color{color: #A6A6A6}
 
 /* errors */
-.ord-error{
-    margin-bottom: 10px;
-    
-}
+.ord-error{margin-bottom: 10px}
 .ord-error-img{
     background-color: #ff9494 !important;
     width: 20px;
@@ -63,19 +58,30 @@ main>.uk-h4{
     box-shadow:0 2px 10px 0 rgba(0, 0, 0, .12);
     border-radius: 10px;
     color: #fff;
-    margin: 0 0 10px 45px;
+    margin-bottom: 10px;
     padding: 15px;
-    h3{margin: 0 0 10px}
     h4{margin: 0 0 10px}
+}
+.ord-title{
+    margin-bottom: 10px;
+    h3{margin: 0}
+}
+.collect-info{padding: 5px 10px}
+.ord-number{
+    position: absolute;
+    font-weight: 500;
+    font-size: large;
+    color: grey;
+    top: -34px;
+    right: 0;
 }
 .dost-info-det{
     border-radius: 10px;
     max-width: max-content;
-    padding: 5px 10px;
 }
 .dost-img{
-    width: 40px;
-    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
     text-align: center;
     background-color: #fff;
     border-radius: 10px;
@@ -94,14 +100,20 @@ main>.uk-h4{
 }
 .dost-info span{font-weight: 500}
 
+.ord-left{
+    position: relative;
+    min-width: 75%;
+}
+.ord-number{margin-left: auto}
+
 .ord-tovars>div:not(:nth-last-child(1)){margin-bottom: 10px}
 .ord-tovar{
     display: flex;
     gap: 5px;
 }
 .ord-tov-img{
-    height: 84px;
-    width: 84px;
+    min-height: 84px;
+    min-width: 84px;
     background-color: #fff;
     border-radius: 10px;
     overflow: hidden;
@@ -127,29 +139,27 @@ main>.uk-h4{
     span.o-cost{opacity: .9}
 }
 .ord-tov-but{
-    margin-left: auto;
-}
-.ord-tov-but{
+    --heart-size: 40px;
     background-color: var(--color-all-flah);
+    margin: auto 0;
+    margin-left: auto;
     border-radius: 10px;
     height: 40px;
-    width: 40px;
+    min-width: 40px;
     padding: 5px;
     div{
-        margin: 0;
         height: 100%;
-        width: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
     }
+    input{margin: 0 !important}
 }
 
 .ord-right{
-    margin: 0;
     height: max-content;
     flex: 1;
-    margin-right: 45px;
+    min-width: 200px;
     font-weight: 500;
 }
 .ord-r-all{
@@ -160,3 +170,50 @@ main>.uk-h4{
 .ord-r-l span{font-size: .9em}
 .ord-r-r{font-size: 1.4em}
 .ord-r-r::after{content: '\20BD'}
+
+@media (max-width: 1220px) {
+    .ord-all{
+        gap: 0;
+        flex-direction: column;
+        margin-bottom: 55px;
+    }
+}
+@media (max-width: 600px) {
+    .ord-title h3{font-size: 1.234em}
+}
+@media (max-width: 450px) {
+    .ord-all{margin-top: 44px}
+    .ord-number{
+        left: 0;
+        right: unset;
+    }
+    .ord-tov-but{
+        --heart-size: 30px;
+        position: absolute;
+        background-color: transparent;
+        height: 30px;
+        min-width: 30px;
+        padding: 1px;
+        right: 5px;
+        top: 5px;
+    }
+    .ord-tovars{
+        display: grid;
+        grid-auto-flow: dense;
+        grid-template-columns: repeat(2, calc(50% - 4.5px));
+        gap: 24px 8px;
+    }
+    .ord-tovar{
+        position: relative;
+        flex-direction: column;
+        gap: 0;
+    }
+    .ord-tov-img, .ord-tov-img img, .ord-tov-img a{
+        width: 100%;
+        height: 180px;
+        max-width: none !important;
+        max-height: none !important;
+    }
+    .ord-tov-img img{object-fit: contain}
+    .ord-tov-info{padding: 0}
+}

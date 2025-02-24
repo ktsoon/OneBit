@@ -4,13 +4,11 @@
 {% block title %}OneBit — интернет-магазин{% endblock title %}
 
 {% block css %}
-  <style>.fon{background: linear-gradient(180deg, var(--color-all) 20%, rgba(184, 184, 184, 0) 60%);height: 400px}</style>
+  <style>.fon{background: linear-gradient(180deg, var(--color-all) 20%, rgba(184, 184, 184, 0) 60%);height: 400px;}</style>
   <link rel="stylesheet" href="{% static 'css/flex-tovars.css' %}">
   <style>
-    @media screen and (max-width:700px){
-      .h_home{margin-top:2.5px !important}
-      .h_home div{border: 2px solid violet}
-    }
+    @media screen and (max-width:700px){.h_home div{border: 2px solid violet}}
+    @media screen and (max-width: 380px) {.h_home{margin-top: 2.5px !important}}
   </style>
 {% endblock css %}
 

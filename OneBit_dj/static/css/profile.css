@@ -21,11 +21,9 @@
 
 .profile button{
     justify-content: center;
-
     border-radius: 10px;
     padding-bottom: 2.5px;
     padding-top: 2.5px;
-    svg{margin-top: auto}
 }
 
 .block_style{
@@ -51,7 +49,14 @@
     display: inline-flex;
     justify-content: center;
 }
-.exit button{display: inline-flex}
+.exit button{
+    display: flex;
+    align-items: center;
+    svg{
+        margin-top: 0;
+        margin-bottom: -4px;
+    }
+}
 
 /* avatar */
 .avatar{
@@ -157,10 +162,9 @@
 
 /* /comm/ */
 
-@media screen and (max-width:700px){
-    .h_user{margin-top: 2.5px !important}
-    .h_user div{border: 2px solid violet}
-}
+@media screen and (max-width:700px){.h_user div{border: 2px solid violet}}
+@media screen and (max-width: 380px) {.h_user{margin-top: 2.5px !important}}
+
 @media screen and (max-width:680px){
     .main{
         display: block;
@@ -171,7 +175,7 @@
     .exit{
         a{flex: 1}
         button{width:100%}
-        svg{margin-bottom: 12.5px}
+        svg{margin-bottom: -6px !important}
     }
     .avatar button,
     .exit button{

@@ -19,8 +19,7 @@ h1>sup {
     30%{border-color: #B00000}
     100%{border-color: #e5e5e5}
 }
-.danger-red{border-color: #B00000 !important}
-.danger-red:focus{border-color: #B00000 !important}
+.danger-red, .danger-red:focus{border-color: #B00000 !important}
 .content_2{
     margin-left: 100px;
     display: flex;
@@ -113,7 +112,7 @@ h1>sup {
 /* /adress/ */
 /* map */
 .map{
-    overflow: hidden;
+    position: relative;
     padding: 10px;
     display: flex;
 }
@@ -128,17 +127,16 @@ h1>sup {
     background-clip: content-box;
     padding-left: 10px;
     overflow-y: auto;
-    height: 400px;
+    height: 404px;
 }
 .map_adress{
     border: 2px dashed var(--color-all);
     background-color: rgba(211, 170, 232, .4);
     padding: 10px 5px 10px 5px;
     cursor: pointer;
-    margin-bottom: 15px;
     transition: padding .2s ease;
-    /* color: var(--color-all-border); */
 }
+.map_adress:not(:nth-last-child(1)){margin-bottom: 15px}
 .map_adress:not(.map_adress_select):hover{padding: 15px 5px 15px 5px}
 .map_adress_select{
     padding: 20px 5px 20px 5px;
@@ -314,10 +312,13 @@ h1>sup {
     .uk-card{
         color: black;
         min-width: 300px;
-        background-color: #f7f7f7;
+        background-color: #f8f8f8;
         padding: 10px;
-        border: 1px solid #ccc;
-        hr{border-color: #ccc;}
+        box-shadow: none;
+        hr{
+            border-color: #ccc;
+            margin: 10px 0;
+        }
     }
 }
 .button-buy-p{
