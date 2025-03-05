@@ -26,6 +26,7 @@
     height: 100%;
 }
 @media screen and (max-width:768px){
+    .baner img{border-radius: 5px}
     .baner .uk-position-center h2, 
     .baner .uk-position-center p {
         font-size: 0.81em;

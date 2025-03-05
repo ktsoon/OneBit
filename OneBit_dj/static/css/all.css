@@ -55,18 +55,18 @@ body{
     min-height: 100%;
 }
 main{
-    min-height: calc(100vh - 380px);
+    min-height: calc(100vh - 340px);
     max-width: var(--desktop-screen);
     padding: 0 16px;
     margin: 0 auto;
     margin-bottom: 10px;
 }
-@media screen and (max-width:600px){
+/* @media screen and (max-width:600px){
     .fon{
         background: linear-gradient(180deg, var(--color-all) 60%, rgba(184, 184, 184, 0) 100%);
         height: 100px;
     }
-}
+} */
 .title-h1{
     color: #333;
     margin: 10px 0;

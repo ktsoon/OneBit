@@ -172,6 +172,17 @@ main .list-tovar:nth-last-child(1) hr {
 
 /* Медиа-запросы */
 
+@media (max-width: 499px) {
+  .t-b-otz{
+    font-size: .8em;
+  }
+  .cost span:nth-child(1){
+    font-size: 18px;
+  }
+  .cost span:nth-last-child(1){
+    font-size: 14px;
+  }
+}
 @media (min-width: 500px) {.t-name{font-size: 1.275em}}
 @media (min-width: 768px) {
   .uk-slider > .tovar {

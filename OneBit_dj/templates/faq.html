@@ -15,7 +15,7 @@
     
 
 {% block content %}
-<h1 class="uk-h1">Вопросы и ответы (FAQ)</h1>
+<h1 class="title-h1">Вопросы и ответы</h1>
 <nav aria-label="Breadcrumb">
     <ul class="uk-breadcrumb bc">
         <li><a href="{% url 'home' %}">Главная</a></li>
@@ -23,7 +23,7 @@
     </ul>
 </nav>
 
-<div class="uk-flex uk-flex-wrap uk-flex-wrap-around uk-margin-medium-left uk-margin-medium-right" uk-nav="targets:> ul > li.uk-parent">
+<div class="uk-flex uk-flex-wrap uk-flex-wrap-around" uk-nav="targets:> ul > li.uk-parent">
     <ul class="uk-width-1 uk-width-1-2@m" >
         <li class="uk-card card-onebit uk-card-body uk-card-small uk-parent uk-margin-top">
             <a class="uk-width uk-text-large">Как посмотреть статус заказа? <span uk-nav-parent-icon></span></a>
@@ -106,6 +106,3 @@
 
 
 {% endblock content %}
-
-{% block header %}{% include "html/header.html" %}{% endblock %}
-{% block footer %}{% include "html/footer.html" %}{% endblock %}

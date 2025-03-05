@@ -23,19 +23,19 @@
         <li>Заказы</li>
     </ul>
 </nav>
-<div uk-filter="target: .js-filter">
+<div>
 
-    <ul class="uk-subnav uk-subnav-pill">
-        <li class="uk-active" uk-filter-control><a href="#">Все</a></li>
-        <li uk-filter-control="[data-dost*='act']"><a href="#">Актуальные</a></li>
-        <li uk-filter-control="[data-dost*='received']"><a href="#">Завершенные</a></li>
-        <li uk-filter-control="[data-dost*='cancelled']"><a href="#">Отменённые</a></li>
+    <ul class="uk-subnav-ord">
+        <li class="s-all"><a href="?sorting=all">Все</a></li>
+        <li class="s-act"><a href="?sorting=act">Актуальные</a></li>
+        <li class="s-received"><a href="?sorting=received">Завершенные</a></li>
+        <li class="s-cancelled"><a href="?sorting=cancelled">Отменённые</a></li>
     </ul>
 
-    <div class="js-filter uk-flex uk-flex-column order-all">
+    <div class="uk-flex uk-flex-column order-all">
         
         {% for ord in order %}
-            <div class="order" id="order" data-dost="{{ ord.dostavka }}">
+            <div class="order" id="order">
                 <div 
                 class="or-top"
                 {% if ord.dostavka == 'received' %}
@@ -88,7 +88,7 @@
                                 {% endif %}
                             {% endif %}
                         {% endif %}
-                        <span><span class="ord-dostavka {{ord.dostavka}}">{{ ord.get_dostavka_display }}</span> c {{ ord.date_update.date }} в {{ ord.date_update.time }}</span>
+                        <div><span class="ord-dostavka {{ord.dostavka}}">{{ ord.get_dostavka_display }}</span><span class="ord-date"> c {{ ord.date_update.date }} в {{ ord.date_update.time }}</span></div>
                     </div>
                     <div class="ord-r">
                     <a href="{% url 'order_details' ord.order_number %}">
@@ -112,6 +112,3 @@
 </div>
 
 {% endblock content %}
-
-{% block header %}{% include "html/header.html" %}{% endblock %}
-{% block footer %}{% include "html/footer.html" %}{% endblock %}

@@ -34,8 +34,12 @@
                 <div><span href class="next" uk-icon="chevron-down"></span></div>
             </div>
             <div class="main-image uk-inline-clip uk-transition-toggle" tabindex="0" uk-lightbox>
+                
                 <a><!-- Картинка --></a>
             </div>
+            {% if tovar.skidka_cost %}
+                <div class="skidka skidka-product"><span>-{{ tovar.skidka|floatformat:0 }}</span></div>
+            {% endif %}
         </div>
         <div class="p-t-info">
             <h1 class="p-name-tovar" style="margin-top:0">
@@ -45,7 +49,13 @@
                 <div id="p-score">
                     <div id="rater"></div>
                 </div>
-                <li class="p-score-com"><a href="#reviews" class="uk-button-text" uk-scroll>{{ comments|length }} {{ comments|length|review_word }}</a></li>
+                <li class="p-score-com"><a href="#reviews" class="uk-button-text" uk-scroll>
+                    {% if comments %}
+                        {{ len_com }} {{ len_com|review_word }}
+                        {% else %}
+                        Отзывов пока нет
+                    {% endif %}
+                </a></li>
             </div>
             <div class="short-char">
 				{% for char in specs|slice:":6" %}
@@ -58,7 +68,9 @@
                         </div>
                     </div>
 				{% endfor %}
-				<div class="a_char"><a href="#characteristics" class="uk-button-text" uk-scroll>Перейти к описанию</a></div>
+                {% if tovar.descr %}
+				    <div class="a_char"><a href="#descr" class="uk-button-text" uk-scroll>Перейти к описанию</a></div>
+                {% endif %}
             </div>
       <div class="p_pokupka">
         <div class="cost p-cost">
@@ -67,7 +79,6 @@
             {% else %}
                 <span>{{ tovar.skidka_cost|intcomma }}</span>
                 <span>{{ tovar.cost|intcomma }}</span>
-                <span>-{{ tovar.skidka|floatformat:0 }}</span>
             {% endif %}
         </div>
         <div class="p-buttons">

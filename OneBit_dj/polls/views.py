@@ -1,19 +1,17 @@
-from django.shortcuts import render, redirect, get_object_or_404 # render - загруска страницы ; redirect - перенаправляет на другую страницу ; get_object_or_404 - запрос. при ошибки выдаст страницу 404
-from django.http import HttpResponseRedirect, JsonResponse # *JsonResponse - возвращает переменную js ; HttpResponse - вывод чистого html, заглушка
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse # *JsonResponse - возвращает переменную json
 from django.contrib.auth.decorators import login_required # перенос пользователя на страницу авторизации если он не вошол в профиль на определённой странице
-from django.views.generic import DetailView # DetailView - просмотр одной записи по ключу. ListView - просмотр сразу множества записей
-from django.contrib import messages # вывод сообщения (sing_in, sing_up, sing_out)
-from django.contrib.auth import login, authenticate, logout # сессия пользователя. удаление, добавление, проверка (sing_in, sing_up, sing_out)
-from django.core.paginator import Paginator # Pagination
-from .models import * # все модели
-from .forms import * # все формы
-# from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import DetailView # DetailView - просмотр одной записи по ключу.
+from django.contrib import messages # вывод сообщения
+from django.contrib.auth import login, authenticate, logout
+from django.core.paginator import Paginator
+from django.core.cache import cache
+from .models import *
+from .forms import *
 # __icontains неработает с SQLlite
-
 from django.db.models import Min, Max, Sum, F, Avg, Count, Q
-from datetime import datetime
 
-import itertools
+import itertools # используется в profile
 
 def char_add_tov(tov, count=5, basket=False):
     """ Создание словаря для хранения первых характеристик каждого товара """
@@ -83,15 +81,22 @@ title_list = [
 def index(request):
     """ Главная """
 
+    if not request.user.is_authenticated:
+        cache.clear()
+
     tovars = Tovars.objects.annotate(rating=Avg('comments__star'), count_com=Count('comments'))
 
     t1 = title_list if request.user.is_authenticated and history_tovars.objects.filter(user=request.user).count() > 5 else title_list[1:]
 
-    data = {
+    favorites = []
+    if request.user.is_authenticated:
+        favorites = favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
+    context = {
         't1': t1,
-        "tovars": tovars
+        "tovars": tovars,
+        'favorites': list(favorites)
     }
-    return render(request, 'index.html', data)
+    return render(request, 'index.html', context)
 
 class productDetailView(DetailView):
     """ Товар """
@@ -134,6 +139,7 @@ class productDetailView(DetailView):
         # комментарии
         com = comments.objects.filter(tovar__slug=slug).order_by('-created_at')
         if com: 
+            context['len_com'] = com.count()
             if self.request.user.is_authenticated:
                 user_comments = com.filter(user=user)
                 if user_comments: context['user_comments'] = True
@@ -180,7 +186,6 @@ def favorite_check(request):
 
 def sing_in(request):
     """ Авторизация пользователя """
-
     # при первом заходе на сайт
     if request.method == 'GET':
         form = LoginForm()
@@ -199,7 +204,7 @@ def sing_in(request):
                 return redirect('home')
 
         # форма не прошла проверку
-        messages.success(request, "Неверный email или пароль")
+        messages.success(request, "Неверный логин или пароль")
 
     return render(request, 'login.html', {"form": form})
 def sing_up(request):
@@ -226,6 +231,7 @@ def sing_up(request):
 def sing_out(request):
     logout(request)
     messages.success(request,'Вы успешно вышли.')
+    cache.clear()
     return redirect("home")
 
 @login_required
@@ -245,7 +251,7 @@ def favorites(request):
         )
     ).select_related('tovar').annotate(
         rating=Avg('tovar__comments__star'),         # Средний рейтинг товара
-        count_com=Count('tovar__comments')        # Количество отзывов
+        count_com=Count('tovar__comments')           # Количество отзывов
     )
     if sorting == 'new' or not sorting:
         tovars = tovars.order_by('created_at')
@@ -258,6 +264,10 @@ def favorites(request):
     elif sorting == 'exp':
         tovars = tovars.order_by('-tovar__skidka_cost', '-tovar__cost')
         sorting_name = 'Сначала дорогие'
+
+
+    favorites = favoritess.objects.filter(user=user).values_list('id', flat=True)
+    context['favorites'] = list(favorites)
 
     context['tovars'] = tovars
     context["tovar_img"] = img_tovar.objects.all()
@@ -484,9 +494,14 @@ def search(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    # Избранное
+    favorites = []
+    if request.user.is_authenticated:
+        favorites = favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
+    context['favorites'] = favorites
+
     context.update({
         'tovars': char_add_tov(page_obj),
-        'count_tov': len(tov),
         'page_obj': page_obj,
         'sorting': sorting,
         'sort_option': sort_option,
@@ -576,9 +591,14 @@ def category(request, cat_slug):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    # Избранное
+    favorites = []
+    if request.user.is_authenticated:
+        favorites = favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
+    context['favorites'] = favorites
+
     context.update({
         'tovars': char_add_tov(page_obj),
-        'count_tov': tov.count(),
         'page_obj': page_obj,
         'category': cat,
         'search': cat.category.lower(),
@@ -639,6 +659,12 @@ def baskett(request):
     tov_ids = tov.values_list('tovar', flat=True)
     tov_img = img_tovar.objects.filter(tovar__in = tov_ids, is_video=False)
 
+    # Избранное
+    favorites = []
+    if request.user.is_authenticated:
+        favorites = favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
+
+    context['favorites'] = favorites
     context['tovars'] = char_add_tov(tov, basket=True)
     context['tovars_if_select'] = tov
     context['tovar_img'] = tov_img
@@ -821,19 +847,31 @@ def order_confirmation(request):
 
 @login_required
 def orderr(request):
-    us = request.user
+    """ Список заказов """
     context = {}
-
+    us = request.user
+    sorting = request.GET.get("sorting")
+    
     ordd = order.objects.filter(user=us).annotate(
         total_price=Sum(F('tovar_order__t_count') * F('tovar_order__t_cost'))
         ).order_by('-date_update')
-    context['order'] = ordd
+    
+    if sorting:
+        if sorting == 'act':
+            ordd=ordd.filter(dostavka__in=['collect','goes','delivered'])
+        if sorting == 'received':
+            ordd=ordd.filter(dostavka='received')
+        if sorting == 'cancelled':
+            ordd=ordd.filter(dostavka='cancelled')
 
+
+    context['order'] = ordd
     context['img'] = img_tovar.objects.filter(is_video=False)
     return render(request, "order.html", context)
 
 @login_required
 def order_details(request, order_number):
+    """ Подробности заказа """
 
     context = {}
 
@@ -844,6 +882,12 @@ def order_details(request, order_number):
     context['results'] = order.objects.filter(user=request.user, order_number=order_number).aggregate(
         total_count=Sum('tovar_order__t_count'),
         total_cost=Sum(F('tovar_order__t_count') * F('tovar_order__t_cost')))
+    
+    # Избранное
+    favorites = []
+    if request.user.is_authenticated:
+        favorites = favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
+    context['favorites'] = favorites
 
     return render(request, 'order_details.html', context)
 
@@ -879,6 +923,8 @@ def comm_add_edit(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def faq(request):
+    """Render the FAQ page."""
+
     return render(request, 'faq.html')
 
 

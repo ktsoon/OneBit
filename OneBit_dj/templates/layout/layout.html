@@ -1,4 +1,5 @@
 {% load static %}
+{% load cache %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -15,11 +16,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     {# ---------------------------/jquery/--------------------------- #}
 
-    {# ----------------------------slider---------------------------- #}
+    {# ----------------------------uikit---------------------------- #}
     <link rel="stylesheet" href="{% static 'slider/uikit.css' %}">
     <script src="{% static 'slider/uikit.min.js' %}"></script>
     <script src="{% static 'slider/uikit-icons.min.js' %}"></script>
-    {# ---------------------------/slider/--------------------------- #}
+    {# ---------------------------/uikit/--------------------------- #}
 
     <link rel="stylesheet" href="{% static 'css/all.css' %}"> 
     <link rel="stylesheet" href="{% static 'css/header.css' %}">
@@ -31,12 +32,24 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-    {% block header %}{% endblock %}
+    {% if user.is_authenticated %}
+        {% cache 600 header %}
+            {% include "html/header.html" %}
+        {% endcache %}
+    {% else %}
+        {% include "html/header.html" %}
+    {% endif %}
     <main>
         <div class="fon"></div>
         {% block content %}{% endblock %}
     </main>
-    {% block footer %}{% endblock %}
+    {% if user.is_authenticated %}
+        {% cache 600 footer %}
+            {% include "html/footer.html" %}
+        {% endcache %}
+    {% else %}
+        {% include "html/footer.html" %}
+    {% endif %}
 
     {% block scripts %}{% endblock scripts %}
     
@@ -774,5 +787,14 @@
     });  
 </script>
 {% endif %}
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YRKRJ97XQP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-YRKRJ97XQP');
+</script>
 </body>
 </html>

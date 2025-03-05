@@ -10,13 +10,11 @@ button.uk-button-onebit-transparent{
     background-color: #fff;
     border: 2px solid var(--color-all);
 }
-button.uk-button-onebit-transparent:hover{
+.fav-filter button.uk-button-onebit-transparent:hover{
     background-color: var(--color-all);
     color: #fff !important;
 }
-.fav-filter:active ~ button.uk-button-onebit-transparent{
-    background-color: var(--color-all-border);
-}
+.fav-filter button.uk-button-onebit-transparent:active{background-color: var(--color-all-bord)}
 .uk-nav-filter{
     padding: 0;
     a{
@@ -36,6 +34,7 @@ sup{
 /* /фильтры/ */
 
 /* товары */
+.tovars-flex{margin-top: 15px}
 .t-bottom{margin-bottom: 5px}
 .button-buy-f{
     margin-top: auto;

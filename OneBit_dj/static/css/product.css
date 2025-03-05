@@ -1,36 +1,37 @@
+:root{
+    --heart-size: 50px
+}
 .product{
-    margin: 10px 20px 25px 20px;
+    margin: 10px 0 25px;
     a:hover{color: var(--color-all-border)}
 }
 .p-name-tovar{
-    font-size: 36px;
-    font-weight: 700;
+    font-size: 2em;
     margin-bottom: 10px;
 }
 .p-tovar{
     margin-top: 20px;
     display: flex;
-    gap: 25px;
+    gap: 20px;
 }
 .uk-lightbox-panel{background-color: rgba(0, 0, 0, 0.9)}
 /* -----slider img----- */
 .slider {
     display: flex;
     position: relative;
+    gap: 20px;
 }
 .main-image {
-    width: 500px;
+    flex: 1;
     height: 500px;
     display: block;
-    margin-left: 20px;
-    border-radius: 20px;
 }
 .main-image img,
 .main-image video {
+    min-width: 250px;
     width: 100%;
     height: 100%;
     object-fit: contain;
-    border-radius: 20px;
 }
 
 /* Стили для пагинации */
@@ -132,24 +133,21 @@
 /* ----product right---- */
 .p-t-info-score{
     display: inline-flex;
-    gap: 5px;
-    font-size: 20px;
+    gap: 15px;
+    font-size: 1.345em;
     margin-bottom: 10px;
 }
 .p-score-com{
     color: var(--color-all);
     font-weight:700;
-    position: relative;
-    right: -10px;
     a{
-        position: relative;
         left: -6px;
         color: var(--color-all);
     }
 }
 .short-char{
-    max-width: 700px;
-    font-size: 18px;
+    max-width: 600px;
+    font-size: 1.121em;
 }
 .uk-leader-fill::after {
     font-size: 7px;
@@ -160,30 +158,21 @@
 .a_char a{
     font-weight: 600;
 }
-/* .s-char-2 div:nth-last-child(1){
-    padding-left: 10px;
-    display: flex;  
-    align-items: flex-end;
-} */
 .a_char{
     margin: 10px 0;
     width: 300px;
-    a{
-        color: var(--color-all);
-    }
-}
-.p_pokupka{
-    margin-top: 40px;
+
+    a{color: var(--color-all)}
 }
 .p-cost>span:nth-child(1){
     font-size: 32px;
 }
-.p-cost>span:nth-child(2),
-.p-cost>span:nth-child(3){
+.p-cost>span:nth-child(2){
     font-size: 24px;
 }
 .p-buttons{
-    display: inline-flex;
+    display: flex;
+    align-items: end;
 }
 .button-buy-p{
     margin-top: 10px;
@@ -203,15 +192,74 @@
     &:hover{background-color: #e4e4e4}
     &:active{background-color: #dbdbdb}
 }
+.but-heart{
+    margin-left: 10px;
+    transform: translateY(calc(var(--heart-size)* -1));
+}
+.skidka-product{
+    top: 10px;
+    right: 10px;
+    bottom: unset;
+    left: unset;
+    font-size: unset;
+
+}
 /* ----/product right/---- */
 
 
 
 
 /* descr */
-.descr{
-    width: 85%;
-    margin: 0 auto;
-    /* p{word-break: break-all} */
-}
+/* .descr{
+    p{word-break: break-all}
+} */
 /* /descr/ */
+
+
+@media (max-width: 1024px) {
+    .p-tovar{
+        flex-direction: column;
+    }
+    .p-buttons button{
+        width: calc(100% - var(--heart-size) - 10px);
+        padding: unset;
+    }
+}
+@media (max-width: 700px) {
+    .pagination>div:not(:last-child){
+        margin-bottom: 0;
+        margin-right: 5px;
+    }
+    .slider{
+        gap: 5px;
+        flex-direction: column-reverse;
+    }
+    .pagg{
+        overflow: unset;
+        overflow-x: scroll;
+        height: unset;
+        margin-top: 0 !important;
+        padding-bottom: 10px;
+    }
+    .pagination{
+        display: flex;
+        margin-top: 0 !important;
+    }
+    .slider-product{
+        display: none;
+    }
+    .main-image img, .main-image video{
+        height: 350px;
+    }
+}
+@media screen and (max-width: 768px) {
+    .button-buy-p {
+        font-size: unset;
+    }
+    .p-name-tovar{
+        font-size: 29px;
+    }
+}
+@media screen and (max-width: 450px) {
+    .short-char{display: none}
+}

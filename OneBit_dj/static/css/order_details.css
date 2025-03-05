@@ -78,6 +78,7 @@
 .dost-info-det{
     border-radius: 10px;
     max-width: max-content;
+    padding: 0 10px;
 }
 .dost-img{
     min-width: 40px;
@@ -170,6 +171,8 @@
 .ord-r-l span{font-size: .9em}
 .ord-r-r{font-size: 1.4em}
 .ord-r-r::after{content: '\20BD'}
+
+.uk-label-danger{white-space: wrap}
 
 @media (max-width: 1220px) {
     .ord-all{

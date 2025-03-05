@@ -1,5 +1,7 @@
 {% load static %}
 {% load polls_tags %}
+{% load cache %}
+
 
 {% if user.is_superuser == 1 %} {# для коректного отображения администратора на телефоне #}
 <style>@media screen and (max-width:700px){.catalog{width:16.9% !important}.h_right{width:83.334%;left:16.667%}}</style>
@@ -19,26 +21,28 @@
         <button class="uk-offcanvas-close uk-font btn-close" type="button" uk-close></button>
         <h2 class="uk-card-default uk-padding-small uk-margin-remove-top">Категории</h2>
         <ul class="uk-nav">
-            {% specifications as spec %}
-            {% Gl_specifications as gl_spec %}
-            {% for gl_s in gl_spec %}
-                <li>
-                    <a href="#">{{ gl_s }} <span uk-icon="chevron-right"></span></a>
-                    <div class="uk-card uk-card-body uk-card-default drop-min-category" uk-drop="animation: reveal-left; animate-out: true;">
-                        <a class="btn-close" onclick="closeDrop(this)" uk-icon="close"></a>
-                        <div>
-                    {% for s in spec %}
-                        {% if forloop.first %}
-                            <span>{{ gl_s }}</span>
-                        {% endif %}
-                        {% if gl_s == s.Gl_category %}
-                        <a href="{% url 'category' s.slug %}">{{ s }} {# <sub>({{ spec|length }})</sub> #}</a>
-                        {% endif %}
-                    {% endfor %}
+            {% cache 600 category_list %}
+                {% specifications as spec %}
+                {% Gl_specifications as gl_spec %}
+                {% for gl_s in gl_spec %}
+                    <li>
+                        <a href="#">{{ gl_s }} <span uk-icon="chevron-right"></span></a>
+                        <div class="uk-card uk-card-body uk-card-default drop-min-category" uk-drop="animation: reveal-left; animate-out: true;">
+                            <a class="btn-close" onclick="closeDrop(this)" uk-icon="close"></a>
+                            <div>
+                        {% for s in spec %}
+                            {% if forloop.first %}
+                                <span>{{ gl_s }}</span>
+                            {% endif %}
+                            {% if gl_s == s.Gl_category %}
+                            <a href="{% url 'category' s.slug %}">{{ s }} {# <sub>({{ spec|length }})</sub> #}</a>
+                            {% endif %}
+                        {% endfor %}
+                            </div>
                         </div>
-                    </div>
-                </li>
-            {% endfor %}
+                    </li>
+                {% endfor %}
+            {% endcache %}
         </ul>
     </div>
 </div>
@@ -69,7 +73,8 @@
         </a>
         <a class="h_user" href="{% url 'profile' %}">
             <div>
-                {% avatar_img user as user_id %}
+                {% cache 600 avatar_img %}
+                    {% avatar_img user as user_id %}
                     {% if user_id %}
                         <img style="
                         margin-top:2.5px;
@@ -82,27 +87,30 @@
                     {% else %}
                         <span uk-icon="icon: user; ratio: 1.5"></span>
                     {% endif %}
+                {% endcache %}
                 <span>{{ user.username }}</span>
             </div>
         </a>
         {% else %} {# если пользователь уже авторизирован #}
             <a class="h_user" href="{% url 'profile' %}">
                 <div>
-                    {% avatar_img user as user_id %}
-                    {% if user_id %}
-                        <img class="user-auth-img"
-                        style="
-                        margin-top:2.5px;
-                        object-fit: contain;
-                        border-radius:10px;
-                        max-width:80px" 
-                        src="/{{user_id}}" 
-                        alt="{{user}}" 
-                        height="30">
-                        <span class="user-auth-icon" uk-icon="icon: user; ratio: 1.5"></span>
-                    {% else %}
-                        <span uk-icon="icon: user; ratio: 1.5"></span>
-                    {% endif %}
+                    {% cache 600 avatar_img %}
+                        {% avatar_img user as user_id %}
+                        {% if user_id %}
+                            <img class="user-auth-img"
+                            style="
+                            margin-top:2.5px;
+                            object-fit: contain;
+                            border-radius:10px;
+                            max-width:80px" 
+                            src="/{{user_id}}" 
+                            alt="{{user}}" 
+                            height="30">
+                            <span class="user-auth-icon" uk-icon="icon: user; ratio: 1.5"></span>
+                        {% else %}
+                            <span uk-icon="icon: user; ratio: 1.5"></span>
+                        {% endif %}
+                    {% endcache %}
                     <span>{{ user.username }}</span>
                 </div>
             </a>

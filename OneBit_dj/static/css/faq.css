@@ -1,10 +1,4 @@
-h1.uk-h1{
-    padding: 0 20px;
-    font-weight: 500;
-    margin: 10px 25px
-}
 cite{color: var(--color-all-border)}
-.bc{margin-bottom: 0}
 .order-status span{
     border-radius: 10px;
     padding: 2.5px;
@@ -17,12 +11,10 @@ cite{color: var(--color-all-border)}
 .received{background-color: var(--color-all-light)}
 .cancelled{background-color: #A6A6A6}
 
-.uk-nav-parent-icon svg{width: 24px;height: 24px;}
-li.uk-open a{opacity: 1}
+.uk-nav-parent-icon svg{width: 24px;height: 24px}
 .card-onebit{
-    box-shadow: 0px 0px 40px 4px rgba(34, 60, 80, 0.2);
-    /* background-color: var(--color-all-flah); */
-    background-color: #fff;
+    /* box-shadow: 10px 10px 14px 2px rgba(34, 60, 80, 0.2); */
+    background-color: #f5f7fa;
     border-radius: 20px;
     color: #000;
     a{
@@ -66,4 +58,12 @@ form input{
     .uk-margin-left\@s {
         margin-left: 20px !important;
     }
+}
+@media (max-width: 500px) {.uk-text-large{font-size: 1.2rem}
+@media (max-width: 400px) {
+    .title-h1{font-size: 2em}
+    .show-faq{
+        font-size: 0.912em;
+    }
+}
 }

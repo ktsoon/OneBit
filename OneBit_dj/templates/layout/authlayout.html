@@ -1,28 +1,39 @@
-{% extends "layout/layout.html" %}
-
 {% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>{% block title %}{% endblock %}</title>
+   <link rel = "stylesheet" href ="{% static 'font/GTEestiPro/stylesheet.css' %}" type = "text/css" />
+   <link rel="icon" href="{% static 'img/logo2.png' %}">
+   
+   {# ----------------------------uikit---------------------------- #}
+   <link rel="stylesheet" href="{% static 'slider/uikit.css' %}">
+   <script src="{% static 'slider/uikit.min.js' %}"></script>
+   <script src="{% static 'slider/uikit-icons.min.js' %}"></script>
+   {# ---------------------------/uikit/--------------------------- #}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'css/register.css' %}">
-<link rel="stylesheet" href="{% static 'css/bg_aut.css' %}">
-{% comment %} <script src="https://unpkg.com/imask"></script> {# https://imask.js.org/ #} {% endcomment %}
-{% endblock css %}
+   <link rel="stylesheet" href="{% static 'css/all.css' %}"> 
+   <link rel="stylesheet" href="{% static 'css/register.css' %}">
+   <link rel="stylesheet" href="{% static 'css/bg_aut.css' %}">
+   {% comment %} <script src="https://unpkg.com/imask"></script> {# https://imask.js.org/ #} {% endcomment %}
+</head>
+<body>
+   <div id="bg"></div>
 
-{% block content %}
-<div id="bg"></div>
+   <div id="aut">
+   <div class="logo-auth"><a href="{% url 'home' %}"><img src="{% static 'img/logo1.png' %}" alt="logo1" height="50"></a></div>
+   <div class="aut-menu">
+   <form method="post" novalidate> {% csrf_token %}
+      
+      {% block auth_content %}
+      
+      {% endblock auth_content %}
 
-<div id="aut">
-<div class="logo-auth"><a href="{% url 'home' %}"><img src="{% static 'img/logo1.png' %}" alt="logo1" height="50"></a></div>
-<div class="aut-menu">
- <form method="post" novalidate> {% csrf_token %}
-    
-    {% block auth_content %}
-    
-    {% endblock auth_content %}
-
- </form>
-</div>
-</div>
-
-{% endblock %}
+   </form>
+   </div>
+   </div>
+</body>
+</html>
 

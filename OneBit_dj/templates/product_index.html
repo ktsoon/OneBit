@@ -54,7 +54,7 @@
     {% include "html/characteristics.html" %}
 
     {% if tovar.descr %}
-    <div class="descr">
+    <div class="descr" id="descr">
       <h2>Описание</h2>
       <p>{{ tovar.descr|safe }}</p>
     </div>
@@ -63,6 +63,3 @@
     {% include "html/reviews.html" %}
     
 {% endblock content %}
-
-{% block header %}{% include "html/header.html" %}{% endblock %}
-{% block footer %}{% include "html/footer.html" %}{% endblock %}

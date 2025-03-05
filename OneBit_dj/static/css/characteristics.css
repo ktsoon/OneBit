@@ -1,4 +1,4 @@
-.char_gl div div:not(:nth-last-child(1)) hr{
+.char_gl > div > div:not(:nth-last-child(1)) hr{
     border-top: 1px solid #e5e5e5;
     margin: 10px 0;
     width: 50%;
@@ -8,21 +8,15 @@
     font-size: 14px;
     width: 600px;
 }
-.characteristics{
-    width: 85%;
-    margin: 0 auto;
-}
 .char_gl{
-    margin-top: 25px;
+    margin-left: 20px;
+    margin-top: 15px;
     font-weight: 600;
     display: flex;
     flex-wrap: wrap;
     .first-half{
-        width:35%;
-        margin-right: 5%;
-    }
-    .second-half{
-        width: 60%;
+        min-width:35%;
+        margin-right: 20px;
     }
     h3{
         font-weight: 600;
@@ -32,7 +26,6 @@
 }
 .s-char-small-flex {
     display: flex;
-    font-size: 16px;
 }
 .s-char-small-ch{
     color: rgb(88, 88, 88);
@@ -44,30 +37,19 @@
     margin-top: 2px;
     
 }
-@media screen and (max-width:1400px){
-    .first-half{
-        width: 40%;
-    }
-}
-@media screen and (max-width:1000px){
-    .first-half{
-        width: 45%;
-        margin-right: 5%;
-    }
-}
-@media screen and (max-width:650px){
+@media screen and (max-width:700px){
     .char_gl{
         display: block;
     }
-    .first-half{
-        width: 100% !important;
-        hr{
-            border-top: 1px solid #e5e5e5;
-            margin: 10px 0;
-            width: 50%;
-        }
+    .second-half, .first-half{width: 100% !important}
+    .first-half hr{
+        border-top: 1px solid #e5e5e5;
+        margin: 10px 0;
+        width: 50%;
     }
-    .second-half{
-        width: 100% !important;
+    .char_gl > .first-half hr{
+        border-top: 1px solid #e5e5e5;
+        margin: 10px 0;
+        width: 50%;
     }
 }

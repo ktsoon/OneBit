@@ -35,10 +35,6 @@ def specifications(): return Category.objects.all()
 @register.simple_tag
 def Gl_specifications(): return Gl_category.objects.all()
 
-""" вкл сердечко для избраного если оно уже добавлено. для всех товаров """
-@register.simple_tag
-def count_favorites_tovar(user, tovar): return favoritess.objects.filter(user=user, tovar__name=tovar).count()
-
 """ все изображения товаров """
 @register.simple_tag
 def tovar_img_all(): return img_tovar.objects.all()

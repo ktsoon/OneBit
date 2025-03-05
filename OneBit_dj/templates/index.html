@@ -1,5 +1,6 @@
 {% extends "layout/layout.html" %}
 {% load static %}
+{% load cache %}
 
 {% block title %}OneBit — интернет-магазин{% endblock title %}
 
@@ -40,5 +41,3 @@
   
 {% endblock content %}
 
-{% block header %}{% include "html/header.html" %}{% endblock %}
-{% block footer %}{% include "html/footer.html" %}{% endblock %}

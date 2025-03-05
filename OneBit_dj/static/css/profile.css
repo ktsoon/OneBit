@@ -135,25 +135,49 @@
 
 /* comm */
 .list_comm_t{
-    display: flex;
-    gap: 20px;
+    display: grid;
+    grid-auto-flow: dense;
+    grid-template-columns: repeat(2, 50%);
+    gap: 24px 8px;
+    margin-top: 15px;
 }
-.bs_comm{width: calc(100% - 50px)}
+@media (min-width: 866px) {
+    .list_comm_t {
+        grid-template-columns: repeat(4, calc(25% - 6.3px));
+        row-gap: 32px;
+    }
+}
+@media (min-width: 1024px) {
+    .list_comm_t {
+        grid-template-columns: repeat(5, calc(20% - 6.67px));
+        row-gap: 40px;
+    }
+}
+@media (min-width: 1280px) {
+    .list_comm_t {
+        grid-template-columns: repeat(6, calc(16.6667% - 6.67px));
+        row-gap: 30px;
+    }
+}
+
+.bs_comm{
+    width: calc(100% - 50px);
+    margin-bottom: 55px;
+}
 .bs_comm:hover{
     transform: none !important;
     box-shadow: var(--shadow);
     h3{color: #fff}
 }
 .comm_t{
-    max-width: 150px;
-    margin-top: 15px;
+    width: 100%;
     transition: transform .2s ease;
     &:hover{transform: scale(1.05)}
 }
 .comm_t img{
-    max-width: 100%;
-    max-height: 150px;
-    border-radius: 10px;
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
 }
 .comm_t span{
     color: #fff;
@@ -165,7 +189,7 @@
 @media screen and (max-width:700px){.h_user div{border: 2px solid violet}}
 @media screen and (max-width: 380px) {.h_user{margin-top: 2.5px !important}}
 
-@media screen and (max-width:680px){
+@media screen and (max-width:700px){
     .main{
         display: block;
         margin-bottom: 65px;
@@ -181,5 +205,8 @@
     .exit button{
         height: 50px;
         font-size: 1.5em;
+    }
+    .comm_t span{
+        font-size: 21px;
     }
 }
