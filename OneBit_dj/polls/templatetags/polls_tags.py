@@ -27,7 +27,7 @@ def avatar_img(userr):
 
 """ количество одного товара в корзине """
 @register.simple_tag
-def bask_count(tov, us): return basket.objects.filter(user__id=us, tovar__id=tov)[0].t_count
+def bask_count(tov, us): return Basket.objects.filter(user__id=us, tovar__id=tov)[0].t_count
 
 """ возвращение всех категорий для каталога """
 @register.simple_tag
@@ -40,29 +40,9 @@ def Gl_specifications(): return Gl_category.objects.all()
 def tovar_img_all(): return img_tovar.objects.all()
 
 """ недавно просмотренные товары """
-@register.simple_tag
-def history_tovars_all(user):
-    a = history_tovars.objects.filter(user=user).order_by('-created_at')[:20].select_related('tovar').annotate(
-        rating=Avg('tovar__comments__star'),         # Средний рейтинг товара
-        count_com=Count('tovar__comments')        # Количество отзывов
-    )
-    for i in a:
-        i=i.tovar
-        if i.skidka_cost:
-            i.skidka = round(100 * (i.cost - i.skidka_cost) / i.cost)
-    return a
-
-""" Акции и скидки товары """
-@register.simple_tag
-def skidka_tovars_all():
-    return Tovars.objects.annotate(
-        skidka=ExpressionWrapper(
-            100 * (F('cost') - F('skidka_cost')) / F('cost'),
-            output_field=FloatField()
-        ),
-        rating=Avg('comments__star'),
-        count_com=Count('comments')
-    ).exclude(skidka_cost=None).order_by('-skidka', '-count_com','-rating')[:20]
+# @register.simple_tag
+# def history_tovars_all(user):
+#     return History_tovars.objects.filter(user=user)[:20]
 
 """ Скидка определённого товара """
 @register.simple_tag
@@ -99,7 +79,4 @@ def pluralize_goods(count):
     else:
         return "товаров"
     
-""" Популярные товары """
-@register.filter
-def popular_tovar_order(tovars): return tovars.order_by('-count_com','-rating')
 

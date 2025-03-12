@@ -4,6 +4,60 @@ ul li {
 main .list-tovar:nth-last-child(1) hr {
   display: none;
 }
+
+/* пустая карточка */
+.blank-img{
+  font-size: 1.125rem;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  text-anchor: middle;
+  cursor: wait;
+}
+.blank-placeholder{
+  display: inline-block;
+  min-height: 1em;
+  vertical-align: middle;
+}
+.blank-glow{
+  cursor: wait;
+  background-color: currentcolor;
+  opacity: .5;
+  animation: placeholder-glow 2s ease-in-out infinite;
+}
+@keyframes placeholder-glow{
+  50% {
+    opacity: .2;
+  }
+}
+.blank-dots{
+  width: 50px;
+  height: 7px;
+  margin: 0 auto;
+}
+.blank-placeholder-big{
+  font-size: 1.25rem;
+}
+.blank-cost span{
+  vertical-align: sub;
+  width: 40%;
+}
+.blank-header{
+  margin-top: 5px;
+}
+.blank-header span:nth-child(1){
+  width: 100%;
+}
+.blank-header span:nth-child(2){
+  width: 70%;
+}
+.blank-info{
+
+}
+
+/* /пустая карточка/ */
+
+
 /* slider */
 .hvr__images,
 .hvr__media {

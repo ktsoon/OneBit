@@ -1,32 +1,30 @@
 from django.db import models
 from django.urls import reverse
 from django.core.validators import FileExtensionValidator
-from django.db.models import ExpressionWrapper, F, FloatField
+from django.db.models import Avg
 from datetime import datetime
+from django.contrib.auth.models import User
 
-from ckeditor.fields import RichTextField
+from ckeditor.fields import RichTextField # описание товара
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from django.contrib.auth.models import User
+from django.core.files.storage import default_storage
+from django.dispatch import receiver
+from django.db.models.signals import pre_delete
+from django.core.files.base import ContentFile
+from PIL import Image
+import os
 
 """ путь сохранения картинок к производителям """
 def img_avtor(instance, fullname):  return f'static/img/Avtor/{instance.avtor.id}/{fullname}'
 
 """ путь сохранения картинок к товару """
-def img_tovar(instance, fullname):  return f'static/img/tovar/{instance.tovar.id}/{fullname}'
+def img_tovar(instance, fullname):  return f'static/img/tovar/{instance.tovar.slug}/{fullname}'
 
 """ путь сохранения аватарок пользователя """
 def img_users(instance, fullname):  return f'static/img/users/{instance.user.id}/{fullname}'
 
-class TovarsSkidka(models.Manager): # для скидки товара
-    def get_queryset(self):
-        return super().get_queryset().annotate(
-            skidka=ExpressionWrapper(
-                100 * (F('cost') - F('skidka_cost')) / F('cost'),
-                output_field=FloatField()
-            )
-        )
 
 """ -----------------migrate----------------- """
 # python manage.py makemigrations
@@ -53,18 +51,33 @@ class Tovars(models.Model):
     
     name = models.CharField("Название", max_length=255, blank=False, help_text="Введите название товара (без названия категории)")
     slug = models.SlugField("URL", max_length=255, unique=True, db_index=True, help_text="если ошибка: поля повторяются. то измениете поле")
-    category = models.ForeignKey("Category", verbose_name='Категория', on_delete=models.CASCADE, blank=False, help_text="Выберите категорию")
+    category = models.ForeignKey("Category", verbose_name='Категория', on_delete=models.CASCADE, blank=False, help_text="Выберите категорию", related_name="tovars")
     avtor = models.ForeignKey("Avtor", verbose_name='Производитель', on_delete=models.PROTECT, help_text="Выберите Производителя товара")
-    cost = models.IntegerField("Цена", blank=False)
-    skidka_cost = models.IntegerField("Цена со скидкой", null=True, blank=True, help_text="можно оставить пустым")
-    descr = RichTextField("Описание" ,max_length=2000, blank=True, null=True, default=None, help_text="Описание товара")
+    cost = models.DecimalField("Цена", blank=False, max_digits=12, decimal_places=2)
+    skidka_cost = models.DecimalField("Цена со скидкой", null=True, blank=True, help_text="можно оставить пустым", max_digits=12, decimal_places=2)
+    descr = RichTextField("Описание", max_length=2000, blank=True, null=True, default=None, help_text="Описание товара")
     t_count = models.PositiveIntegerField("Количество товаров", default=99, validators=[MinValueValidator(1), MaxValueValidator(10000)])
     created_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
 
-    objects = TovarsSkidka()
+    @property
+    def rating(self):
+        """Возвращает средний рейтинг товара."""
+        return self.comments.aggregate(Avg("star"))["star__avg"] or 0
     
-
+    @property
+    def review_count(self):
+        """Возвращает количество отзывов."""
+        return self.comments.count()
+    
+    @property
+    def skidka(self):
+        """Возвращает процент скидки."""
+        if self.skidka_cost:
+            return round(100 * (self.cost - self.skidka_cost) / self.cost)
+        return 0
+    
     class Meta:
+        ordering = ['-created_at']
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
 
@@ -108,28 +121,90 @@ class Category(models.Model):
     def get_absolute_url(self):
         return reverse("Category_detail", kwargs={"pk": self.pk})
 
-class img_tovar(models.Model):
+class ImgTovar(models.Model):
     """ Картинки к товарам """
 
-    tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, db_index=True, help_text="Выберите товар")
+    tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, help_text="Выберите товар", related_name="images")
     img = models.FileField("Картинка или видео", upload_to=img_tovar, null=True, blank=False, validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','jfif','pjpeg','pjp','png','svg','webp','gif','avi','flv','mp4','mpg'])])
     is_video = models.BooleanField("Видео", default=False, help_text="ставиться автомитически. если нет, то поставте")  # Поле для определения, является ли файл видео
 
     def save(self, *args, **kwargs):
-        if self.img:
-            # Получаем расширение файла
-            extension = self.img.name.split('.')[-1].lower()
-            # Если расширение соответствует видеоформату, устанавливаем is_video в True
-            if extension in ['avi', 'flv', 'mp4', 'mpg']:
-                self.is_video = True
+        # Проверяем, является ли файл видео
+        if self.img.name.lower().endswith(('.mp4', '.mov', '.avi', '.mkv', '.webm')):
+            self.is_video = True  # Устанавливаем галочку автоматически
+        else:
+            self.is_video = False  # Сбрасываем, если это не видео
+
         super().save(*args, **kwargs)
+
+        if not self.is_video:
+            self.create_resized_images()
+
+    def create_resized_images(self):
+        """Создает три версии изображения: миниатюру, среднее и оригинал."""
+        img_path = self.img.path
+        try:
+            img = Image.open(img_path)
+            sizes = {
+                "thumbnail": (150, 150),
+                "medium": (400, 400),
+            }
+
+            for size_name, max_size in sizes.items():
+                img_resized = img.copy()
+                img_resized.thumbnail(max_size)
+
+                file_root, file_ext = os.path.splitext(self.img.name)
+                new_filename = f"{file_root}_{size_name}{file_ext}"
+
+                temp_file = ContentFile(b"")
+                img_resized.save(temp_file, format=img.format)
+                default_storage.save(new_filename, temp_file)
+        except Exception as e:
+            print(f"Ошибка обработки изображения: {e}")  # Логируем ошибку, но не прерываем сохранение
+
+    def get_image_url(self, size="original"):
+        """Возвращает URL для нужного размера изображения."""
+        if size == "original":
+            return self.img.url
+        file_root, file_ext = os.path.splitext(self.img.url)
+        return f"{file_root}_{size}{file_ext}"
+    
+    @property
+    def thumbnail_url(self):
+        """Миниатюра (150x150)"""
+        return self.get_image_url("thumbnail")
+
+    @property
+    def medium_url(self):
+        """Средний размер (400x400)"""
+        return self.get_image_url("medium")
+
+    @property
+    def original_url(self):
+        """Полное изображение"""
+        return self.get_image_url("original")
+    
+    def delete_files(self):
+        """Удаляет все файлы изображений при удалении записи."""
+        if self.img:
+            file_root, file_ext = os.path.splitext(self.img.path)
+            for size in ["thumbnail", "medium", "original"]:
+                file_path = f"{file_root}_{size}{file_ext}" if size != "original" else self.img.path
+                if os.path.exists(file_path):
+                    os.remove(file_path)
 
     class Meta:
         verbose_name = "Картинка к товару"
         verbose_name_plural = "Картинки к товарам"
 
     def __str__(self):
-        return self.tovar.name
+        return f"Изображение {self.tovar.name}"
+    
+@receiver(pre_delete, sender=ImgTovar)
+def delete_tovar_images(sender, instance, **kwargs):
+    """Удаляет файлы изображений перед удалением записи."""
+    instance.delete_files()
 
 class Avtor(models.Model):
     """ Производитель товара """
@@ -149,21 +224,7 @@ class Avtor(models.Model):
     def get_absolute_url(self):
         return reverse("Avtor_detail", kwargs={"pk": self.pk})
 
-class specs(models.Model):
-    """ Характеристики к товару """
-
-    tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, db_index=True, help_text="Выберите товар")
-    category = models.ForeignKey("detail", verbose_name="Характеристика", on_delete=models.CASCADE, help_text="Выберите характеристику к товару")
-    description = models.TextField("Значение", help_text="Введите значение характеристики к товару")
-
-    class Meta:
-        verbose_name = "Характеристику к товару"
-        verbose_name_plural = "Характеристики к товару"
-
-    def __str__(self):
-        return self.category.gl_category
-
-class detail(models.Model):
+class Detail(models.Model):
     """ Описание характеритики """
 
     gl_category = models.CharField("Категория xарактеристики", max_length=50, null=True, help_text="Введите категорию характеристики")
@@ -183,7 +244,21 @@ class detail(models.Model):
             return f"{self.category} - {categories[0]['category']}"
         return f"{self.category} - {', '.join(category['category'] for category in categories)}"
 
-class favoritess(models.Model):
+class Specs(models.Model):
+    """ Характеристики к товару """
+
+    tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, db_index=True, help_text="Выберите товар")
+    category = models.ForeignKey(Detail, verbose_name="Характеристика", on_delete=models.CASCADE, help_text="Выберите характеристику к товару")
+    description = models.TextField("Значение", help_text="Введите значение характеристики к товару")
+
+    class Meta:
+        verbose_name = "Характеристику к товару"
+        verbose_name_plural = "Характеристики к товару"
+
+    def __str__(self):
+        return self.category.gl_category
+
+class Favoritess(models.Model):
     """ Избранные товары """
 
     tovar = models.ForeignKey(Tovars, verbose_name="Товар", on_delete=models.CASCADE)
@@ -198,7 +273,7 @@ class favoritess(models.Model):
     def __str__(self):
         return self.tovar.name
 
-class history_tovars(models.Model):
+class History_tovars(models.Model):
     """ История просмотра товаров """
     
     tovar = models.ForeignKey(Tovars, verbose_name="Товар", on_delete=models.CASCADE)
@@ -206,13 +281,14 @@ class history_tovars(models.Model):
     created_at = models.DateTimeField(verbose_name="Дата просмотра товара", auto_now_add=True, null=True)
 
     class Meta:
+        ordering = ['-created_at']
         verbose_name = "История просмотра товаров"
         verbose_name_plural = "Истории просмотров товаров"
 
     def __str__(self):
         return f'{self.tovar} {self.user} {self.created_at}'
 
-class basket(models.Model):
+class Basket(models.Model):
     """ Корзина """
 
     tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, db_index=True, help_text="Выберите товар")
@@ -227,7 +303,7 @@ class basket(models.Model):
     def __str__(self):
         return f'Товар {self.tovar} для пользователя {self.user}'
 
-class order_tovars(models.Model):
+class Order_tovars(models.Model):
     """ Товары заказов """
 
     tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, db_index=True, help_text="Выберите товар")
@@ -242,7 +318,7 @@ class order_tovars(models.Model):
     def __str__(self):
         return self.tovar.name
 
-class order(models.Model):
+class Order(models.Model):
     """ Заказ """
 
     get_dostavka=[
@@ -257,7 +333,7 @@ class order(models.Model):
     
     order_number = models.CharField('Индификатор',max_length=25, unique=True, editable=False)
     
-    tovar_order = models.ManyToManyField(order_tovars, blank=True, verbose_name="Товары заказа")
+    tovar_order = models.ManyToManyField(Order_tovars, blank=True, verbose_name="Товары заказа")
     user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
 
     dostavka = models.CharField("Доставка", max_length=9, choices=get_dostavka)
@@ -297,36 +373,23 @@ class order(models.Model):
     def __str__(self):
         return self.user.username
 
-class comments(models.Model):
+class Comments(models.Model):
     """ Отзывы """
     
-    tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, help_text="Выберите товар")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.TextField("Коментарий", max_length=3000, null=True, blank=True)
+    tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, help_text="Выберите товар", related_name="comments")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    text = models.TextField("Коментарий", max_length=3000, null=True, blank=True)
     star = models.PositiveIntegerField("Оценка", validators=[MinValueValidator(1), MaxValueValidator(5)])
     
     update_at = models.DateTimeField(verbose_name="Дата изменения", auto_now=True)
     created_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
 
-    baned = models.BooleanField("Заблокировать комментарий", default=False)
-    baned_com = models.CharField("Причина блокировки", max_length=250, null=True, blank=True, help_text="опишите причину блокировки пользователю")
-    baned_date = models.DateTimeField(verbose_name="Дата бана", null=True, blank=True, help_text='Меняется автоматически')
-
-    def save(self, *args, **kwargs):
-        if self.baned and self.baned_date is None:
-            self.baned_date = datetime.now()
-        elif not self.baned and self.baned_date is not None:
-            self.baned_date = None
-        super(comments, self).save(*args, **kwargs)
-
     class Meta:
+        ordering = ['-created_at']
         verbose_name = "Комметарий товара"
         verbose_name_plural = "Комметарии товаров"
 
     def __str__(self):
         return self.user.get_username()
-
-    def get_absolute_url(self):
-        return reverse("product", kwargs={"slug": self.tovar.slug})
 
 

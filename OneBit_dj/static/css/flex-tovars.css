@@ -4,7 +4,6 @@
     grid-auto-flow: dense;
     grid-template-columns: repeat(2, calc(50% - 4.5px));
     gap: 24px 8px;
-    margin-bottom: 75px;
 }
 @media (min-width: 768px) {
     .tovars-flex {

@@ -9,7 +9,7 @@ from django.core.cache import cache
 from .models import *
 from .forms import *
 # __icontains неработает с SQLlite
-from django.db.models import Min, Max, Sum, F, Avg, Count, Q
+from django.db.models import Min, Max, Sum, F, Avg, Count, Q, ExpressionWrapper, FloatField
 
 from OneBit_dj.settings import BASE_URL # для ссылок seo
 
@@ -80,22 +80,50 @@ title_list = [
         # 'Рекомендуем для вас', (добавить) если пользователь авторизирован
     ]
 
+
+def load_tovars(request):
+    """
+    Загружает товары постронично через AJAX
+    """
+    page = request.GET.get('page', 1) # - номер страницы, по умолчанию 1
+    tovars_list = Tovars.objects.all()
+    paginator = Paginator(tovars_list, 18)
+
+    tovars = paginator.get_page(page)
+    data = {
+        'tovars': list(tovars.object_list.values('id', 'name', 'cost', 'skidka_cost', 'slug')),
+        'has_next': tovars.has_next()
+    }
+    return JsonResponse(data)
+
 def index(request):
     """ Главная """
 
     if not request.user.is_authenticated:
         cache.clear()
 
-    tovars = Tovars.objects.annotate(rating=Avg('comments__star'), count_com=Count('comments'))
-
-    t1 = title_list if request.user.is_authenticated and history_tovars.objects.filter(user=request.user).count() > 5 else title_list[1:]
+    tovars = Tovars.objects.all()
 
     favorites = []
     if request.user.is_authenticated:
-        favorites = favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
+        favorites = Favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
+        history = History_tovars.objects.filter(user=request.user)[:20]
+    
+    t1 = title_list if request.user.is_authenticated and history.count() > 5 else title_list[1:]
+
+    stocks = Tovars.objects.annotate(
+        skidka_value=ExpressionWrapper(
+            100 * (F('cost') - F('skidka_cost')) / F('cost'),
+            output_field=FloatField()
+        ),
+        review_count_tovar=Count('comments'),
+        rating_tovar=Avg('comments__star')
+    ).order_by('-skidka_value', '-review_count_tovar', '-rating_tovar')[:20]
+
     context = {
         't1': t1,
-        "tovars": tovars,
+        "stocks": stocks,
+        "history": history,
         'favorites': list(favorites)
     }
     return render(request, 'index.html', context)
