@@ -11,6 +11,8 @@ from .forms import *
 # __icontains неработает с SQLlite
 from django.db.models import Min, Max, Sum, F, Avg, Count, Q
 
+from OneBit_dj.settings import BASE_URL # для ссылок seo
+
 import itertools # используется в profile
 
 def char_add_tov(tov, count=5, basket=False):
@@ -109,7 +111,8 @@ class productDetailView(DetailView):
         context = super().get_context_data(*args, **kwargs)
         slug = self.kwargs['slug']
         user = self.request.user.id
-        context["img_tovar_p"] = img_tovar.objects.filter(tovar__slug=slug) # кортинки к товару
+        context["img_tovar_p"] = img_tovar.objects.filter(tovar__slug=slug) # картинки к товару
+        context["seo_img"] = BASE_URL + context["img_tovar_p"].filter(is_video=False).first().img.url
 
         # характеритики {
         context["specs"] = specs.objects.filter(tovar__slug=slug).order_by('-category__gl_category','-category__category')
@@ -393,11 +396,11 @@ def search(request):
     """ страница с товарами по запросу (поиск) """
     context = {}
     search = request.GET.get('search')
-    context['search'] = search
+    context['title'] = search
+    print(search, search.isspace())
     if not search or search.isspace(): return redirect("home")
-    if len(search) > 100: return redirect(index)
+    if len(search) > 100: return redirect("home")
     request.session['text_search'] = search
-
     cat = fuzzy_search(search, Category, 'category', similarity_threshold=80, method='ratio')[:1]
     if cat: return redirect('category', cat_slug=cat[0].slug)
 
@@ -510,6 +513,7 @@ def search(request):
         'min_price': price_range['min_price'],
         'max_price': price_range['max_price'],
         'selected_categories': selected_categories,
+        'seo_category': Category.objects.filter(slug__in=selected_categories),
         'selected_avtors': selected_avtors,
         'selected_min_price': request.GET.get('min_price'),
         'selected_max_price': request.GET.get('max_price'),
@@ -525,6 +529,7 @@ def category(request, cat_slug):
     cat = get_object_or_404(Category, slug=cat_slug) # Получаем категорию по slug или выдаем 404
     tov = Tovars.objects.filter(category=cat) # Получаем все товары в данной категории
     context['category'] = cat
+    context['title'] = cat.category
     if not tov:
         context['tovars'] = []
         return render(request, 'search.html', context)
@@ -926,5 +931,3 @@ def faq(request):
     """Render the FAQ page."""
 
     return render(request, 'faq.html')
-
-

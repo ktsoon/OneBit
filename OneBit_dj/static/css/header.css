@@ -49,11 +49,9 @@ header {
     box-shadow: var(--shadow-black);
     border-style: none;
     justify-content: center;
-    div {
-      margin-left: 5px;
-    }
+    span:nth-child(1) {margin-bottom: -2px}
+    span:nth-last-child(1) {margin-left: 5px}
   }
-  span {margin-bottom: -3px}
 }
 /* ------------drop-nav------------ */
 .off-bar-category {
@@ -217,7 +215,7 @@ header {
 }
 /* ------------/right/------------ */
 @media screen and (max-width: 1024px) {
-  .catalog .uk-button div {
+  .catalog .uk-button span:nth-last-child(1) {
     display: none;
   }
 }

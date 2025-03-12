@@ -1,25 +1,17 @@
 {% extends "layout/authlayout.html" %}
 
-{% block title %}Регистрация — OneBit{% endblock title %}
+{% block title %}Регистрация на OneBit{% endblock title %}
+
+{% block seo_description %}Регистрируйся на OneBit и получи доступ к кучи товаров, быстрой доставка, скидкам и акциям. Покупайте комплектующие для для компьтеров и серверов по выгодным ценам.{% endblock seo_description %}
+{% block seo_keywords %}регистрация на OneBit, регистрация onebit, войти onebit, reg onebit, auth onebit, register onebit{% endblock seo_keywords %}
+
+{% block link_title %}Регистрация на OneBit{% endblock %}
+{% block link_url %}{{ request.path }}{% endblock %}
+{% block link_image %}{% static 'img/logo2.png' %}{% endblock %}
+{% block link_description %}Регистрируйся на OneBit и получи доступ к кучи товаров, быстрой доставка, скидкам и акциям.{% endblock %}
+   
    
 {% block auth_content %}
-
-{% comment %} <div class="auth-input-text">
-   <input type="text" name="p1" id="p1" required>
-   <div class="auth-labelline">Логин</div>
-</div>
-<div class="auth-input-text">
-   <input type="email" name="p2" id="p2" placeholder="" required>
-   <div class="auth-labelline">Email</div>
-</div>
-<div class="auth-input-text">
-   <input type="password" name="p3" id="p3" required>
-   <div class="auth-labelline">Пароль</div>
-</div>
-<div class="auth-input-text">
-   <input type="password" name="p4" id="p4" required>
-   <div class="auth-labelline">Повтор пароля</div>
-</div> {% endcomment %}
 
 {% for field in form %}
    <div class="auth-input-text">

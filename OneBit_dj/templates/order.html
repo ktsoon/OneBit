@@ -18,8 +18,8 @@
 <h1 class="title-h1">Заказы</h1>
 <nav aria-label="Breadcrumb">
     <ul class="uk-breadcrumb bc">
-        <li><a href="{% url 'home' %}">Главная</a></li>
-        <li><a href="{% url 'profile' %}">Профиль</a></li>
+        <li><a href="{% url 'home' %}" target="_blank">Главная</a></li>
+        <li><a href="{% url 'profile' %}" target="_blank">Профиль</a></li>
         <li>Заказы</li>
     </ul>
 </nav>
@@ -45,7 +45,7 @@
                     style="background-color: grey"
                 {% endif %}
                 {% endif %}>
-                <a href="{% url 'order_details' ord.order_number %}">
+                <a href="{% url 'order_details' ord.order_number %}" target="_blank">
                     <div>
                         <span>Заказ от {{ ord.date.date }}</span>
                         <div class="ord-num uk-button-text">№ {{ ord.order_number }}</div>
@@ -91,7 +91,7 @@
                         <div><span class="ord-dostavka {{ord.dostavka}}">{{ ord.get_dostavka_display }}</span><span class="ord-date"> c {{ ord.date_update.date }} в {{ ord.date_update.time }}</span></div>
                     </div>
                     <div class="ord-r">
-                    <a href="{% url 'order_details' ord.order_number %}">
+                    <a href="{% url 'order_details' ord.order_number %}" target="_blank">
                         {% for tov in ord.tovar_order.all %}
                         {% define 1 as count %}
                             {% for i in img %}

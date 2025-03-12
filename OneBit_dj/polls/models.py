@@ -79,6 +79,7 @@ class Gl_category(models.Model):
 
     Gl_category = models.CharField("Главная категория", max_length=120, unique=True, db_index=True, help_text="Введите название главной категории")
     slug = models.SlugField("URL", max_length=255, unique=True, db_index=True, help_text="если ошибка: поля повторяются. то измениете поле")
+    seo = models.TextField("SEO")
 
     class Meta:
         verbose_name = "Главная категория"
@@ -96,6 +97,7 @@ class Category(models.Model):
     Gl_category = models.ForeignKey(Gl_category, verbose_name="Главная категория", null=True, on_delete=models.CASCADE)
     category = models.CharField("Категория", max_length=120, db_index=True, unique=True, help_text="Введите название категории")
     slug = models.SlugField("URL", max_length=255, unique=True, db_index=True, help_text="если ошибка: поля повторяются. то измениете поле")
+    seo = models.TextField("SEO")
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
@@ -135,6 +137,7 @@ class Avtor(models.Model):
     avtor = models.CharField("Производитель", max_length=50, help_text="Введите производителя товара")
     img = models.ImageField("Картинка", upload_to = img_avtor, max_length=None, blank=True, null=True)
     slug = models.SlugField("URL", max_length=255, unique=True, db_index=True, help_text="если ошибка: поля повторяются. то измениете поле")
+    seo = models.TextField("SEO", help_text="Можете добавить ключевые слова (без дублирования названия производителя)")
 
     class Meta:
         verbose_name = "Производитель"

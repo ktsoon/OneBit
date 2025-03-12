@@ -2,7 +2,16 @@
 {% load static %}
 {% load cache %}
 
-{% block title %}OneBit — интернет-магазин{% endblock title %}
+{% block title %}OneBit — интернет-магазин продажи комплектующик для компьютеров и серверов{% endblock title %}
+
+{% block seo_description %}Куча товаров, быстрая доставка, скидки и акции. Покупайте комплектующие для для компьтеров и серверов по выгодным ценам.{% endblock seo_description %}
+{% block seo_keywords %} доставка комплектующих, недорогие комплектующие, комплектующие для компьютера, купить комплектующие онлайн, лучшие цены на комплектующие, комплектующие для игр, комплектующие для офиса, комплектующие для серверов, комплектующие для домашнего использования, комплектующие для профессиональной работы, комплектующие для монтажа видео, комплектующие для стриминга, комплектующие для майнинга, комплектующие для VR{% endblock seo_keywords %}
+
+{% block link_title %}OneBit – лучшие комплектующие для твоего компьютера{% endblock %}
+{% block link_url %}{{ request.path }}{% endblock %}
+{% block link_image %}{% static 'img/logo2.png' %}{% endblock %}
+{% block link_description %}OneBit — интернет-магазин продажи комплектующик для компьютеров и серверов{% endblock %}
+  
 
 {% block css %}
   <style>.fon{background: linear-gradient(180deg, var(--color-all) 20%, rgba(184, 184, 184, 0) 60%);height: 400px;}</style>

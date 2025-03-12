@@ -38,8 +38,8 @@
     <h1 class="title-h1">Избранное<sup>{{ tovars|length }}</sup></h1>
     <nav aria-label="Breadcrumb">
         <ul class="uk-breadcrumb bc">
-            <li><a href="{% url 'home' %}">Главная</a></li>
-            <li><a href="{% url 'profile' %}">Профиль</a></li>
+            <li><a href="{% url 'home' %}" target="_blank">Главная</a></li>
+            <li><a href="{% url 'profile' %}" target="_blank">Профиль</a></li>
             <li>Избранное</li>
         </ul>
     </nav>
@@ -61,7 +61,7 @@
     <div class="tovars-flex">
         {% for tovar in tovars %}
             <div class="tovar">
-                <a href="{{ tovar.tovar.get_absolute_url }}" class="but-heart-div">
+                <a href="{{ tovar.tovar.get_absolute_url }}" target="_blank" class="but-heart-div">
                     <div class="but-heart but-heart-tovar">
                         <input
                         type="checkbox"
@@ -90,7 +90,7 @@
                     </div>
                 </a>
                 <div class="t-bottom">
-                    <a href="{% url 'product' tovar.tovar.slug %}">
+                    <a href="{{ tovar.tovar.get_absolute_url }}" target="_blank">
                     <div class="cost">
                         {% if not tovar.tovar.skidka_cost %}
                             <span>{{ tovar.tovar.cost|intcomma }}</span>

@@ -17,9 +17,9 @@
 <h1 class="title-h1">Заказ от {{ order.date.date }}</h1>
 <nav aria-label="Breadcrumb">
     <ul class="uk-breadcrumb bc">
-        <li><a href="{% url 'home' %}">Главная</a></li>
-        <li><a href="{% url 'profile' %}">Профиль</a></li>
-        <li><a href="{% url 'order' %}">Заказы</a></li>
+        <li><a href="{% url 'home' %}" target="_blank">Главная</a></li>
+        <li><a href="{% url 'profile' %}" target="_blank">Профиль</a></li>
+        <li><a href="{% url 'order' %}" target="_blank">Заказы</a></li>
         <li>Детали заказа № {{ order.order_number }}</li>
     </ul>
 </nav>
@@ -79,10 +79,10 @@
                         {% for i in img %}
                             {% if i.tovar == tov.tovar and count == 1 %}
                                 {% summ 1 count as count %}
-                                <div class="ord-tov-img"><a href="{% url 'product' tov.tovar.slug %}"><img src="{{ i.img.url }}" alt="{{ tov.tovar.slug }}"></a></div>
+                                <div class="ord-tov-img"><a href="{{ tov.tovar.get_absolute_url }}" target="_blank"><img src="{{ i.img.url }}" alt="{{ tov.tovar.slug }}"></a></div>
                             {% endif %}
                         {% endfor %}
-                        <a href="{% url 'product' tov.tovar.slug %}" class="ord-tov-info">
+                        <a href="{{ tov.tovar.get_absolute_url }}" target="_blank" class="ord-tov-info">
                             <div class="ord-tov-cost">
                                 <span class="b-cost">{{tov.t_cost|multiply:tov.t_count|intcomma}}&nbsp;</span>
                                 {% if tov.t_count != 1 %}

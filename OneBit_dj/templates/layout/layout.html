@@ -4,9 +4,24 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel = "stylesheet" href ="{% static 'font/GTEestiPro/stylesheet.css' %}" type = "text/css" />
-    <link rel="icon" href="{% static 'img/logo2.png' %}">
+    <meta name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, viewport-fit=cover, maximum-scale=1, minimum-scale=1" /> {# масштабирование #}
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> {# поддержка IE #}
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="description" content="{% block seo_description %}{% endblock %} "> {# описание сайта #}
+    <meta name="keywords" content="onebit, интернет-магазин, интернет-магазин onebit, интернет-магазин комплектующих,{% block seo_keywords %}{% endblock %}"> {# ключевые слова #}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OneBit">
+    <meta property="og:locale" content="ru_RU">
+    <meta property="og:title" content="{% block link_title %}{% endblock %}">
+    <meta property="og:url" content="{% block link_url %}{% endblock %}">
+    <meta property="og:image" content="{% block link_image %}{% endblock %}">
+    <meta property="og:description" content="{% block link_description %}{% endblock %}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    {# <meta name="robots" content="index, follow"> #}
+    
+    <link rel = "stylesheet" href ="{% static 'font/GTEestiPro/stylesheet.css' %}" type = "text/css" /> {# шрифт #}
+    <link rel="icon" href="{% static 'img/logo2.png' %}"> {# иконка #}
 
     {# -------------поиск autocomplete.trevoreyre.com------------- #}
     <link rel="stylesheet" href="https://unpkg.com/@trevoreyre/autocomplete-js/dist/style.css"/>
@@ -28,8 +43,6 @@
     <link rel="stylesheet" href="{% static 'css/tovar-conteiner.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     {% block css %}{% endblock %}
-
-    <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
     {% if user.is_authenticated %}

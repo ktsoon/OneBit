@@ -24,6 +24,7 @@
 .main-image {
     flex: 1;
     height: 500px;
+    max-width: 700px;
     display: block;
 }
 .main-image img,
@@ -179,6 +180,7 @@
     border-radius: 10px;
     font-size: 24px;
     font-weight: 600;
+    width: max-content;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -221,8 +223,11 @@
         flex-direction: column;
     }
     .p-buttons button{
-        width: calc(100% - var(--heart-size) - 10px);
+        width: 100%;
         padding: unset;
+    }
+    .p-buttons:has(.but-heart) .uk-button{
+        width: calc(100% - var(--heart-size) - 10px)
     }
 }
 @media (max-width: 700px) {
@@ -262,4 +267,5 @@
 }
 @media screen and (max-width: 450px) {
     .short-char{display: none}
+    .psc-blank{font-size: 18px}
 }

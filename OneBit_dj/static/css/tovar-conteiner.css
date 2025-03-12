@@ -179,7 +179,7 @@ main .list-tovar:nth-last-child(1) hr {
   .cost span:nth-child(1){
     font-size: 18px;
   }
-  .cost span:nth-last-child(1){
+  .cost span:nth-child(2){
     font-size: 14px;
   }
 }

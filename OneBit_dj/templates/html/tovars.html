@@ -6,7 +6,7 @@
     <div class="t-title">
         <span class="uk-h2">{{ title.0 }}</span>
         {% if title.1 %}
-            <a href="{{ title.1 }}"><div>Смотреть всё</div></a>
+            <a href="{{ title.1 }}" target="_blank"><div>Смотреть всё</div></a>
         {% endif %}
     </div>
     <div class="tovars uk-position-relative uk-visible-toggle" tabindex="-1" id="my-slider" uk-slider="finite: true;">
@@ -27,9 +27,8 @@
                     {% endif %}
                     {% if product_exc != tovar %} {# чтобы на странице товара неповторялся этот-же товар #}
                         <div class="tovar">
-                            {% if user.is_authenticated %}
-                            {% endif %}
-                            <a href="{{ tovar.get_absolute_url }}" class="but-heart-div">
+                            <a href="{{ tovar.get_absolute_url }}" target="_blank" class="but-heart-div">
+                                {% if user.is_authenticated %}
                                 <div class="but-heart but-heart-tovar">
                                     <input
                                     type="checkbox"
@@ -41,6 +40,7 @@
                                         <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
                                     </svg>
                                 </div>
+                                {% endif %}
                                 {% if tovar.skidka_cost %}
                                     <div class="skidka">
                                         <span>-{{ tovar.skidka|floatformat:0 }}</span> {# floatformat - сколько цифр после запятой #}
@@ -59,7 +59,7 @@
                                 {% define 1 as count %}
                             </a>
                             <div class="t-bottom">
-                                <a href="{% url 'product' tovar.slug %}">
+                                <a href="{{ tovar.get_absolute_url }}" target="_blank">
                                 <div class="cost">
                                     {% if not tovar.skidka_cost %}
                                         <span>{{ tovar.cost|intcomma }}</span>

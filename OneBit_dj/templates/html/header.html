@@ -8,12 +8,12 @@
 {% endif %}
 
 <header>
-<a href="{% url 'home' %}" class="logo"><img id="logo" src="{% static 'img/logo2.png' %}" alt="лого" height="60"></a> {# логотип сайта #}
+<a href="{% url 'home' %}" target="_blank" class="logo"><img id="logo" src="{% static 'img/logo2.png' %}" alt="лого" height="60"></a> {# логотип сайта #}
 {# каталог #}
 <div class="catalog">
     <button class="uk-button uk-button-default" uk-toggle="target: #model-category">
         <span uk-icon="icon: menu; ratio: 1.5" class="uk-icon"></span>
-        <div>Каталог</div>
+        <span>Каталог</span>
     </button>
 </div>
 <div id="model-category" uk-offcanvas="overlay: true; delay-hide: 30000">
@@ -35,7 +35,7 @@
                                 <span>{{ gl_s }}</span>
                             {% endif %}
                             {% if gl_s == s.Gl_category %}
-                            <a href="{% url 'category' s.slug %}">{{ s }} {# <sub>({{ spec|length }})</sub> #}</a>
+                                <a href="{% url 'category' s.slug %}" target="_blank">{{ s }} {# <sub>({{ spec|length }})</sub> #}</a>
                             {% endif %}
                         {% endfor %}
                             </div>
@@ -65,13 +65,13 @@
 <div class="h_right">
     {% if user.is_authenticated  %} {# проверка на авторизированого пользователя #}
         {% if user.is_superuser == 1 %} {# проверка на админа #}
-        <a href="/admin">
+        <a href="/admin" target="_blank">
             <div>
                 <span uk-icon="icon: server; ratio: 1.5"></span>
                 <span class="h-admin2">админ&nbsp;панель</span>
             </div>
         </a>
-        <a class="h_user" href="{% url 'profile' %}">
+        <a class="h_user" href="{% url 'profile' %}" target="_blank">
             <div>
                 {% cache 600 avatar_img %}
                     {% avatar_img user as user_id %}
@@ -92,7 +92,7 @@
             </div>
         </a>
         {% else %} {# если пользователь уже авторизирован #}
-            <a class="h_user" href="{% url 'profile' %}">
+            <a class="h_user" href="{% url 'profile' %}" target="_blank">
                 <div>
                     {% cache 600 avatar_img %}
                         {% avatar_img user as user_id %}
@@ -116,17 +116,17 @@
             </a>
         {% endif %}
     {% else %} {# если пользователь ещё не авторизирован #}
-        <a href="{% url 'login' %}">
+        <a href="{% url 'login' %}" target="_blank">
             <div>
                 <span uk-icon="icon: user; ratio: 1.5"></span>
                 <span>&nbsp;&nbsp;Войти&nbsp;&nbsp;</span>
             </div>
         </a>
     {% endif %} {# если пользователь уже авторизирован #}
-        <a class="h_home" href="{% url 'home' %}"> {# Заказы #}
+        <a class="h_home" href="{% url 'home' %}" target="_blank"> {# Заказы #}
             <div><span uk-icon="icon: home; ratio: 1.5"></span><span></span></div>
         </a>
-        <a class="h_order" href="{% url 'order' %}"> {# Заказы #}
+        <a class="h_order" href="{% url 'order' %}" target="_blank"> {# Заказы #}
             <div>
                 <span uk-icon="icon: bag; ratio: 1.5"></span>
                 <span>Заказы</span>
@@ -141,7 +141,7 @@
             {% endif %}
         </a>
 
-        <a class="h_fav" href="{% url 'favorites' %}"> {# Избранное #}
+        <a class="h_fav" href="{% url 'favorites' %}" target="_blank"> {# Избранное #}
             <div>
                 <span uk-icon="icon: heart; ratio: 1.5"></span>
                 <span>Избранное</span>
@@ -155,7 +155,7 @@
                 <style>.favorit{display:none}</style>
             {% endif %}
         </a>
-        <a class="h_bask" href="{% url 'basket' %}"> {# Корзина #}
+        <a class="h_bask" href="{% url 'basket' %}" target="_blank"> {# Корзина #}
             <div>
                 <span uk-icon="icon: cart; ratio: 1.5"></span>
                 <span>Корзина</span>

@@ -1,7 +1,15 @@
 {% extends "layout/authlayout.html" %}
 
 
-{% block title %}Авторизация — OneBit{% endblock title %}
+{% block title %}Авторизация на OneBit{% endblock title %}
+
+{% block seo_description %}Авторизируйся на OneBit и получи доступ к кучи товаров, быстрой доставка, скидкам и акциям. Покупайте комплектующие для для компьтеров и серверов по выгодным ценам.{% endblock seo_description %}
+{% block seo_keywords %}авторизируйся на OneBit, авторизация onebit, войти onebit, login onebit, auth onebit{% endblock seo_keywords %}
+
+{% block link_title %}Авторизируйся на OneBit{% endblock %}
+{% block link_url %}{{ request.path }}{% endblock %}
+{% block link_image %}{% static 'img/logo2.png' %}{% endblock %}
+{% block link_description %}Авторизируйся на OneBit и получи доступ к кучи товаров, быстрой доставка, скидкам и акциям.{% endblock %}
    
 {% block auth_content %}
 

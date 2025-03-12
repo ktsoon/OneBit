@@ -15,7 +15,7 @@
 {% block content %}
 <nav aria-label="Breadcrumb">
    <ul class="uk-breadcrumb bc">
-       <li><a href="{% url 'home' %}">Главная</a></li>
+       <li><a href="{% url 'home' %}" target="_blank">Главная</a></li>
        <li class="uk-disabled">Профиль</li>
    </ul>
 </nav>
@@ -62,7 +62,7 @@
 
    </div>
    <div class="profile b_t">
-      <a class="block_tov block_style" href="{% url 'order' %}">
+      <a class="block_tov block_style" href="{% url 'order' %}" target="_blank">
          {# считает и выводит количество заказов #}
          {% define user.order_set.all.count as count_order %}
          <h3>Заказы<sup> {% if count_order %}{{ count_order }}{% endif %}</sup></h3>
@@ -70,7 +70,7 @@
          <div class="z_right" uk-icon="bag"></div>
       </a>
 
-      <a class="block_tov block_style" href="{% url 'favorites' %}">
+      <a class="block_tov block_style" href="{% url 'favorites' %}" target="_blank">
          {# считает и выводит количество товаров в избранном #}
          {% define user.favoritess_set.all.count as count_favoritess %}
          <h3>Избранное<sup> {% if count_favoritess %}{{ count_favoritess }}{% endif %}</sup></h3>
@@ -78,7 +78,7 @@
          <div class="z_right" uk-icon="heart"></div>
       </a>
 
-      <a class="block_tov block_style" href="{% url 'basket' %}">
+      <a class="block_tov block_style" href="{% url 'basket' %}" target="_blank">
          {# считает и выводит количество товаров в корзине #}
          {% define user.basket_set.all.count as count_basket %}
          <h3>Корзина<sup> {% if count_basket %}{{ count_basket }}{% endif %}</sup></h3>
@@ -92,7 +92,7 @@
          <h3>Оставте комментарий уже купленным товарам:</h3>
          <div class="list_comm_t">
             {% for i in comment_us %}
-               <a class="comm_t" href="{% url 'product' i.tovar.slug %}#reviews">
+               <a class="comm_t" href="{{ i.tovar.get_absolute_url }}#reviews" target="_blank">
                   {% tovar_img_first i.tovar as tov_img %}
                   <img src="{{ tov_img }}" alt="i.tovar.slug">
                   <span>{{ i.tovar.name }}</span>

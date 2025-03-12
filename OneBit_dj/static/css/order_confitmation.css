@@ -21,34 +21,14 @@ h1>sup {
 }
 .danger-red, .danger-red:focus{border-color: #B00000 !important}
 .content_2{
-    margin-left: 100px;
     display: flex;
     justify-content: space-between;
-    &>div>hr{
-        margin-left: -70px;
-    }
 }
 .form-section{flex:3}
 .info-section{flex: 1}
 /* left */
 .step-title{
     color: var(--color-all);
-    &::before{
-        position: absolute;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-left: -70px;
-        margin-top: -2px;
-        background-color: rgba(211, 170, 232, .4);
-        padding: 10px;
-        border-radius: 50%;
-        height: 30px;
-        width: 30px;
-    }
-    &.st1::before{content: '1'}
-    &.st2::before{content: '2'}
-    &.st3::before{content: '3'}
 }
 .sposob{
     display: flex;
@@ -113,7 +93,6 @@ h1>sup {
 /* map */
 .map{
     position: relative;
-    padding: 10px;
     display: flex;
 }
 #map{
@@ -137,16 +116,18 @@ h1>sup {
     transition: padding .2s ease;
 }
 .map_adress:not(:nth-last-child(1)){margin-bottom: 15px}
-.map_adress:not(.map_adress_select):hover{padding: 15px 5px 15px 5px}
-.map_adress_select{
-    padding: 20px 5px 20px 5px;
-    border: 2px solid var(--color-all);
-    background-color: rgba(211, 170, 232, .8);
+@media (min-width: 701px) {
+    .map_adress:not(.map_adress_select):hover{padding: 15px 5px 15px 5px}
+    .map_adress_select{
+        padding: 20px 5px 20px 5px;
+        border: 2px solid var(--color-all);
+        background-color: rgba(211, 170, 232, .8);
+    }
 }
 .ymaps-2-1-79-map{width: 100% !important}
 .map-hour{
     position: absolute;
-    bottom: -10px;
+    bottom: -20px;
 }
 /* /map/ */
 
@@ -255,10 +236,22 @@ h1>sup {
 /* Сетка */
 #product-container.grid-view {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
+    grid-auto-flow: dense;
+    grid-template-columns: repeat(2, calc(50% - 4.5px));
+    gap: 24px 8px;
 }
-.tov{max-width: 220px}
+@media (min-width: 768px) {
+    #product-container.grid-view {
+        grid-template-columns: repeat(4, calc(25% - 6.3px));
+        row-gap: 32px;
+    }
+}
+@media (min-width: 1024px) {
+    #product-container.grid-view {
+        grid-template-columns: repeat(5, calc(20% - 6.67px));
+        row-gap: 40px;
+    }
+}
 .list_tov{margin-top: 20px}
 .tov .images{position: relative}
 .ord-t-del{
@@ -275,8 +268,7 @@ h1>sup {
     }
 }
 .tov img{
-    height: 180px;
-    width: 220px;
+    width: 100%;
     background: #f3f3f3;
     border-radius: 10px;
     object-fit: contain;
@@ -354,3 +346,94 @@ h1>sup {
 }
 
 /* /right/ */
+
+@media (max-width: 1220px) {
+    .content_2{
+        flex-direction: column-reverse;
+    }
+    .uk-flex-right{justify-content: flex-start}
+    .right-bar{
+        height: 123px;
+        padding: 0;
+        margin-left: -115px !important;
+        margin-right: -40px !important;
+        .uk-card{
+            border-bottom-left-radius:0;
+            border-bottom-right-radius:0;
+            margin-bottom: 0 !important;
+        }
+    }
+    .form-section{
+        margin-bottom: 160px;
+        margin-top: -120px;
+    }
+}
+@media (max-width: 700px) {
+    .right-bar:not(.uk-active){
+        opacity: 0;
+        pointer-events: none;
+    }
+    .map{
+        flex-direction: column;
+        margin-bottom: 40px;
+    }
+    .map-hour{bottom: -40px}
+    #map{
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .map_right{
+        padding-left: 0;
+        display: flex;
+        gap: 5px;
+        padding-bottom: 5px;
+    }
+    .map_adress{
+        padding: 10px 5px 10px 5px;
+        min-width: 160px !important;
+        margin-bottom: 0 !important;
+    }
+    .map_adress_select{
+        border: 2px solid var(--color-all);
+        background-color: rgba(211, 170, 232, .8);
+    }
+}
+@media (max-width: 650px) {
+    .card_behind{
+        width: 364px !important;
+        margin: 0 ;
+        margin-top: 10px;
+    }
+}
+@media (max-width: 580px) {
+    .right-bar{margin-left: -40px !important}
+    .card>div{
+        width: auto !important;
+    }
+}
+@media (min-width: 580px) {
+    .content_2>div>hr{margin-left: -70px}
+    .content_2{
+        margin-left: 100px;
+    }
+    .step-title::before{
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: -70px;
+        margin-top: -2px;
+        background-color: rgba(211, 170, 232, .4);
+        padding: 10px;
+        border-radius: 50%;
+        height: 30px;
+        width: 30px;
+    }
+    .st1::before{content: '1'}
+    .st2::before{content: '2'}
+    .st3::before{content: '3'}
+}
+@media (max-width: 360px) {
+    .map-hour{bottom: -60px}
+    .map{margin-bottom: 60px}
+}

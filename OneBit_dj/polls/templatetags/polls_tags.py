@@ -102,3 +102,4 @@ def pluralize_goods(count):
 """ Популярные товары """
 @register.filter
 def popular_tovar_order(tovars): return tovars.order_by('-count_com','-rating')
+

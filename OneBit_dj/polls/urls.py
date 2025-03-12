@@ -1,6 +1,17 @@
 from django.urls import path
 from . import views
-""" Главная """
+
+from django.http import HttpResponse
+from django.conf import settings
+import os
+def robots_txt(request):
+    """
+    Представление для robots.txt. Возвращает содержимое static/robots.txt.
+    """
+    file_path = os.path.join(settings.BASE_DIR, 'static', 'robots.txt')
+    with open(file_path, 'r') as file:
+        return HttpResponse(file.read(), content_type='text/plain')
+
 urlpatterns = [
     path('', views.index, name='home'), # главная
     path('product/<str:slug>/', views.productDetailView.as_view(), name='product'), # отдельный товар
@@ -23,6 +34,8 @@ urlpatterns = [
     path('add_order/', views.add_order, name='add_order'), # добавление в заказ ajax
     path('orderlist/', views.orderr, name='order'), # заказы
     path('orderdetails/<str:order_number>/', views.order_details, name='order_details'), # заказы
-    path('FAQ/', views.faq, name="faq") # Часто задаваемые вопросы (FAQ)
+    path('FAQ/', views.faq, name="faq"), # Часто задаваемые вопросы (FAQ)
+
+    path('robots.txt', robots_txt, name='robots_txt') # robots.txt 
 ] 
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

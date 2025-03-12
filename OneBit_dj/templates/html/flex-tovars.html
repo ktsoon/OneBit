@@ -6,13 +6,13 @@
     <div class="t-title">
         <span class="uk-h2">{{ title.0 }}</span>
         {% if title.1 %}
-            <a href="{{ title.1 }}"><div>Смотреть всё</div></a>
+            <a href="{{ title.1 }}" target="_blank"><div>Смотреть всё</div></a>
         {% endif %}
     </div>
     <div class="tovars-flex">
         {% for tovar in tovars|popular_tovar_order %}
             <div class="tovar">
-                <a href="{{ tovar.get_absolute_url }}" class="but-heart-div">
+                <a href="{{ tovar.get_absolute_url }}" target="_blank" class="but-heart-div">
                     {% if user.is_authenticated %}
                         <div class="but-heart but-heart-tovar">
                             <input
@@ -44,7 +44,7 @@
                     {% define 1 as count %}
                 </a>
                 <div class="t-bottom">
-                    <a href="{% url 'product' tovar.slug %}">
+                    <a href="{{ tovar.get_absolute_url }}" target="_blank">
                     <div class="cost">
                         {% if not tovar.skidka_cost %}
                             <span>{{ tovar.cost|intcomma }}</span>

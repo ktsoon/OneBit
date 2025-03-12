@@ -67,8 +67,8 @@
 <h1 class="title-h1">Корзина<sup>{{ tovars|length }}</sup></h1>
 <nav aria-label="Breadcrumb">
   <ul class="uk-breadcrumb bc">
-      <li><a href="{% url 'home' %}">Главная</a></li>
-      <li><a href="{% url 'profile' %}">Профиль</a></li>
+      <li><a href="{% url 'home' %}" target="_blank">Главная</a></li>
+      <li><a href="{% url 'profile' %}" target="_blank">Профиль</a></li>
       <li>Корзина</li>
   </ul>
 </nav>
@@ -95,7 +95,7 @@
               value="{{ tovar.id }}">
             </div>
 
-              <a href="{{ tovar.get_absolute_url }}" class="but-heart-div">
+              <a href="{{ tovar.get_absolute_url }}" target="_blank" class="but-heart-div">
                 {% if tovar.skidka_cost %}
                   <div class="skidka">
                     <span>-{{ tovar.skidka|floatformat:0 }}</span> {# floatformat - сколько цифр после запятой #}
@@ -112,7 +112,7 @@
                   </div>
               </a>
               <div class="t-t-rght">
-                <a href="{{ tovar.get_absolute_url }}">
+                <a href="{{ tovar.get_absolute_url }}" target="_blank">
                     <div class="t-name">
                       {{tovar.name}}
                     </div>

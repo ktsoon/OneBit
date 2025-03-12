@@ -3,6 +3,14 @@
 
 {% block title %}Вопросы и ответы (FAQ) — OneBit{% endblock %}
 
+{% block seo_description %}Как посмотреть статус заказа? Как получить заказ? Ошибки при оплате? Как отследить доставку товара? или задайте свой вопрос{% endblock seo_description %}
+{% block seo_keywords %}faq onebit, onebit faq, Как посмотреть статус заказа onebit, Как получить заказа onebit, Ошибки при оплате на onebit, Как отследить доставку товара на onebit, задать свой вопрос onebit, тех поддержка onebit{% endblock seo_keywords %}
+
+{% block link_title %}Вопросы и ответы на OneBit{% endblock %}
+{% block link_url %}{{ request.path }}{% endblock %}
+{% block link_image %}{% static 'img/logo2.png' %}{% endblock %}
+{% block link_description %}Задай свой вопрос или узнай как посмотреть статус заказа, Как получить заказ, Ошибки при оплате, Как отследить доставку товара{% endblock %}
+
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/faq.css' %}">
 {% endblock css %}
@@ -18,18 +26,18 @@
 <h1 class="title-h1">Вопросы и ответы</h1>
 <nav aria-label="Breadcrumb">
     <ul class="uk-breadcrumb bc">
-        <li><a href="{% url 'home' %}">Главная</a></li>
+        <li><a href="{% url 'home' %}" target="_blank">Главная</a></li>
         <li class="uk-disabled">Вопросы и ответы (FAQ)</li>
     </ul>
 </nav>
 
 <div class="uk-flex uk-flex-wrap uk-flex-wrap-around" uk-nav="targets:> ul > li.uk-parent">
-    <ul class="uk-width-1 uk-width-1-2@m" >
+    <ul class="faq">
         <li class="uk-card card-onebit uk-card-body uk-card-small uk-parent uk-margin-top">
             <a class="uk-width uk-text-large">Как посмотреть статус заказа? <span uk-nav-parent-icon></span></a>
             <ul class="show-faq uk-nav-sub">
                 <li class="order-status">
-                    Посмотреть статус заказа можно в личном кабинете в разделе <a class="uk-button-text" href="{% url 'order' %}">Заказы</a>. <br>
+                    Посмотреть статус заказа можно в личном кабинете в разделе <a class="uk-button-text" href="{% url 'order' %}" target="_blank">Заказы</a>. <br>
                     <span class="collect white">Проверяется</span> - заказ проверяется и передаются в доставку. <br>
                     <span class="goes white">Достовляется</span> - транспортировка товаров до пункта выдачи, магазина. <br>
                     <span class="delivered white">Доставлен</span> - заказ готов к получению. <br>
@@ -39,7 +47,7 @@
             </ul>
         </li>
     </ul>
-    <ul class="uk-width-1 uk-width-1-2@m">
+    <ul class="faq">
         <li class="uk-card card-onebit uk-card-body uk-card-small uk-parent uk-margin-remove-left uk-margin-left@s uk-margin-top">
             <a class="uk-width uk-text-large">Как получить заказ? <span uk-nav-parent-icon></span></a>
             <ul class="show-faq uk-nav-sub">
@@ -50,7 +58,7 @@
             </ul>
         </li>
     </ul>
-    <ul class="uk-width-1 uk-width-1-2@m">
+    <ul class="faq">
         <li class="uk-card card-onebit uk-card-body uk-card-small uk-parent uk-margin-top">
             <a class="uk-width uk-text-large">Ошибки при оплате <span uk-nav-parent-icon></span></a>
             <ul class="show-faq uk-nav-sub">
@@ -72,7 +80,7 @@
             </ul>
         </li>
     </ul>
-    <ul class="uk-width-1 uk-width-1-2@m">
+    <ul class="faq">
         <li class="uk-card card-onebit uk-card-body uk-card-small uk-parent uk-margin-remove-left uk-margin-left@s uk-margin-top">
             <a class="uk-width uk-text-large">Как отследить доставку товара? <span uk-nav-parent-icon></span></a>
             <ul class="show-faq uk-nav-sub">
@@ -82,7 +90,7 @@
             </ul>
         </li>
     </ul>
-    <div class="uk-width-1 uk-padding-remove-left">
+    <div class="uk-padding-remove-left" style="width: 100%">
         <form class="uk-form-stacked uk-card card-onebit uk-card-body uk-card-small uk-margin-top uk-margin-large-bottom" id="question-form"> {% csrf_token %}
             <h2 class="uk-width uk-text-large uk-margin-remove" style="font-weight:500">Задать свой вопрос</h2>
             <div class="uk-margin">

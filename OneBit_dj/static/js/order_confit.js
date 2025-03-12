@@ -370,3 +370,28 @@ $(document).ready(function () {
     $itogi.find('.cost2').text(totalOriginalCost.toLocaleString()); // Устанавливаем первоначальную стоимость
 });
 
+
+
+// uk-sticky bottom
+
+// Отслеживание изменений внутри .right-bar (изменение высоты)
+var observer = new MutationObserver(function () {
+    observer.disconnect();
+    updateSticky();
+});
+
+observer.observe($('.right-bar')[0], { childList: true, subtree: true, attributes: true });
+
+function updateSticky() {
+    if ($(window).width() <= 700) {
+        $('.right-bar').attr('uk-sticky', 'position: bottom; end: !body; offset: -70; show-on-up: true; animation: uk-animation-slide-bottom');
+    } else if ($(window).width() <= 1220) {
+        $('.right-bar').attr('uk-sticky', 'position: bottom; end: !.content_2');
+    } else {
+        $('.right-bar').attr('uk-sticky', 'end: !.content_2; offset: 20');
+    }
+    UIkit.update('.right-bar'); // Обновляем только .right-bar
+}
+
+updateSticky(); // Вызываем один раз при загрузке
+

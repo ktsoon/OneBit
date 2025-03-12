@@ -170,11 +170,15 @@
     h3{color: #fff}
 }
 .comm_t{
+    display: flex;
+    flex-direction: column;
     width: 100%;
     transition: transform .2s ease;
     &:hover{transform: scale(1.05)}
 }
 .comm_t img{
+    flex: 1;
+    background-color: #fff;
     width: 100%;
     max-height: 250px;
     object-fit: contain;
@@ -182,6 +186,11 @@
 .comm_t span{
     color: #fff;
     font-weight: 500;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 42px;
 }
 
 /* /comm/ */
@@ -207,6 +216,7 @@
         font-size: 1.5em;
     }
     .comm_t span{
-        font-size: 21px;
+        font-size: 18px;
+        height: 48px;
     }
 }

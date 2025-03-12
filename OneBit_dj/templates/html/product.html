@@ -5,9 +5,9 @@
 
     <nav aria-label="Breadcrumb">
         <ul class="uk-breadcrumb">
-            <li><a href="{% url 'home' %}">Главная</a></li>
+            <li><a href="{% url 'home' %}" target="_blank">Главная</a></li>
             <li class="uk-disabled"><a>{{ tovar.category.Gl_category }}</a></li>
-            <li><a href="{% url 'category' tovar.category.slug %}">{{ tovar.category.category }}</a></li>
+            <li><a href="{% url 'category' tovar.category.slug %}" target="_blank">{{ tovar.category.category }}</a></li>
             <li class="uk-disabled">{{ tovar }}</li>
         </ul>
     </nav>
@@ -49,11 +49,11 @@
                 <div id="p-score">
                     <div id="rater"></div>
                 </div>
-                <li class="p-score-com"><a href="#reviews" class="uk-button-text" uk-scroll>
+                <li class="p-score-com {% if not comments %} psc-blank {% endif %}"><a href="#reviews" class="uk-button-text" uk-scroll>
                     {% if comments %}
                         {{ len_com }} {{ len_com|review_word }}
                         {% else %}
-                        Отзывов пока нет
+                        Отзывов нет
                     {% endif %}
                 </a></li>
             </div>

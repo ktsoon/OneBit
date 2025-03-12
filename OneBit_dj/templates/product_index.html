@@ -5,8 +5,16 @@
   {% if specs_tip %}
     {{specs_tip.0.description}} 
   {% endif %}
-  {{tovar.name}} — OneBit
+  {{tovar.name}} на OneBit
 {% endblock %}
+
+{% block seo_description %}{{tovar.name}} – купить на OneBit по выгодной цене! Большой ассортимент, быстрая и бесплатная доставка. Распродажи, скидки и акции. Реальные отзывы покупателей.{% endblock seo_description %}
+{% block seo_keywords %}{{tovar.category.Gl_category.seo}},{{tovar.category.seo}}{% endblock seo_keywords %}
+
+{% block link_title %}{{tovar.name}} купить по низкой цене с быстрой и бесплатной достаквой на OneBit{% endblock %}
+{% block link_url %}{{ request.path }}{% endblock %}
+{% block link_image %}{{seo_img}}{% endblock %}
+{% block link_description %}{{tovar.name}} купить на OneBit по выгодной цене! Большой ассортимент, быстрая и бесплатная доставка. Распродажи, скидки и акции. Реальные отзывы покупателей.{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/product.css' %}">

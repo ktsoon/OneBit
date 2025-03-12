@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+BASE_URL = "http://127.0.0.1:8000"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -148,3 +149,7 @@ CACHES = {
         'LOCATION': 'unique-snowflake',
     }
 }
+
+# SECURE_SSL_REDIRECT = True  # Перенаправление на HTTPS
+# CSRF_COOKIE_SECURE = True   # Защита CSRF через HTTPS
+# SESSION_COOKIE_SECURE = True  # Защита сессий через HTTPS
