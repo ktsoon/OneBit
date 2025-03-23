@@ -15,7 +15,6 @@
 <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@latest/dist/js/jquery.suggestions.min.js"></script> {# suggestions JQuery #}
 <script src="{% static 'js/valid_card.js' %}"></script> {# валидация карты #}
 <script>
-  const pic = "{% static 'img/logo2.png' %}" {# метка магазина на карте #}
   const DJANGO_STATIC_URL = '{{ STATIC_URL_CARD }}';
 </script>
 <script src="{% static 'js/order_confit.js' %}"></script>
@@ -23,10 +22,6 @@
     
 
 {% block content %}
-{% comment %} <form id="delivery-form" method="POST"> {% csrf_token %}
-  <input type="radio" name="delivery" checked value="Pochta" id="Pochta" style="display: none;">
-  <input type="radio" name="delivery" value="pickup" id="pickup" style="display: none;">
-</form> {% endcomment %}
 <h1 class="uk-h1">Оформление заказа<sup>0</sup></h1>
 <div class="content_2">
   <div class="form-section">
@@ -134,37 +129,30 @@
         
         {% for tov in tovars %}
           <div class="tov" id="{{tov.tovar.id}}">
-            {% define 1 as count %}
-            {% for img in tovar_img %}
-              {% if img.tovar == tov.tovar and count == 1 %}
-                {% summ 1 count as count %}
-
-                <div class="images">
-                  <div class="ord-t-del" id="{{tov.tovar.id}}"><a uk-icon="close"></a></div>
-                  <img src="{{ img.img.url }}" alt="{{ tov.tovar.slug }}">
-                  <div class="count-t"><span>{{ tov.t_count }} шт.</span></div>
-                </div>
-                <div class="t-bottom">
-                  <div style="gap:0" class="cost">
+              <div class="images">
+                <div class="ord-t-del" id="{{tov.tovar.id}}"><a uk-icon="close"></a></div>
+                <img src="{{ tov.tovar.images.all|tovar_img_first }}" alt="{{ tov.tovar.slug }}">
+                <div class="count-t"><span>{{ tov.t_count }} шт.</span></div>
+              </div>
+              <div class="t-bottom">
+                <div style="gap:0" class="cost">
+                  {% if not tov.tovar.skidka_cost %}
+                    <span data-cost='{{tov.tovar.cost}}'>{{ tov.tovar.cost|multiply:tov.t_count|intcomma }}</span>
+                  {% else %}
+                    <span data-cost='{{tov.tovar.skidka_cost}}' data-bes-skidkoi="{{tov.tovar.cost}}">{{ tov.tovar.skidka_cost|multiply:tov.t_count|intcomma }}</span>
+                  {% endif %}
+                  <div class="cost_all">
                     {% if not tov.tovar.skidka_cost %}
-                      <span data-cost='{{tov.tovar.cost}}'>{{ tov.tovar.cost|multiply:tov.t_count|intcomma }}</span>
+                    {{ tov.tovar.cost|intcomma }}
                     {% else %}
-                      <span data-cost='{{tov.tovar.skidka_cost}}' data-bes-skidkoi="{{tov.tovar.cost}}">{{ tov.tovar.skidka_cost|multiply:tov.t_count|intcomma }}</span>
+                    {{ tov.tovar.skidka_cost|intcomma }}
                     {% endif %}
-                    <div class="cost_all">
-                      {% if not tov.tovar.skidka_cost %}
-                      {{ tov.tovar.cost|intcomma }}
-                      {% else %}
-                      {{ tov.tovar.skidka_cost|intcomma }}
-                      {% endif %}
-                      &#8381;
-                      <sub style="font-weight:500">/шт.</sub>
-                    </div>
+                    &#8381;
+                    <sub style="font-weight:500">/шт.</sub>
                   </div>
-                  <span class="t-name">{{tov.tovar.name}}</span>
                 </div>
-              {% endif %}
-            {% endfor %}
+                <span class="t-name">{{tov.tovar.name}}</span>
+              </div>
           </div>
         {% endfor %}
 

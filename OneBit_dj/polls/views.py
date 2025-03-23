@@ -1,5 +1,6 @@
+# __icontains неработает с SQLlite
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse # *JsonResponse - возвращает переменную json
+from django.http import JsonResponse # ajax
 from django.contrib.auth.decorators import login_required # перенос пользователя на страницу авторизации если он не вошол в профиль на определённой странице
 from django.views.generic import DetailView # DetailView - просмотр одной записи по ключу.
 from django.contrib import messages # вывод сообщения
@@ -8,29 +9,11 @@ from django.core.paginator import Paginator
 from django.core.cache import cache
 from .models import *
 from .forms import *
-# __icontains неработает с SQLlite
 from django.db.models import Min, Max, Sum, F, Avg, Count, Q, ExpressionWrapper, FloatField
 
-from OneBit_dj.settings import BASE_URL # для ссылок seo
+from django.utils import timezone
 
 import itertools # используется в profile
-
-def char_add_tov(tov, count=5, basket=False):
-    """ Создание словаря для хранения первых характеристик каждого товара """
-
-    if basket:
-        tovars_specs = {Tovars.objects.filter(id=tovar.tovar.id).annotate(rating=Avg('comments__star'), count_com=Count('comments'))[0]: list() for tovar in tov}
-        specs_all = []
-        for i in tov:
-            for j in specs.objects.filter(tovar=i.tovar):
-                specs_all.append(j)
-    else:
-        tovars_specs = {Tovars.objects.filter(id=tovar.id).annotate(rating=Avg('comments__star'), count_com=Count('comments'))[0]: list() for tovar in tov}
-        specs_all = specs.objects.filter(tovar__in=tov)
-    for spec in specs_all:
-        if len(tovars_specs[spec.tovar]) < count:
-            tovars_specs[spec.tovar].append(spec)
-    return tovars_specs
 
 # для поиска
 # from django.db.models import Q
@@ -60,15 +43,16 @@ def fuzzy_search(query, model, field, similarity_threshold=70, method=''):
     # Возвращаем только объекты модели
     return [result[0] for result in filtered_results]
 
-def search_tovars_by_characteristics(search):
-        """ Поиск товаров по характеристикам """
-        tovars_with_char = []
-        for char in specs.objects.all():
-            similarity = fuzz.WRatio(char.description.lower(), search.lower())
-            if similarity >= 81:  # Устанавливаем порог сходства
-                # print(char.description, similarity)
-                tovars_with_char.append(char.tovar)
-        return tovars_with_char
+def format_price(price):
+    """ Убирает дробную часть и добавляет пробелы между разрядами """
+    return f"{int(price):,}".replace(",", "")
+
+def search_tovars_by_characteristics(search_text):
+    """ Поиск товаров по характеристикам """
+    return [
+        spec.tovar for spec in Specs.objects.select_related("tovar")
+        if fuzz.WRatio(spec.description.lower(), search_text.lower()) >= 81
+    ]
 
 title_list = [
         ['Недавно просмотреные'],
@@ -80,34 +64,20 @@ title_list = [
         # 'Рекомендуем для вас', (добавить) если пользователь авторизирован
     ]
 
-
-def load_tovars(request):
-    """
-    Загружает товары постронично через AJAX
-    """
-    page = request.GET.get('page', 1) # - номер страницы, по умолчанию 1
-    tovars_list = Tovars.objects.all()
-    paginator = Paginator(tovars_list, 18)
-
-    tovars = paginator.get_page(page)
-    data = {
-        'tovars': list(tovars.object_list.values('id', 'name', 'cost', 'skidka_cost', 'slug')),
-        'has_next': tovars.has_next()
-    }
-    return JsonResponse(data)
-
 def index(request):
     """ Главная """
+    context = {}
 
     if not request.user.is_authenticated:
         cache.clear()
-
-    tovars = Tovars.objects.all()
 
     favorites = []
     if request.user.is_authenticated:
         favorites = Favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
         history = History_tovars.objects.filter(user=request.user)[:20]
+
+        context['favorites'] = favorites
+        context['history'] = history
     
     t1 = title_list if request.user.is_authenticated and history.count() > 5 else title_list[1:]
 
@@ -120,81 +90,63 @@ def index(request):
         rating_tovar=Avg('comments__star')
     ).order_by('-skidka_value', '-review_count_tovar', '-rating_tovar')[:20]
 
-    context = {
-        't1': t1,
-        "stocks": stocks,
-        "history": history,
-        'favorites': list(favorites)
-    }
+    context['t1'] = t1
+    context['stocks'] = stocks
+
     return render(request, 'index.html', context)
 
-class productDetailView(DetailView):
+def product(request, slug):
     """ Товар """
-    model = Tovars
-    template_name = "product_index.html"
-    context_object_name = 'tovar'
+    context = {}
 
-    # новые переменная
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        slug = self.kwargs['slug']
-        user = self.request.user.id
-        context["img_tovar_p"] = img_tovar.objects.filter(tovar__slug=slug) # картинки к товару
-        context["seo_img"] = BASE_URL + context["img_tovar_p"].filter(is_video=False).first().img.url
+    tovar = get_object_or_404(Tovars, slug=slug)
 
-        # характеритики {
-        context["specs"] = specs.objects.filter(tovar__slug=slug).order_by('-category__gl_category','-category__category')
-        A = []
-        specs_gl = context["specs"]
-        for i in specs_gl:
-            A.append(i.category.gl_category)
-        li = []
-        for i in A:
-            if i not in li:
-                li.append(i)
-        context["specs_gl"] = li
-        # } /характеристики/
+    context["tovar"] = tovar
+    user = request.user
 
-        # история просмотра
-        if user:
-            visite = history_tovars.objects.filter(user=user, tovar__slug=slug).count() # открывали ли товар до этого (0-нет 1-да)
-            if visite == 0: # если user просматривает товар впервые
-                history_tovars.objects.create(tovar=context["tovar"], user=self.request.user) # заносим в базу
-            else: # если user уже просматривал этот товар до этого
-                history_tovars.objects.get(user=user, tovar__slug=slug).delete() # удаляем из базы
-                history_tovars.objects.create(tovar=context["tovar"], user=self.request.user) # и заносим заного, чтобы он сохранялся как последний просмотренный товар
+    # категории характеристик
+    char = tovar.specs.all().order_by('category__gl_category')
+    s = []
+    for c in char:
+        if c.category.gl_category in s: continue
+        s.append(c.category.gl_category)
+    context['GlavChar'] = s
+
+    # история просмотра
+    if user.is_authenticated:
+        visite = History_tovars.objects.filter(user=user, tovar__slug=slug).count() # открывали ли товар до этого (0-нет 1-да)
+        if visite == 0: # если user просматривает товар впервые
+            History_tovars.objects.create(tovar=context["tovar"], user=user) # заносим в базу
+        else: # если user уже просматривал этот товар до этого
+            h = History_tovars.objects.get(user=user, tovar__slug=slug)
+            h.created_at = timezone.now()
+            h.save()
         # /история просмотра/
-        hist = history_tovars.objects.filter(user=user).count()
-        if hist - 5 > 0: context['c_history'] = True
+        hist = History_tovars.objects.filter(user=user)[:20]
+        if hist.count() > 5: context['history'] = hist
 
-        # комментарии
-        com = comments.objects.filter(tovar__slug=slug).order_by('-created_at')
-        if com: 
-            context['len_com'] = com.count()
-            if self.request.user.is_authenticated:
-                user_comments = com.filter(user=user)
-                if user_comments: context['user_comments'] = True
-                else: context['user_comments'] = False
-                other_comments = com.filter(baned=False).exclude(user=user)
-                com = list(user_comments) + list(other_comments)
-            else:
-                com = com.filter(baned=False)
-            context['comments'] = com
-            context['avg_star'] = str(comments.objects.aggregate(Avg('star'))['star__avg'])
-        else: context['avg_star'] = 0
-        if self.request.user.is_authenticated:
-            context['if_buy'] = order.objects.filter(
-                    dostavka='received', 
-                    user_id=user,
-                    tovar_order__tovar__slug=slug
-                ).distinct().count()
+    # комментарии
+    com = tovar.comments.all()
+    if com and user.is_authenticated: 
+        user_comments = com.filter(user=user)
+        if user_comments: context['user_comments'] = True
+        else: context['user_comments'] = False
+        other_comments = com.exclude(user=user)
+        com = list(user_comments) + list(other_comments)
+    context['comments'] = com
+    # куплен ли товар у пользователя
+    if user.is_authenticated:
+        context['if_buy'] = Order.objects.filter(
+                dostavka='received', 
+                user_id=user,
+                tovar_order__tovar__slug=slug
+            ).distinct().count()
 
-        
-        context['favorite'] = favoritess.objects.filter(user=user, tovar__slug=slug).count() # добавлен ли товар в избранное
+    if user.is_authenticated:
+        context['favorite'] = Favoritess.objects.filter(user=user, tovar__slug=slug).count() # добавлен ли товар в избранное
         context['title'] = title_list[0]
-        context['if_basket'] = basket.objects.filter(user=user, tovar__slug=slug).count()
-        context["specs_tip"] = context["specs"].filter(category__category='Тип')
-        return context
+        context['if_basket'] = Basket.objects.filter(user=user, tovar__slug=slug).count()
+    return render(request, 'product_index.html', context)
 
 @login_required
 def favorite_check(request):
@@ -268,42 +220,28 @@ def sing_out(request):
 @login_required
 def favorites(request):
     """ страница избранное """
-
-    from django.db.models import F, FloatField, ExpressionWrapper
-    context={}
     sorting = request.GET.get('sorting')
     sorting_name = 'Сначала новые'
     user = request.user.id
     
-    tovars = favoritess.objects.filter(user=user).select_related('tovar').annotate(
-        skidka=ExpressionWrapper(
-            100 * (F('tovar__cost') - F('tovar__skidka_cost')) / F('tovar__cost'),
-            output_field=FloatField()
-        )
-    ).select_related('tovar').annotate(
-        rating=Avg('tovar__comments__star'),         # Средний рейтинг товара
-        count_com=Count('tovar__comments')           # Количество отзывов
-    )
+    favorites = Favoritess.objects.filter(user=user)
     if sorting == 'new' or not sorting:
-        tovars = tovars.order_by('created_at')
+        favorites = favorites.order_by('created_at')
     elif sorting == 'old':
-        tovars = tovars.order_by('-created_at')
+        favorites = favorites.order_by('-created_at')
         sorting_name = 'Сначала старые'
     elif sorting == 'low':
-        tovars = tovars.order_by('tovar__cost', 'tovar__skidka_cost')
+        favorites = favorites.order_by('tovar__cost', 'tovar__skidka_cost')
         sorting_name = 'Сначала дешёвые'
     elif sorting == 'exp':
-        tovars = tovars.order_by('-tovar__skidka_cost', '-tovar__cost')
+        favorites = favorites.order_by('-tovar__skidka_cost', '-tovar__cost')
         sorting_name = 'Сначала дорогие'
 
-
-    favorites = favoritess.objects.filter(user=user).values_list('id', flat=True)
-    context['favorites'] = list(favorites)
-
-    context['tovars'] = tovars
-    context["tovar_img"] = img_tovar.objects.all()
-    context['sorting'] = sorting_name
-    context['if_basket_all'] = [i.tovar.name for i in basket.objects.filter(user=request.user)]
+    context = {
+        'favorites': favorites,
+        'sorting': sorting_name,
+        'if_basket_all': [_ for _ in Basket.objects.filter(user=request.user).values_list('tovar__id', flat=True)],
+    }
 
     return render(request, 'favorites.html', context)
 
@@ -312,7 +250,7 @@ def profile(request):
     """ Профиль пользователя """
 
     try:
-        profile = request.user.userprofile
+        profile = request.user.profile
     except UserProfile.DoesNotExist:
         profile = None
     context = {}
@@ -322,13 +260,14 @@ def profile(request):
             profile = form.save(commit=False)
             profile.user = request.user
             profile.save()
+            cache.clear()
             return redirect('profile')
     else:
         form = UserProfileForm(instance=profile)
 
-    commented_tovars = comments.objects.filter(user_id=request.user).values_list('tovar', flat=True)
+    commented_tovars = Comments.objects.filter(user_id=request.user).values_list('tovar', flat=True)
     # оставить комментарии для определённых товаров
-    orders = order.objects.filter(
+    orders = Order.objects.filter(
         dostavka='received', 
         user_id=request.user
     )
@@ -342,10 +281,6 @@ def profile(request):
                 unique_tovars.add(tovar)
 
     context['comment_us'] = set(itertools.islice(unique_tovars, 6))
-    # Выводим уникальные товары
-    # print("\nУникальные товары:")
-    # for tovar in unique_tovars:
-    #     print(f"Товар: {tovar.tovar.name}, ID: {tovar.tovar.id}")
     
     context['form'] = form
     context['title'] = title_list[0]
@@ -354,117 +289,103 @@ def profile(request):
     return render(request, 'profile.html', context)
 
 def search_text(request):
-    """ подсказки при вводе в поисковую строку """
+    """ Подсказки при вводе в поисковую строку """
     text = request.GET.get('text')
+    if not text:
+        return JsonResponse({'status': 400, 'message': 'No search text provided'})
+
     payload = []
-    data = {}
-    if text:
-        cat = fuzzy_search(text, Category, 'category')
-        if not cat: cat = Category.objects.filter(category__icontains=text)
-        avt = fuzzy_search(text, Avtor, 'avtor')
-        if not avt: avt = Avtor.objects.filter(avtor__icontains=text)
-        
-        first_image_ids_all = img_tovar.objects.filter(is_video=False, tovar__name__icontains=text).values('tovar_id').annotate(first_image_id=Min('id'))
-        first_image_ids = [record['first_image_id'] for record in first_image_ids_all]
-        tovars_all = img_tovar.objects.filter(id__in=first_image_ids) # товары
-        if not tovars_all: # если запрос не точный
-            img_tovar_ids = img_tovar.objects.filter(is_video=False)
-            filtered_results = []
-            for result in img_tovar_ids:
-                similarity = fuzz.WRatio(result.tovar.name.lower(), text.lower())
-                if similarity >= 50:
-                    filtered_results.append((result, similarity))
-            # Сортируем результаты по убыванию сходства
-            filtered_results.sort(key=lambda x: x[1], reverse=True)
-            # Возвращаем только объекты модели
-            tovars_all = [result[0] for result in filtered_results]
-            filtered_results_t=[]
-            filtered_results_v=''
-            for x in tovars_all:
-                if x.tovar.name != filtered_results_v:
-                    filtered_results_t.append(x)
-                    filtered_results_v = x.tovar.name
-            tovars_all = filtered_results_t
 
-        for tovar in cat:
-            payload.append({
-                'name': tovar.category,
-                'slug': tovar.slug,
-                'categ': 'cat',
-                'gl_cat': tovar.Gl_category.Gl_category
-                })
-        for tovar in avt:
-            if tovar.img:
-                payload.append({
-                    'name': tovar.avtor,
-                    'slug': tovar.slug,
-                    'categ': 'avt',
-                    'img_url': tovar.img.url
-                })
-            else:
-                payload.append({
-                    'name': tovar.avtor,
-                    'slug': tovar.slug,
-                    'categ': 'avt',
-                    'img': None
-                })
-        for tovar in tovars_all:
-            payload.append({
-                'name': tovar.tovar.name,
-                'slug': tovar.tovar.slug,
-                'categ': 'tovar',
-                'img_url': tovar.img.url
-                })
+    # Поиск категорий и авторов с учётом неточного совпадения
+    categories = fuzzy_search(text, Category, 'category') or Category.objects.filter(category__icontains=text)
+    authors = fuzzy_search(text, Avtor, 'avtor') or Avtor.objects.filter(avtor__icontains=text)
 
-        data['status'] = 200
-        data['search'] = payload
-    return JsonResponse(data)
-
-def search(request):
-    """ страница с товарами по запросу (поиск) """
-    context = {}
-    search = request.GET.get('search')
-    context['title'] = search
-    print(search, search.isspace())
-    if not search or search.isspace(): return redirect("home")
-    if len(search) > 100: return redirect("home")
-    request.session['text_search'] = search
-    cat = fuzzy_search(search, Category, 'category', similarity_threshold=80, method='ratio')[:1]
-    if cat: return redirect('category', cat_slug=cat[0].slug)
-
-    avt = fuzzy_search(search, Avtor, 'avtor', similarity_threshold=80, method='ratio')[:1]
-    if avt:
-        context['avtor'] = avt[0]
-        tov = Tovars.objects.filter(avtor=avt[0])
-    else:
-        # Поиск по названию товара
-        tovars_by_name = Tovars.objects.filter(name__icontains=search)
-        # Поиск по характеристикам
-        tovars_with_char = search_tovars_by_characteristics(search)
-        # Объединяем результаты поиска по названию и характеристикам
-        tov = set(list(tovars_by_name) + list(tovars_with_char))
-        if len(tov) == 1: return redirect('product', next(iter(tov)).slug) # если товар один то сразу перебрасывает на странуцу этого товара
-
-    all_tovars = Tovars.objects.filter(id__in=[t.id for t in tov])  # Все найденные товары
-
-    if not all_tovars.exists():
-        context['tovars'] = []
-        return render(request, 'search.html', context)
-    
-    # Определение мин/макс цены без фильтров (учёт skidka_cost)
-    price_range = all_tovars.aggregate(
-        min_price=Min('skidka_cost', default=Min('cost')),
-        max_price=Max('skidka_cost', default=Max('cost'))
+    # Поиск товаров (сначала точное совпадение, затем нечеткое)
+    first_image_ids = (
+        ImgTovar.objects
+        .filter(is_video=False, tovar__name__icontains=text)
+        .values('tovar_id')
+        .annotate(first_image_id=Min('id'))
+        .values_list('first_image_id', flat=True)
     )
 
-    min_price_all = price_range['min_price'] or 0
-    max_price_all = price_range['max_price'] or 0
+    tovars_all = ImgTovar.objects.filter(id__in=first_image_ids)
     
-    
-    # Получение категорий и производителей только из найденных товаров
-    available_categories = {t.category for t in tov}
-    available_avtors = {t.avtor for t in tov}
-    
+    if not tovars_all:
+        tovars_all = [
+            result for result in ImgTovar.objects.filter(is_video=False)
+            if fuzz.WRatio(result.tovar.name.lower(), text.lower()) >= 50
+        ]
+        # Убираем дублирующиеся товары
+        seen_names = set()
+        tovars_all = [x for x in tovars_all if not (x.tovar.name in seen_names or seen_names.add(x.tovar.name))]
+
+    # Формирование JSON-ответа
+    for cat in categories:
+        payload.append({'name': cat.category, 'slug': cat.slug, 'categ': 'cat', 'gl_cat': cat.main_categories.main_category})
+
+    for avt in authors:
+        payload.append({
+            'name': avt.avtor, 'slug': avt.slug, 'categ': 'avt',
+            'img_url': getattr(avt.img, 'url', None)
+        })
+
+    for tovar in tovars_all:
+        payload.append({
+            'name': tovar.tovar.name,
+            'slug': tovar.tovar.slug,
+            'categ': 'tovar',
+            'img_url': tovar.thumbnail_url  # Используем thumbnail_url
+        })
+
+    return JsonResponse({'status': 200, 'search': payload})
+
+def search(request):
+    """ Страница с товарами по запросу (поиск) """
+    search_text = request.GET.get('search', '').strip()
+    if not search_text or len(search_text) > 100:
+        return redirect("home")
+
+    request.session['text_search'] = search_text
+    context = {'title': search_text}
+
+    # Проверяем, совпадает ли запрос с категорией
+    category_match = fuzzy_search(search_text, Category, 'category', similarity_threshold=80, method='ratio')
+    if category_match:
+        return redirect('category', cat_slug=category_match[0].slug)
+
+    # Проверяем, совпадает ли запрос с производителем
+    author_match = fuzzy_search(search_text, Avtor, 'avtor', similarity_threshold=80, method='ratio')
+    if author_match:
+        context['avtor'] = author_match[0]
+        tovars = list(Tovars.objects.filter(avtor=author_match[0]))
+    else:
+        # Поиск по названию товара и характеристикам
+        tovars_by_name = list(Tovars.objects.filter(name__icontains=search_text))
+        tovars_by_specs = search_tovars_by_characteristics(search_text)
+        tovars = list(set(tovars_by_name + tovars_by_specs))
+
+        if len(tovars) == 1:
+            return redirect('product', slug=tovars[0].slug)
+
+    # Если ничего не найдено
+    if not tovars:
+        context['tovars'] = []
+        return render(request, 'search.html', context)
+
+    # Определение мин/макс цены среди всех найденных товаров
+    price_range = Tovars.objects.filter(id__in=[t.id for t in tovars]).aggregate(
+        min_price=Min('skidka_cost', default=Min('cost')),
+        max_price=Max('cost')
+    )
+
+    min_price_all = format_price(price_range['min_price'] or 0)
+    max_price_all = format_price(price_range['max_price'] or 0)
+
+    # Доступные категории и производители из найденных товаров
+    available_categories = {t.category for t in tovars}
+    available_avtors = {t.avtor for t in tovars}
+
     # Фильтрация товаров
     selected_categories = request.GET.getlist('category')
     selected_avtors = request.GET.getlist('avtor')
@@ -472,181 +393,165 @@ def search(request):
     max_price = request.GET.get('max_price')
     min_rating = request.GET.get('rating')
 
-    # Фильтр по категории
     if selected_categories:
-        tov = [t for t in tov if str(t.category.slug) in selected_categories]
-        # Обновляем список производителей, но **только из выбранной категории**
-        available_avtors = {t.avtor for t in tov}
-    
-    # Фильтр по производителю
+        tovars = [t for t in tovars if t.category.slug in selected_categories]
+        available_avtors = {t.avtor for t in tovars}
+
     if selected_avtors:
-        tov = [t for t in tov if str(t.avtor.slug) in selected_avtors]
-        # Обновляем список категорий, но **только из выбранных производителей**
-        available_categories = {t.category for t in tov}
-
-
-    if not selected_categories or selected_avtors:
-        # Если производители не выбраны, показываем все категории
-        available_categories = {t.category for t in all_tovars}
-        available_avtors = {t.avtor for t in all_tovars}
+        tovars = [t for t in tovars if t.avtor.slug in selected_avtors]
+        available_categories = {t.category for t in tovars}
 
     # Фильтр по цене
     if min_price:
-        min_price = int(min_price)
-        min_price = max(min_price, min_price_all)
-        tov = [t for t in tov if (t.skidka_cost or t.cost) >= min_price]
+        min_price = int(min_price.replace(" ", ""))
+        min_price = max(min_price, int(price_range['min_price'] or 0))
+        tovars = [t for t in tovars if (t.skidka_cost or t.cost) >= min_price]
+
     if max_price:
-        max_price = int(max_price)
-        max_price = min(max_price, max_price_all)
-        tov = [t for t in tov if (t.skidka_cost or t.cost) <= max_price]
+        max_price = int(max_price.replace(" ", ""))
+        max_price = min(max_price, int(price_range['max_price'] or 0))
+        tovars = [t for t in tovars if (t.skidka_cost or t.cost) <= max_price]
 
     # Фильтр по рейтингу
     if min_rating:
         min_rating = float(min_rating)
-        tovars_with_high_rating = Tovars.objects.annotate(avg_rating=Avg('comments__star')).filter(avg_rating__gte=min_rating)
-        tov = [t for t in tov if t in tovars_with_high_rating]
+        tovars = [t for t in tovars if t.rating >= min_rating]
 
-    # Сортировка (по умолчанию - по релевантности)
+    # Сортировка
     sort_option = request.GET.get('sort')
     if sort_option == "low":
-        tov = sorted(tov, key=lambda x: x.skidka_cost if x.skidka_cost else x.cost)
+        tovars.sort(key=lambda t: t.skidka_cost or t.cost)
         sorting = "По убыванию цены"
     elif sort_option == "exp":
-        tov = sorted(tov, key=lambda x: x.skidka_cost if x.skidka_cost else x.cost, reverse=True)
+        tovars.sort(key=lambda t: t.skidka_cost or t.cost, reverse=True)
         sorting = "По возрастанию цены"
     elif sort_option == "new":
-        tov = sorted(tov, key=lambda x: x.created_at, reverse=True)
+        tovars.sort(key=lambda t: t.created_at, reverse=True)
         sorting = "По новинкам"
-    elif not sort_option or sort_option == "pop":
+    else:
         sorting = "По релевантности"
 
     # Пагинация
-    paginator = Paginator(list(tov), 10)  # 10 товаров на страницу
+    paginator = Paginator(tovars, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     # Избранное
     favorites = []
     if request.user.is_authenticated:
-        favorites = favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
+        favorites = Favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
     context['favorites'] = favorites
 
+    # Обновление контекста
     context.update({
-        'tovars': char_add_tov(page_obj),
+        'tovars': page_obj.object_list,
         'page_obj': page_obj,
         'sorting': sorting,
         'sort_option': sort_option,
         'categories': available_categories,
         'avtors': available_avtors,
-        'min_price': price_range['min_price'],
-        'max_price': price_range['max_price'],
+        'min_price': min_price_all,
+        'max_price': max_price_all,
         'selected_categories': selected_categories,
-        'seo_category': Category.objects.filter(slug__in=selected_categories),
         'selected_avtors': selected_avtors,
         'selected_min_price': request.GET.get('min_price'),
         'selected_max_price': request.GET.get('max_price'),
-        'selected_rating': min_rating or 0
+        'selected_rating': min_rating or 0,
     })
-    print(context['selected_min_price'])
-    if request.user.is_authenticated: context['if_basket_all'] = [i.tovar.name for i in basket.objects.filter(user=request.user)]
+
     return render(request, 'search.html', context)
 
 def category(request, cat_slug):
-    """ страница с товарами по запросу(или нет) с выбранной категорией (поиск) """
-    context = {}
-    cat = get_object_or_404(Category, slug=cat_slug) # Получаем категорию по slug или выдаем 404
-    tov = Tovars.objects.filter(category=cat) # Получаем все товары в данной категории
-    context['category'] = cat
-    context['title'] = cat.category
-    if not tov:
-        context['tovars'] = []
-        return render(request, 'search.html', context)
-    # Получаем главную категорию
-    gl_category = cat.Gl_category
-    # Получаем все категории внутри этой главной категории
-    related_categories = Category.objects.filter(Gl_category=gl_category)
+    """ Страница с товарами для выбранной категории """
+    cat = get_object_or_404(Category, slug=cat_slug)
+    tovars = list(Tovars.objects.filter(category=cat))
+
+    # Если товаров нет
+    if not tovars:
+        return render(request, 'search.html', {'category': cat, 'title': cat.category, 'tovars': []})
+
+    # Определяем главную категорию и связанные категории
+    gl_category = cat.main_categories
+    related_categories = Category.objects.filter(main_categories=gl_category)
+
+    # Определение мин/макс цены среди найденных товаров
+    price_range = Tovars.objects.filter(category=cat).aggregate(
+        min_price=Min('skidka_cost', default=Min('cost')),
+        max_price=Max('cost')
+    )
+
+    min_price_all = format_price(price_range['min_price']) or 0
+    max_price_all = format_price(price_range['max_price']) or 0
+
+    # Доступные производители
+    available_avtors = Avtor.objects.filter(tovars__category=cat).distinct()
 
     # Фильтрация товаров
     selected_avtors = request.GET.getlist('avtor')
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
     min_rating = request.GET.get('rating')
-    
-    selected_category = request.GET.get('category')
-    if selected_category and selected_category != cat_slug:
-        return redirect('category', cat_slug=selected_category)
 
-    # Фильтр по производителю
     if selected_avtors:
-        tov = tov.filter(avtor__slug__in=selected_avtors)
+        tovars = [t for t in tovars if str(t.avtor.slug) in selected_avtors]
 
-    # Фильтр по цене
     if min_price:
         min_price = int(min_price)
-        tov = tov.filter(Q(skidka_cost__gte=min_price) | Q(cost__gte=min_price))
-    
+        min_price = max(min_price, int(min_price_all))
+        tovars = [t for t in tovars if (t.skidka_cost or t.cost) >= min_price]
+
     if max_price:
         max_price = int(max_price)
-        tov = tov.filter(Q(skidka_cost__lte=max_price) | Q(cost__lte=max_price))
+        max_price = min(max_price, int(max_price_all))
+        tovars = [t for t in tovars if (t.skidka_cost or t.cost) <= max_price]
 
-    # Фильтр по рейтингу
     if min_rating:
         min_rating = float(min_rating)
-        tov = tov.annotate(avg_rating=Avg('comments__star')).filter(avg_rating__gte=min_rating)
+        tovars = [t for t in tovars if t.rating >= min_rating]
 
-    # Получение доступных производителей (из найденных товаров)
-    available_avtors = Avtor.objects.filter(tovars__in=tov).distinct()
-
-    # Минимальная и максимальная цена среди найденных товаров
-    price_range = tov.aggregate(
-        min_price=Min('skidka_cost', default=Min('cost')),
-        max_price=Max('cost')
-    )
-
-
-    # Сортировка (по умолчанию - по релевантности)
+    # Сортировка
     sort_option = request.GET.get('sort', 'pop')
     if sort_option == "low":
-        tov = tov.order_by('skidka_cost', 'cost')
+        tovars.sort(key=lambda t: t.skidka_cost or t.cost)
         sorting = "По убыванию цены"
     elif sort_option == "exp":
-        tov = tov.order_by('-skidka_cost', '-cost')
+        tovars.sort(key=lambda t: t.skidka_cost or t.cost, reverse=True)
         sorting = "По возрастанию цены"
     elif sort_option == "new":
-        tov = tov.order_by('-created_at')
+        tovars.sort(key=lambda t: t.created_at, reverse=True)
         sorting = "По новинкам"
     else:
-        tov = tov.annotate(review_count=Count('comments')).order_by('-review_count')
+        tovars.sort(key=lambda t: t.comments.count(), reverse=True)  # По популярности (по количеству отзывов)
         sorting = "По релевантности"
-    
+
     # Пагинация
-    paginator = Paginator(tov, 10)  # 10 товаров на страницу
+    paginator = Paginator(tovars, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     # Избранное
     favorites = []
     if request.user.is_authenticated:
-        favorites = favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
-    context['favorites'] = favorites
+        favorites = Favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
 
-    context.update({
-        'tovars': char_add_tov(page_obj),
-        'page_obj': page_obj,
+    context = {
         'category': cat,
-        'search': cat.category.lower(),
+        'title': cat.category,
+        'tovars': page_obj.object_list,
+        'page_obj': page_obj,
         'categories': related_categories,
         'avtors': available_avtors,
         'sorting': sorting,
         'sort_option': sort_option,
-        'min_price': price_range['min_price'],
-        'max_price': price_range['max_price'],
+        'min_price': min_price_all,
+        'max_price': max_price_all,
         'selected_avtors': selected_avtors,
-        'selected_min_price': min_price or price_range['min_price'],
-        'selected_max_price': max_price or price_range['max_price'],
-        'selected_rating': min_rating or 0
-    })
-    if request.user.is_authenticated: context['if_basket_all'] = [i.tovar.name for i in basket.objects.filter(user=request.user)]
+        'selected_min_price': request.GET.get('min_price'),
+        'selected_max_price': request.GET.get('max_price'),
+        'selected_rating': min_rating or 0,
+        'favorites': favorites if request.user.is_authenticated else [],
+    }
+
     return render(request, 'search.html', context)
 
 def filter_update(request):
@@ -688,19 +593,14 @@ def baskett(request):
     """ Корзина """
     context = {}
 
-    tov = basket.objects.filter(user=request.user)
-    tov_ids = tov.values_list('tovar', flat=True)
-    tov_img = img_tovar.objects.filter(tovar__in = tov_ids, is_video=False)
+    tov = Basket.objects.filter(user=request.user)
 
     # Избранное
     favorites = []
-    if request.user.is_authenticated:
-        favorites = favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
+    favorites = Favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
 
     context['favorites'] = favorites
-    context['tovars'] = char_add_tov(tov, basket=True)
-    context['tovars_if_select'] = tov
-    context['tovar_img'] = tov_img
+    context['tovars_in_basket'] = tov
 
     return render(request, 'basket.html', context)
 
@@ -867,14 +767,9 @@ def order_confirmation(request):
     from django.conf import settings
     context['STATIC_URL_CARD'] = settings.STATIC_URL+'img/card'
 
-    ord_tov = basket.objects.filter(user=request.user, if_select=True)
+    ord_tov = Basket.objects.filter(user=request.user, if_select=True)
     if not ord_tov: return redirect("basket")
     context['tovars'] = ord_tov
-
-    # img
-    tov_ids = ord_tov.values_list('tovar', flat=True)
-    tov_img = img_tovar.objects.filter(tovar__in = tov_ids, is_video=False)
-    context['tovar_img'] = tov_img
 
     return render(request, 'order_confitmation.html', context)
 
@@ -885,9 +780,7 @@ def orderr(request):
     us = request.user
     sorting = request.GET.get("sorting")
     
-    ordd = order.objects.filter(user=us).annotate(
-        total_price=Sum(F('tovar_order__t_count') * F('tovar_order__t_cost'))
-        ).order_by('-date_update')
+    ordd = Order.objects.filter(user=us).order_by('-date_update')
     
     if sorting:
         if sorting == 'act':
@@ -897,9 +790,7 @@ def orderr(request):
         if sorting == 'cancelled':
             ordd=ordd.filter(dostavka='cancelled')
 
-
     context['order'] = ordd
-    context['img'] = img_tovar.objects.filter(is_video=False)
     return render(request, "order.html", context)
 
 @login_required
@@ -908,18 +799,14 @@ def order_details(request, order_number):
 
     context = {}
 
-    ordd = order.objects.get(user=request.user, order_number=order_number)
-    context['order'] = ordd
-    context['img'] = img_tovar.objects.filter(is_video=False)
+    context['order'] = Order.objects.get(user=request.user, order_number=order_number)
+    context['img'] = ImgTovar.objects.filter(is_video=False)
 
-    context['results'] = order.objects.filter(user=request.user, order_number=order_number).aggregate(
-        total_count=Sum('tovar_order__t_count'),
-        total_cost=Sum(F('tovar_order__t_count') * F('tovar_order__t_cost')))
+    context['results'] = Order.objects.filter(user=request.user, order_number=order_number)
     
     # Избранное
     favorites = []
-    if request.user.is_authenticated:
-        favorites = favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
+    favorites = Favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
     context['favorites'] = favorites
 
     return render(request, 'order_details.html', context)
@@ -959,3 +846,92 @@ def faq(request):
     """Render the FAQ page."""
 
     return render(request, 'faq.html')
+
+
+# ajax
+
+def load_tovars(request):
+    """
+    Загружает товары постронично через AJAX
+    """
+    page = int(request.GET.get("page", 1))
+    per_page = 18
+    offset = (page - 1) * per_page
+
+    tovars = Tovars.objects.prefetch_related("images")[offset:offset + per_page]
+
+    def format_price_tov(price):
+        return f"{price:,}".replace(",", " ")  # 109240 → 109 240
+
+    data = []
+    for tovar in tovars:
+        images = tovar.images.filter(is_video=False)[:5]  # Получаем первые 5 изображений, исключая видео
+        image_urls = [img.medium_url for img in images]
+
+        data.append({
+            "id": tovar.id,
+            "name": tovar.name,
+            "slug": tovar.slug,
+            "cost": format_price_tov(int(tovar.cost)),
+            "skidka_cost": format_price_tov(int(tovar.skidka_cost)) if tovar.skidka_cost else None,
+            "skidka": round(tovar.skidka) if tovar.skidka else 0,
+            "rating": f"{tovar.rating:.1f}" if tovar.rating else 0,
+            "review_count": tovar.review_count,
+            "images": image_urls,  # Массив из 5 изображений
+        })
+        if request.user.is_authenticated:
+            data[-1]["is_favorite"] = tovar.favoritess_set.filter(user=request.user).exists()
+
+    return JsonResponse({"tovars": data, "has_next": len(tovars) == per_page})
+
+from django.utils.timesince import timesince
+def load_comments(request, product_id):
+    page = int(request.GET.get("page", 1))
+    user_comment = None
+
+    # Получаем все комментарии к товару
+    comments_qs = Comments.objects.filter(tovar_id=product_id).select_related("user").order_by("-created_at")
+
+    # Если пользователь авторизован, ищем его комментарий
+    if request.user.is_authenticated:
+        user_comment = comments_qs.filter(user=request.user).first()
+        comments_qs = comments_qs.exclude(user=request.user)  # Исключаем его из общего списка
+
+    paginator = Paginator(comments_qs, 5)  # Пагинация только для остальных комментариев
+    comments_page = paginator.get_page(page)
+
+    # Создаем список комментариев
+    comments_data = []
+    
+    # Добавляем комментарий пользователя только на первой странице
+    if page == 1 and user_comment:
+        comments_data.append({
+            "id": user_comment.id,
+            "username": user_comment.user.username,
+            "avatar": user_comment.user.profile.avatar.url if hasattr(user_comment.user, "profile") and user_comment.user.profile.avatar else None,
+            "comment": user_comment.text,
+            "star": user_comment.star,
+            "created_at": timesince(user_comment.created_at, timezone.now()) + " назад",
+            "updated_at": timesince(user_comment.update_at, timezone.now()) + " назад" if user_comment.update_at != user_comment.created_at else None,
+            "baned": user_comment.baned,
+            "user_comment": True
+        })
+
+    # Добавляем остальные комментарии
+    for com in comments_page:
+        comments_data.append({
+            "id": com.id,
+            "username": com.user.username,
+            "avatar": com.user.profile.avatar.url if hasattr(com.user, "profile") and com.user.profile.avatar else None,
+            "comment": com.text,
+            "star": com.star,
+            "created_at": timesince(com.created_at, timezone.now()) + " назад",
+            "updated_at": timesince(com.update_at, timezone.now()) + " назад" if com.update_at != com.created_at else None,
+            "baned": com.baned,
+            "user_comment": False
+        })
+    return JsonResponse({
+        "comments": comments_data,
+        "has_next": comments_page.has_next(),
+    })
+

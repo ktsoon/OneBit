@@ -1,9 +1,10 @@
 .totop{
     position: absolute;
     right: 35px;
-    margin-top: -45px;
+    top: -45px;
 }
 footer{
+    position: relative;
     a:hover{color: #000 !important}
     dd a:hover{color: var(--color-all) !important}
     .icon-flex{gap:5px;align-items: center;width: max-content}

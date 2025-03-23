@@ -30,11 +30,6 @@ main .list-tovar:nth-last-child(1) hr {
     opacity: .2;
   }
 }
-.blank-dots{
-  width: 50px;
-  height: 7px;
-  margin: 0 auto;
-}
 .blank-placeholder-big{
   font-size: 1.25rem;
 }
@@ -51,8 +46,11 @@ main .list-tovar:nth-last-child(1) hr {
 .blank-header span:nth-child(2){
   width: 70%;
 }
-.blank-info{
-
+.btn-load{
+  text-align: center;
+  border-radius: 10px;
+  font-weight: 500;
+  
 }
 
 /* /пустая карточка/ */
@@ -227,9 +225,6 @@ main .list-tovar:nth-last-child(1) hr {
 /* Медиа-запросы */
 
 @media (max-width: 499px) {
-  .t-b-otz{
-    font-size: .8em;
-  }
   .cost span:nth-child(1){
     font-size: 18px;
   }

@@ -150,6 +150,7 @@ CACHES = {
     }
 }
 
+
 # SECURE_SSL_REDIRECT = True  # Перенаправление на HTTPS
 # CSRF_COOKIE_SECURE = True   # Защита CSRF через HTTPS
 # SESSION_COOKIE_SECURE = True  # Защита сессий через HTTPS

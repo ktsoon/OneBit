@@ -43,6 +43,13 @@ article.uk-comment{position: relative}
     .star-value{background-size: 33px !important}
 }
 
+.title-reviews{
+    display: flex;
+    align-items: baseline;
+    font-weight: 500;
+    span{color: gray}
+}
+
 /* modal */
 .uk-modal-dialog.uk-modal-body .p-score{
     align-items:center;
@@ -78,6 +85,13 @@ article.uk-comment{position: relative}
 @media screen and (max-width: 700px) {
     .but-edit{
         top: unset;
-        bottom: 20px;
+        top: 10px;
+        right: 10px;
+    }
+    .uk-comment-primary{
+        padding: 10px;
+    }
+    .com-right{
+        padding-left: 10px;
     }
 }

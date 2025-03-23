@@ -24,7 +24,7 @@
 .main-image {
     flex: 1;
     height: 500px;
-    max-width: 700px;
+    width: 600px;
     display: block;
 }
 .main-image img,
@@ -139,6 +139,7 @@
     margin-bottom: 10px;
 }
 .p-score-com{
+    list-style-type: none;
     color: var(--color-all);
     font-weight:700;
     a{

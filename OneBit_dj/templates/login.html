@@ -1,4 +1,5 @@
 {% extends "layout/authlayout.html" %}
+{% load static %}
 
 
 {% block title %}Авторизация на OneBit{% endblock title %}
@@ -12,7 +13,7 @@
 {% block link_description %}Авторизируйся на OneBit и получи доступ к кучи товаров, быстрой доставка, скидкам и акциям.{% endblock %}
    
 {% block auth_content %}
-
+<h1 class="title-auth">Авторизация</h1>
 {% for field in form %}
    <div class="auth-input-text">
       {{ field }}

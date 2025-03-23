@@ -129,6 +129,7 @@ header {
 /* ------------search------------ */
 .search {
   width: 100%;
+  max-width: 800px;
   margin-right: 15px;
   display: flex;
   align-items: center;
@@ -276,6 +277,7 @@ header {
     height: 40px;
     padding-left: 50px;
     margin-left: 15px;
+    border-radius: 5px;
     width: calc(100% - 15px);
   }
   .catalog,

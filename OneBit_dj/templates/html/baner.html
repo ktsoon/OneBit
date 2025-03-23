@@ -1,20 +1,19 @@
 {% load static %}
 <div class="baner">
-    {% comment %} <img src="{% static 'img/baaner.png' %}" alt="baner"> {% endcomment %}
     <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slider="autoplay: true">
         <div class="uk-slider-items uk-grid uk-child-width-1-1">
             <div>
                 <div class="uk-panel">
-                    <img src="{% static 'img/baneer/p1.jpg' %}" alt="p1">
+                    <img rel="preload" src="{% static 'img/baneer/p1.jpg' %}" width="1280" height="480" alt="p1" >
                     <div class="uk-position-center uk-text-center">
-                        <h2 uk-slider-parallax="x: 100,-100">Быстродействие в каждом гигабайте!</h2>
-                        <p uk-slider-parallax="x: 200,-200">Ускорьте работу вашего ПК с высокоскоростной оперативной памятью! Больше возможностей для игр, работы и творчества.</p>
+                        <h2 uk-slider-parallax="x: 100,-100">Скидки на ОЗУ!</h2>
+                        <p uk-slider-parallax="x: 200,-200">Ускорьте работу вашего ПК с высокоскоростной оперативной памятью! И получите выгоду от наших скидок!</p>
                     </div>
                 </div>
             </div>
             <div>
                 <div class="uk-panel">
-                    <img src="{% static 'img/baneer/p2.webp' %}" alt="p2">
+                    <img src="{% static 'img/baneer/p2.webp' %}" width="1280" height="480" alt="p2" loading="lazy">
                     <div class="uk-position-center uk-text-center">
                         <h2 uk-slider-parallax="x: 100,-100">Мощность без границ!</h2>
                         <p uk-slider-parallax="x: 200,-200">Разблокируйте потенциал вашего ПК с новейшими процессорами! Высокая производительность, энергоэффективность и поддержка передовых технологий.
@@ -25,7 +24,7 @@
             </div>
             <div>
                 <div class="uk-panel">
-                    <img src="{% static 'img/baneer/p3.jpg' %}" alt="p3">
+                    <img src="{% static 'img/baneer/p3.jpg' %}" width="1280" height="480" alt="p3" loading="lazy">
                     <div class="uk-position-center uk-text-center">
                         <h2 uk-slider-parallax="x: 100,-100">Графика нового уровня!</h2>
                         <p uk-slider-parallax="x: 200,-200">Погрузитесь в мир высоких FPS и реалистичной графики! Игровые и профессиональные видеокарты для максимальной производительности.</p>

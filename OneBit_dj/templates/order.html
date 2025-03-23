@@ -1,7 +1,6 @@
 {% extends "layout/layout.html" %}
 {% load static %}
 {% load humanize %}
-{% load polls_tags %}
 
 {% block title %}Заказы — OneBit{% endblock %}
 
@@ -82,22 +81,15 @@
                                     {% endif %}
                                 {% endif %}
                             </span>
-                            {% if ord.sposob_dostavka == 'Pochta' %}
-                                {% if ord.dostavka == 'delivered' or ord.dostavka == 'goes' %}
-                                <span>Трек-номер: {{ ord.track_numbers }}</span>
-                                {% endif %}
-                            {% endif %}
                         {% endif %}
                         <div><span class="ord-dostavka {{ord.dostavka}}">{{ ord.get_dostavka_display }}</span><span class="ord-date"> c {{ ord.date_update.date }} в {{ ord.date_update.time }}</span></div>
                     </div>
                     <div class="ord-r">
                     <a href="{% url 'order_details' ord.order_number %}" target="_blank">
                         {% for tov in ord.tovar_order.all %}
-                        {% define 1 as count %}
-                            {% for i in img %}
-                            {% if i.tovar == tov.tovar and count == 1 %}
-                                    {% summ 1 count as count %}
-                                    <img src="{{ i.img.url }}" alt="{{ tov.tovar.slug }}">
+                            {% for img in tov.tovar.images.all|slice:"1" %}
+                            {% if not img.is_video %}
+                                    <img src="{{ img.medium_url }}" alt="{{ tov.tovar.slug }}">
                                 {% endif %}
                             {% endfor %}
                         {% endfor %}

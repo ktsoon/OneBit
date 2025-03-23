@@ -314,6 +314,13 @@ hr{margin: 10px 0}
     .filter-sort{gap: 10px}
 }
 @media (max-width: 640px) {.off-bar-filter .btn-close{margin-top: 10px}}
+@media (max-width: 468px) {
+    .t-s-char{
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 10px;
+    }
+}
 @media (max-width: 360px) {
     .filter-sort{
         font-size: 0.863em;

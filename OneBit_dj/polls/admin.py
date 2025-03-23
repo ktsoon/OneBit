@@ -82,18 +82,18 @@ class TovarsAdmin(admin.ModelAdmin):
 class Gl_categoryAdmin(admin.ModelAdmin):
     """ Главная Категория """
 
-    list_display = ('Gl_category','slug')
-    prepopulated_fields = { "slug": ("Gl_category",)}
-    search_fields = ('Gl_category',)
+    list_display = ('main_category','slug')
+    prepopulated_fields = { "slug": ("main_category",)}
+    search_fields = ('main_category',)
 
 @admin.register(Category) # Категория
 class CategoryAdmin(admin.ModelAdmin):
     """ Категория """
 
-    list_display = ('category', 'Gl_category','slug')
+    list_display = ('category', 'main_categories','slug')
     prepopulated_fields = { "slug": ("category",)}
     search_fields = ('category',)
-    list_filter = ('Gl_category',)
+    list_filter = ('main_categories',)
 
 @admin.register(ImgTovar) # Картинки к товару
 class ImgTovarAdmin(admin.ModelAdmin):

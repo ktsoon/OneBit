@@ -82,14 +82,13 @@
             </div>
         {% endfor %} {% endcomment %}
         
-        {% for _ in "012345678901234567" %}
+        {% comment %} {% for _ in "012345" %}
             <div class="blank-tovar">
                 <div class="blank-img">
                     <svg width="100%" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder" preserveAspectRatio="xMidYMid slice" focusable="false">
                         <title>Placeholder</title>
                         <rect width="100%" height="100%" fill="#868e96"></rect>
                     </svg>
-                    <div class="blank-dots blank-glow"></div>
                 </div>
                 <div class="blank-cost">
                     <span class="blank-placeholder blank-glow blank-placeholder-big"></span>
@@ -108,7 +107,6 @@
                     <span class="blank-placeholder blank-glow" style="width: 30%"></span>
                 </div>
             </div>
-        {% endfor %}
+        {% endfor %} {% endcomment %}
     </div>
-    <button id="load-more" class="uk-button uk-button-primary">Загрузить ещё</button>
 </div>

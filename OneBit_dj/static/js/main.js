@@ -68,6 +68,10 @@ class HvrSlider {
         }, { passive: true });
 
         hvrSectors.addEventListener('mouseleave', resetToFirstImage);
+
+        // Меняем класс .images на .hvr-images после инициализации слайдера
+        el.classList.remove('images');
+        el.classList.add('hvr-images');
       }
     });
   }
@@ -93,7 +97,7 @@ window.addEventListener('DOMContentLoaded', function() {
           var catalogElements = document.querySelectorAll('div.catalog');
 
           // Атрибут, который нужно добавить
-          var ukStickyValue = "position: bottom; end: !body; show-on-up: true; animation: uk-animation-slide-bottom";
+          var ukStickyValue = "position: bottom; end: !body; animation: uk-animation-slide-bottom";
 
           // Добавляем атрибут ко всем найденным элементам с классом h_right
           hRightElements.forEach(function(element) {
@@ -106,10 +110,6 @@ window.addEventListener('DOMContentLoaded', function() {
           });
       }
   }
-
-  // Удаление выпадающего списка при max-width: 700px
-  var dropdownDiv = document.querySelector('.uk-dropdown');
-  var mq = window.matchMedia('(max-width: 700px)');
 
   // Удаление и изменение классов для слайдера при max-width: 700px
   const ulElements = document.querySelectorAll('ul.uk-slider');

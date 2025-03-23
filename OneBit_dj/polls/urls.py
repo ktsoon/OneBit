@@ -14,7 +14,7 @@ def robots_txt(request):
 
 urlpatterns = [
     path('', views.index, name='home'), # главная
-    path('product/<str:slug>/', views.productDetailView.as_view(), name='product'), # отдельный товар
+    path('product/<str:slug>/', views.product, name='product'), # отдельный товар
     path('product_comm_add_edit/', views.comm_add_edit, name='comm_add_edit'), # отдельный товар
     path('login/', views.sing_in, name="login"), # авторизация
     path('register/', views.sing_up, name="register"), # регистрация
@@ -37,7 +37,10 @@ urlpatterns = [
     path('basket_count/', views.basket_count, name='basket_count'), # корзина. обновить количество товара ajax
     path('basket/select/', views.basket_if_select, name='basket_if_select'), # выбор товара ajax
     path('add_order/', views.add_order, name='add_order'), # добавление в заказ ajax
+
     path('load_tovars/', views.load_tovars, name='load_tovars'), # AJAX загрузка товаров
+    path('load_comments/<int:product_id>/', views.load_comments, name='load_comments'), # AJAX загрузка товаров
+
 
     path('robots.txt', robots_txt, name='robots_txt') # robots.txt 
 ] 

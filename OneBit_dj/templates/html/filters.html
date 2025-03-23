@@ -37,7 +37,7 @@
                                     <label class="uk-form-label uk-display-block" for="cost-ot">От</label>
                                     <input class="uk-input uk-width-5-6" id="cost-ot" type="text" name="min_price"
                                     placeholder="{{ min_price|intcomma }}" min="{{ min_price }}" max="{{ max_price }}"
-                                    {% if selected_min_price != min_price %}
+                                    {% if selected_min_price and selected_min_price != min_price %}
                                         value="{{ selected_min_price }}"
                                     {% endif %}
                                     >
@@ -46,7 +46,7 @@
                                     <label class="uk-form-label uk-display-block" for="cost-do">До</label>
                                     <input class="uk-input uk-width-5-6" id="cost-do" type="text" name="max_price" 
                                     placeholder="{{ max_price|intcomma }}" min="{{ min_price }}" max="{{ max_price }}"
-                                    {% if selected_max_price != max_price %}
+                                    {% if selected_max_price and selected_max_price != max_price %}
                                         value="{{ selected_max_price }}"
                                     {% endif %}
                                     >
@@ -129,8 +129,8 @@
                                 <div class="uk-width-1-2">
                                     <label class="uk-form-label uk-display-block" for="cost-ot">От</label>
                                     <input class="uk-input uk-width-5-6" id="cost-ot" type="text" name="min_price"
-                                    placeholder="{{ min_price|intcomma }}" min="{{ min_price }}" max="{{ max_price }}"
-                                    {% if selected_min_price and selected_min_price != min_price|stringformat:'i' %}
+                                    placeholder="{{ min_price|floatformat:0|intcomma }}" min="{{ min_price }}" max="{{ max_price }}"
+                                    {% if selected_min_price and selected_min_price != min_price %}
                                         value="{{ selected_min_price }}"
                                     {% endif %}
                                     >
@@ -139,7 +139,7 @@
                                     <label class="uk-form-label uk-display-block" for="cost-do">До</label>
                                     <input class="uk-input uk-width-5-6" id="cost-do" type="text" name="max_price"
                                     placeholder="{{ max_price|intcomma }}" min="{{ min_price }}" max="{{ max_price }}"
-                                    {% if selected_max_price and selected_max_price != max_price|stringformat:'i' %}
+                                    {% if selected_max_price and selected_max_price != max_price %}
                                         value="{{ selected_max_price }}"
                                     {% endif %}
                                     >

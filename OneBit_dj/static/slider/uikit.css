@@ -7938,20 +7938,20 @@ iframe[uk-cover] {
     top: calc(50% - var(--uk-position-margin-offset));
     --uk-position-translate-y: -50%;
     transform: translate(0, var(--uk-position-translate-y));
-    background: var(--color-all);
+    background: #b960e550;
     border-radius: 50%;
     svg{
-        color: white;
+        color: #fff;
     }
 }
 [class*=uk-position-center-left]:hover,
 [class*=uk-position-center-right]:hover{
-    background: var(--color-all-bord);
+    background: #b960e575;
     transition: 0.3s;
 }
 [class*=uk-position-center-left]:active,
 [class*=uk-position-center-right]:active{
-    background: var(--color-all-border);
+    background: #b960e575;
     transition: 0.3s;
 }
 

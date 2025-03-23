@@ -107,8 +107,9 @@ $(document).ready(function() {
 
         $('.tovar_b:checked').each(function() {
             var $parent = $(this).closest('.tovar-srch');
-            var itemName = $parent.find('.t-cntr-name').text().trim();
-            var itemImgSrc = $parent.find('.images img').attr('src');
+            var itemName = $parent.find('.t-name').text().trim();
+            var itemImgSrc = $parent.find('.t-img img').attr('src');
+            console.log($parent, itemName, itemImgSrc);
 
             // Создание нового элемента списка
             var listItem = `
@@ -176,7 +177,7 @@ $(document).ready(function() {
 // uk-sticky bottom
 function updateSticky() {
     if ($(window).width() <= 700) {
-        $('.right-bar .uk-card').attr('uk-sticky', 'position: bottom; end: !body; offset: -70; show-on-up: true; animation: uk-animation-slide-bottom');
+        $('.right-bar .uk-card').attr('uk-sticky', 'position: bottom; end: !body; offset: -70; animation: uk-animation-slide-bottom');
         UIkit.sticky(inactive, '.right-bar')
         UIkit.sticky('.right-bar .uk-card'); // Обновляем поведение
     }else if ($(window).width() <= 1220) {

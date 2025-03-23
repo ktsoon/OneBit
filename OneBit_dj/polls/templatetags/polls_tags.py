@@ -2,8 +2,6 @@ from django import template
 
 from polls.models import *
 
-from django.db.models import F, FloatField, ExpressionWrapper, Avg, Count
-
 register = template.Library()
 
 """ поменять переменную """
@@ -20,37 +18,18 @@ def multiply(value, arg): return value * arg
 
 """ аватарка """
 @register.simple_tag
-def avatar_img(userr):
-    a = UserProfile.objects.filter(user=userr)
-    if a: return a[0].avatar
+def avatar_img(user):
+    a = UserProfile.objects.filter(user=user).values_list('avatar', flat=True)
+    if a: return a[0]
     else: return False
 
-""" количество одного товара в корзине """
 @register.simple_tag
-def bask_count(tov, us): return Basket.objects.filter(user__id=us, tovar__id=tov)[0].t_count
-
-""" возвращение всех категорий для каталога """
-@register.simple_tag
-def specifications(): return Category.objects.all()
-@register.simple_tag
-def Gl_specifications(): return Gl_category.objects.all()
-
-""" все изображения товаров """
-@register.simple_tag
-def tovar_img_all(): return img_tovar.objects.all()
-
-""" недавно просмотренные товары """
-# @register.simple_tag
-# def history_tovars_all(user):
-#     return History_tovars.objects.filter(user=user)[:20]
-
-""" Скидка определённого товара """
-@register.simple_tag
-def skidka_tovar(cost, skidka_cost): return 100 * (cost - skidka_cost) / cost
+def Gl_specifications():
+    return Gl_category.objects.prefetch_related('categories').all()
 
 """ Первая картинка товара """
-@register.simple_tag
-def tovar_img_first(tovar): return img_tovar.objects.filter(tovar=tovar, is_video=False).first().img.url
+@register.filter
+def tovar_img_first(images): return images.filter(is_video=False).first().medium_url
 
 """ Возвращает правильное окончание для слова 'отзыв' """
 @register.filter

@@ -33,7 +33,7 @@ def img_users(instance, fullname):  return f'static/img/users/{instance.user.id}
 class UserProfile(models.Model):
     """ Профиль пользователя """
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True, related_name="profile")
     avatar = models.ImageField("Аватарка", upload_to=img_users, null=True, blank=False)
 
     class Meta:
@@ -61,14 +61,14 @@ class Tovars(models.Model):
 
     @property
     def rating(self):
-        """Возвращает средний рейтинг товара."""
-        return self.comments.aggregate(Avg("star"))["star__avg"] or 0
+        """Возвращает средний рейтинг товара, исключая забаненные комментарии."""
+        avg = self.comments.aggregate(Avg("star"))["star__avg"]
+        return round(avg, 1) if avg else 0
     
     @property
     def review_count(self):
-        """Возвращает количество отзывов."""
+        """Возвращает количество незабаненных отзывов."""
         return self.comments.count()
-    
     @property
     def skidka(self):
         """Возвращает процент скидки."""
@@ -90,7 +90,7 @@ class Tovars(models.Model):
 class Gl_category(models.Model):
     """ Главные Категории """
 
-    Gl_category = models.CharField("Главная категория", max_length=120, unique=True, db_index=True, help_text="Введите название главной категории")
+    main_category = models.CharField("Главная категория", max_length=120, unique=True, db_index=True, help_text="Введите название главной категории")
     slug = models.SlugField("URL", max_length=255, unique=True, db_index=True, help_text="если ошибка: поля повторяются. то измениете поле")
     seo = models.TextField("SEO")
 
@@ -99,7 +99,7 @@ class Gl_category(models.Model):
         verbose_name_plural = "Главные категории"
 
     def __str__(self):
-        return self.Gl_category
+        return self.main_category
 
     def get_absolute_url(self):
         return reverse("Gl_category_detail", kwargs={"pk": self.pk})
@@ -107,7 +107,7 @@ class Gl_category(models.Model):
 class Category(models.Model):
     """ Категории """
 
-    Gl_category = models.ForeignKey(Gl_category, verbose_name="Главная категория", null=True, on_delete=models.CASCADE)
+    main_categories = models.ForeignKey(Gl_category, verbose_name="Главная категория", null=True, on_delete=models.CASCADE, related_name="categories")
     category = models.CharField("Категория", max_length=120, db_index=True, unique=True, help_text="Введите название категории")
     slug = models.SlugField("URL", max_length=255, unique=True, db_index=True, help_text="если ошибка: поля повторяются. то измениете поле")
     seo = models.TextField("SEO")
@@ -247,7 +247,7 @@ class Detail(models.Model):
 class Specs(models.Model):
     """ Характеристики к товару """
 
-    tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, db_index=True, help_text="Выберите товар")
+    tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, db_index=True, help_text="Выберите товар", related_name="specs")
     category = models.ForeignKey(Detail, verbose_name="Характеристика", on_delete=models.CASCADE, help_text="Выберите характеристику к товару")
     description = models.TextField("Значение", help_text="Введите значение характеристики к товару")
 
@@ -266,6 +266,7 @@ class Favoritess(models.Model):
     created_at = models.DateTimeField(verbose_name="Дата добавления", auto_now_add=True, null=True)
 
     class Meta:
+        unique_together = ('tovar', 'user')
         verbose_name = "Избранный товар"
         verbose_name_plural = "Избранные товары"
         unique_together = ('tovar', 'user')
@@ -281,6 +282,7 @@ class History_tovars(models.Model):
     created_at = models.DateTimeField(verbose_name="Дата просмотра товара", auto_now_add=True, null=True)
 
     class Meta:
+        unique_together = ('tovar', 'user')
         ordering = ['-created_at']
         verbose_name = "История просмотра товаров"
         verbose_name_plural = "Истории просмотров товаров"
@@ -291,12 +293,13 @@ class History_tovars(models.Model):
 class Basket(models.Model):
     """ Корзина """
 
-    tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, db_index=True, help_text="Выберите товар")
+    tovar = models.ForeignKey(Tovars, on_delete=models.CASCADE, db_index=True, help_text="Выберите товар", related_name="basket")
     user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
     t_count = models.PositiveIntegerField("Количество", default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
     if_select = models.BooleanField("Выбран ли товар", default=False)
 
     class Meta:
+        unique_together = ('tovar', 'user')
         verbose_name = "Корзина"
         verbose_name_plural = "Корзины"
 
@@ -346,10 +349,6 @@ class Order(models.Model):
 
     coords = models.CharField("Координаты магазина", max_length=250, blank=True, null=True, help_text='Если способ доставки \"Самовывоз\"')
 
-    card_number = models.CharField("Номер карты", max_length=19)
-    mm = models.PositiveIntegerField("Месяц карты", validators=[MinValueValidator(1),MaxValueValidator(12)])
-    yy = models.PositiveIntegerField("Год карты", validators=[MinValueValidator(1),MaxValueValidator(99)])
-    cvv = models.CharField("CVV", max_length=3)
     date = models.DateTimeField("Дата заказа", auto_now=False, auto_now_add=True)
     date_update = models.DateTimeField("Дата доставки/отмены", auto_now=True)
 
@@ -366,6 +365,14 @@ class Order(models.Model):
             self.order_number = f"{date_part}-{time_part}-{next_id}"
         super().save(*args, **kwargs)
 
+    @property
+    def total_price(self):
+        """Возвращает общую стоимость заказа."""
+        price = 0
+        for order_tovar in self.tovar_order.all():
+            price += order_tovar.t_cost * order_tovar.t_count
+        return price
+    
     class Meta:
         verbose_name = "Заказ"
         verbose_name_plural = "Заказы"
@@ -380,11 +387,13 @@ class Comments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     text = models.TextField("Коментарий", max_length=3000, null=True, blank=True)
     star = models.PositiveIntegerField("Оценка", validators=[MinValueValidator(1), MaxValueValidator(5)])
+    baned = models.BooleanField("Забанен", default=False)
     
     update_at = models.DateTimeField(verbose_name="Дата изменения", auto_now=True)
     created_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
 
     class Meta:
+        unique_together = ('tovar', 'user')
         ordering = ['-created_at']
         verbose_name = "Комметарий товара"
         verbose_name_plural = "Комметарии товаров"

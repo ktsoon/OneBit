@@ -128,10 +128,7 @@ ymaps.ready(() => {
         const placemark = new ymaps.Placemark(store.coords, {
             hintContent: store.name,
         }, {
-            iconLayout: 'default#image',
-            iconImageHref: pic,
-            iconImageSize: [30, 42],
-            iconImageOffset: [-15, -42]
+            preset: 'islands#violetDotIcon',
         });
 
         // Событие клика на метке

@@ -37,7 +37,7 @@
                   <div class="form_ava">
                      {% if not avatar %}
                         <span uk-icon="icon: user;ratio: 7"></span>
-                        <img>
+                        <img width="250" height="177">
                      {% endif %}
                      {{ form.avatar }}
                   </div>
@@ -87,19 +87,17 @@
       </a>
 
       {% if comment_us %}
-      <div class="block_tov block_style bs_comm">
-         {# считает и выводит количество товаров в корзине #}
-         <h3>Оставте комментарий уже купленным товарам:</h3>
-         <div class="list_comm_t">
-            {% for i in comment_us %}
-               <a class="comm_t" href="{{ i.tovar.get_absolute_url }}#reviews" target="_blank">
-                  {% tovar_img_first i.tovar as tov_img %}
-                  <img src="{{ tov_img }}" alt="i.tovar.slug">
-                  <span>{{ i.tovar.name }}</span>
-               </a>
-            {% endfor %}
+         <div class="block_tov block_style bs_comm">
+            <h3>Оставьте комментарий уже купленным товарам:</h3>
+            <div class="list_comm_t">
+               {% for i in comment_us %}
+                  <a class="comm_t" href="{{ i.tovar.get_absolute_url }}#reviews" target="_blank">
+                     <img src="{{ i.tovar.images.all|tovar_img_first }}" alt="{{i.tovar.slug}}">
+                     <span>{{ i.tovar.name }}</span>
+                  </a>
+               {% endfor %}
+            </div>
          </div>
-      </div>
       {% endif %}
    </div>
 </div>

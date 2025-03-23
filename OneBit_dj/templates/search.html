@@ -81,7 +81,7 @@
 <nav aria-label="Breadcrumb">
     <ul class="uk-breadcrumb bc">
         <li><a href="{% url 'home' %}" target="_blank">Главная</a></li>
-        <li class="uk-disabled"><a>{{ category.Gl_category }}</a></li>
+        <li class="uk-disabled"><a>{{ category.main_categories }}</a></li>
         <li>{{ category.category|capfirst }}</li>
     </ul>
 </nav>
@@ -175,22 +175,19 @@
     {% endif %}
     
     <div class="right-main">
-        {% for tovar, specs in tovars.items %}
+        {% for tovar in tovars %}
             <div class="tovar-srch">
                 <div>
                     <a href="{{ tovar.get_absolute_url }}" target="_blank" class="but-heart-div">
                         {% if tovar.skidka_cost %}
                             <div class="skidka">
-                                <span>-{{ tovar.skidka|floatformat:0 }}</span> {# floatformat - сколько цифр после запятой #}
+                                <span>-{{ tovar.skidka }}</span>
                             </div>
                         {% endif %}
                         <div class="t-img images">
-                            {% tovar_img_all as tovar_img %}
-                            {% define 1 as count %}
-                            {% for img in tovar_img %}
-                                {% if img.tovar == tovar and not img.is_video and count <= 10 %}
-                                    {% summ 1 count as count %}
-                                    <img src="{{ img.img.url }}" alt="{{ tovar.slug }}_img_{{ img.id }}.{{ forloop.counter0 }}"> 
+                            {% for img in tovar.images.all|slice:'8' %}
+                                {% if not img.is_video %}
+                                    <img src="{{ img.medium_url }}" alt="{{ tovar.slug }}_img_{{ img.id }}"> 
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -204,7 +201,7 @@
                     <div class="t-center">
                         <div>
                             <div class="t-s-char">
-                                {% for char in specs %}
+                                {% for char in tovar.specs.all|slice:'5' %}
                                     <div class="s-char">
                                         <span>{{ char.category.category }}: </span>
                                         <span>{{ char.description }}</span>
@@ -222,7 +219,7 @@
                                 <div class="t-b-otz">
                                     <img src="{% static 'img/icon-aktuelles.png' %}" alt="комент">
                                     <div>
-                                        {{ tovar.count_com }} {{ tovar.count_com|review_word }}
+                                        {{ tovar.review_count }} {{ tovar.review_count|review_word }}
                                     </div>
                                 </div>
                             </div>
@@ -238,10 +235,10 @@
                         <div class="right-top">
                             <div class="cost">
                                 {% if not tovar.skidka_cost %}
-                                    <span>{{ tovar.cost|intcomma }}</span>
+                                    <span>{{ tovar.cost|floatformat:0|intcomma }}</span>
                                 {% else %}
-                                    <span>{{ tovar.skidka_cost|intcomma }}</span>
-                                    <span>{{ tovar.cost|intcomma }}</span>
+                                    <span>{{ tovar.skidka_cost|floatformat:0|intcomma }}</span>
+                                    <span>{{ tovar.cost|floatformat:0|intcomma }}</span>
                                 {% endif %}
                             </div>
                             <div class="p-buttons">
@@ -251,7 +248,8 @@
                                         <div>В&nbsp;корзине</div>
                                     </button>
                                 {% else %}
-                                    <button class="uk-button uk-button-onebit button-buy-p b-buy-searh" id="{{ tovar.id }}">
+                                    <button class="uk-button uk-button-onebit button-buy-p b-buy-searh" id="{{ tovar.id }}"
+                                    {% if not user.is_authenticated %} uk-tooltip="Необходимо авторизоваться" {% endif %}>
                                         <span uk-icon="icon: cart; ratio: 1"></span>
                                         <div>Добавить в&nbsp;корзину</div>
                                     </button>
@@ -265,6 +263,12 @@
                                         data-product="{{ tovar.id }}"
                                         {% if tovar.id in favorites %} checked {% endif %}>
                                         <svg class="heart-main" viewBox="0 0 512 512" title="heart">
+                                            <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
+                                        </svg>
+                                    </div>
+                                {% else %}
+                                    <div class="but-heart">
+                                        <svg class="heart-main" viewBox="0 0 512 512" width="55" title="heart" uk-tooltip="Необходимо авторизоваться">
                                             <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
                                         </svg>
                                     </div>

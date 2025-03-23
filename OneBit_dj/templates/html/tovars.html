@@ -45,10 +45,14 @@
                                     </div>
                                 {% endif %}
                                 <div class="t-img images">
-                                    {% comment %} {% tovar_img_all as tovar_img %} {% endcomment %}
                                     {% for img in tovar.images.all|slice:'6' %}
-                                        {% if img.tovar == tovar and not img.is_video %}
-                                            <img src="{{ img.medium_url }}" width="400" height="400" alt="{{ tovar.name }}_img_{{ img.id }}"> 
+                                        {% if not img.is_video %}
+                                            <img src="{{ img.medium_url }}" width="400" height="400" alt="{{ tovar.name }}_img_{{ img.id }}"
+                                            {% if foorloop.counter0 == 0 %}
+                                            rel="preload"
+                                            {% else %}
+                                            loading="lazy"
+                                            {% endif %}> 
                                         {% endif %}
                                     {% endfor %}
                                 </div>
@@ -85,7 +89,7 @@
                                 <div class="t-b-info">
                                     <div class="t-b-otz">
                                         <img src="{% static 'img/icon-aktuelles.png' %}" alt="комент">
-                                        <div>Отзывов пока нет</div>
+                                        <div>0 отзывов</div>
                                     </div>
                                 </div>
                                 {% endif %}

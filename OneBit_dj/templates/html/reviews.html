@@ -2,17 +2,20 @@
 {% load polls_tags %}
 
 <div class="reviews" id="reviews">
-    <h2>Отзывы</h2>
+    <div class="title-reviews">
+        <h2>Отзывы</h2>
+        <span>{{tovar.comments.count}} {{tovar.comments.count|review_word}}</span>
+    </div>
     {% if not user_comments and user.is_authenticated and if_buy != 0 %}
         <button class="uk-button uk-button-onebit uk-button-small" uk-toggle="target: #add-comment-modal">Добавить отзыв</button>
     {% endif %}
     {% if comments %}
-        <ul class="uk-comment-list">
+        {% comment %} <ul class="uk-comment-list">
             {% for com in comments %}
             <li id="com-{{com.id}}">
                 <article class="uk-comment uk-comment-primary" role="comment">
                     <div class="uk-comment-header"
-                    {% if not com.comment and not com.baned %}
+                    {% if not com.text %}
                     style="margin-bottom:0"
                     {% endif %}
                     >
@@ -20,16 +23,16 @@
                             <div class="uk-width-auto">
                                 {% avatar_img com.user as img_ava %}
                                 {% if img_ava %}
-                                <img class="uk-comment-avatar" src="/{{img_ava}}" width="80" height="80" alt="">
+                                    <img class="uk-comment-avatar" src="/{{img_ava}}" width="80" height="80" alt="">
                                 {% else %}
-                                <span class="uk-icon" uk-icon="icon: user; ratio: 4" style="max-width: 80px"></span>
+                                    <span class="uk-icon" uk-icon="icon: user; ratio: 4" style="max-width: 80px"></span>
                                 {% endif %}
                             </div>
-                            <div class="uk-width-expand">
+                            <div class="uk-width-expand com-right">
                                 <h4 class="uk-comment-title uk-margin-remove"><a class="uk-link-reset">{{ com.user.username }}</a></h4>
                                 <ul class="uk-comment-meta uk-subnav uk-subnav-divider uk-margin-remove-top">
                                     <li>
-                                        <a>{{ com.created_at|timesince }} назад</a>
+                                        <span>{{ com.created_at|timesince }} назад</span>
                                         <div class="p-score">
                                             <div class="rater-com" id="rater_com_{{com.id}}"></div>
                                         </div>
@@ -43,28 +46,32 @@
                             </div>
                         </div>
                     </div>
-                    {% if com.comment or com.baned %}
+                    {% if com.text %}
                     <div class="uk-comment-body">
-                        {% if com.baned %}
-                        <span class="uk-label uk-label-danger">Коментарий скрыт</span>
-                        <div class="uk-text-danger">Причина блокировки: {{ com.baned_com }}</div>
-                        {% endif %}
-                        <p class="collapsible">{{ com.comment }}</p>
+                        <p class="collapsible">{{ com.text }}</p>
                         <a class="uk-link-muted toggle-button">Читать далее</a>
-                        
                     </div>
                     {% endif %}
                     {% if com.user == user %}
                     <button class="uk-button uk-button-default uk-button-small but-edit"
-                    uk-toggle="target: #edit-comment-modal"
+                        uk-toggle="target: #edit-comment-modal"
                         data-id="{{com.id}}"
-                        data-text="{{com.comment}}"
+                        data-text="{{com.text}}"
                         data-score="{{com.star}}">Изменить</button>
                     {% endif %}
                 </article>
             </li>
             {% endfor %}
-        </ul>
+        </ul> {% endcomment %}
+
+
+        <ul class="uk-comment-list"></ul>
+
+        <div id="load-more-comments" class="uk-text-center uk-flex uk-flex-center" style="display: none; gap: 10px">
+            <span uk-spinner></span> Загрузка комментариев...
+        </div>
+
+
     {% else %}
         <div class="noComments">
             <h3 class="uk-h3">Отзывов пока нет.</h3>

@@ -26,13 +26,34 @@ function showSlides() {
     mainImageContainer.appendChild(mainMedia);
   } else {
     const link = document.createElement('a');
-    link.href = currentSlide.src;
+    // Убираем "_thumbnail" из URL изображения
+    const imageUrl = currentSlide.src.replace('_thumbnail', '');
+
+    // Проверяем ширину экрана
+    if (window.innerWidth > 700) {
+      link.href = imageUrl; // Добавляем href только при ширине экрана больше 700px
+    }
+
     mainMedia = document.createElement('img');
-    mainMedia.src = currentSlide.src;
+    mainMedia.src = imageUrl; // Используем измененный URL
     mainMedia.alt = currentSlide.alt;
-    mainMedia.classList.add('uk-transition-scale-up', 'uk-transition-opaque');
+
+    // Добавляем класс uk-transition-scale-up только при ширине экрана больше 700px
+    if (window.innerWidth > 700) {
+      mainMedia.classList.add('uk-transition-scale-up', 'uk-transition-opaque');
+    } else {
+      mainMedia.classList.add('uk-transition-opaque'); // Добавляем только uk-transition-opaque
+    }
+
     link.appendChild(mainMedia);
     mainImageContainer.appendChild(link);
+  }
+
+  // Убираем uk-lightbox при ширине экрана 700px и меньше
+  if (window.innerWidth <= 700) {
+    mainImageContainer.removeAttribute('uk-lightbox');
+  } else {
+    mainImageContainer.setAttribute('uk-lightbox', '');
   }
 
   for (let i = 0; i < slides.length; i++) {
@@ -47,7 +68,6 @@ function currentSlide(index) {
   slideIndex = index;
   showSlides();
 }
-
 
 // -------------------------------------------------------------------------------------------------------
 

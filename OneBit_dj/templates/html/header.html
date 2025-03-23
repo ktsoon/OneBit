@@ -21,21 +21,20 @@
         <button class="uk-offcanvas-close uk-font btn-close" type="button" uk-close></button>
         <h2 class="uk-card-default uk-padding-small uk-margin-remove-top">Категории</h2>
         <ul class="uk-nav">
-            {% cache 600 category_list %}
-                {% specifications as spec %}
-                {% Gl_specifications as gl_spec %}
-                {% for gl_s in gl_spec %}
+            {% cache 600 list_categories %}
+                {% Gl_specifications as gl_categories %}
+                {% for gl_category in gl_categories %}
                     <li>
-                        <a href="#">{{ gl_s }} <span uk-icon="chevron-right"></span></a>
+                        <a href="#">{{ gl_category }}<span uk-icon="chevron-right"></span></a>
                         <div class="uk-card uk-card-body uk-card-default drop-min-category" uk-drop="animation: reveal-left; animate-out: true;">
                             <a class="btn-close" onclick="closeDrop(this)" uk-icon="close"></a>
                             <div>
-                        {% for s in spec %}
+                        {% for category in gl_category.categories.all %}
                             {% if forloop.first %}
-                                <span>{{ gl_s }}</span>
+                                <span>{{ gl_category }}</span>
                             {% endif %}
-                            {% if gl_s == s.Gl_category %}
-                                <a href="{% url 'category' s.slug %}" target="_blank">{{ s }} {# <sub>({{ spec|length }})</sub> #}</a>
+                            {% if gl_category == category.main_categories %}
+                                <a href="{% url 'category' category.slug %}" target="_blank">{{ category }} {# <sub>({{ spec|length }})</sub> #}</a>
                             {% endif %}
                         {% endfor %}
                             </div>
@@ -71,9 +70,8 @@
                 <span class="h-admin2">админ&nbsp;панель</span>
             </div>
         </a>
-        <a class="h_user" href="{% url 'profile' %}" target="_blank">
+        <a class="h_user" href="{% url 'profile' %}">
             <div>
-                {% cache 600 avatar_img %}
                     {% avatar_img user as user_id %}
                     {% if user_id %}
                         <img style="
@@ -87,14 +85,12 @@
                     {% else %}
                         <span uk-icon="icon: user; ratio: 1.5"></span>
                     {% endif %}
-                {% endcache %}
                 <span>{{ user.username }}</span>
             </div>
         </a>
         {% else %} {# если пользователь уже авторизирован #}
-            <a class="h_user" href="{% url 'profile' %}" target="_blank">
+            <a class="h_user" href="{% url 'profile' %}">
                 <div>
-                    {% cache 600 avatar_img %}
                         {% avatar_img user as user_id %}
                         {% if user_id %}
                             <img class="user-auth-img"
@@ -110,23 +106,14 @@
                         {% else %}
                             <span uk-icon="icon: user; ratio: 1.5"></span>
                         {% endif %}
-                    {% endcache %}
                     <span>{{ user.username }}</span>
                 </div>
             </a>
         {% endif %}
-    {% else %} {# если пользователь ещё не авторизирован #}
-        <a href="{% url 'login' %}" target="_blank">
-            <div>
-                <span uk-icon="icon: user; ratio: 1.5"></span>
-                <span>&nbsp;&nbsp;Войти&nbsp;&nbsp;</span>
-            </div>
-        </a>
-    {% endif %} {# если пользователь уже авторизирован #}
-        <a class="h_home" href="{% url 'home' %}" target="_blank"> {# Заказы #}
+        <a class="h_home" href="{% url 'home' %}">
             <div><span uk-icon="icon: home; ratio: 1.5"></span><span></span></div>
         </a>
-        <a class="h_order" href="{% url 'order' %}" target="_blank"> {# Заказы #}
+        <a class="h_order" href="{% url 'order' %}"> {# Заказы #}
             <div>
                 <span uk-icon="icon: bag; ratio: 1.5"></span>
                 <span>Заказы</span>
@@ -141,7 +128,7 @@
             {% endif %}
         </a>
 
-        <a class="h_fav" href="{% url 'favorites' %}" target="_blank"> {# Избранное #}
+        <a class="h_fav" href="{% url 'favorites' %}"> {# Избранное #}
             <div>
                 <span uk-icon="icon: heart; ratio: 1.5"></span>
                 <span>Избранное</span>
@@ -155,7 +142,7 @@
                 <style>.favorit{display:none}</style>
             {% endif %}
         </a>
-        <a class="h_bask" href="{% url 'basket' %}" target="_blank"> {# Корзина #}
+        <a class="h_bask" href="{% url 'basket' %}"> {# Корзина #}
             <div>
                 <span uk-icon="icon: cart; ratio: 1.5"></span>
                 <span>Корзина</span>
@@ -169,50 +156,35 @@
                 <style>.bask{display:none}</style>
             {% endif %}
         </a>
+    {% else %} {# если пользователь ещё не авторизирован #}
+        <a class="h_home" href="{% url 'home' %}">
+            <div><span uk-icon="icon: home; ratio: 1.5"></span><span></span></div>
+        </a>
+        <a href="{% url 'login' %}" style="max-width:unset">
+            <div>
+                <span uk-icon="icon: user; ratio: 1.5"></span>
+                <span>Авторизироваться</span>
+            </div>
+        </a>
+        <a href="{% url 'register' %}">
+            <div>
+                <span uk-icon="icon: users; ratio: 1.5"></span>
+                <span>Зарегистрироваться</span>
+            </div>
+        </a>
+    {% endif %} {# если пользователь уже авторизирован #}
 </div>
 </header>
-<div class="dropdown-bg"></div> {# тег который перекрывает все элементы от случайного нажатия при открытии каталога #}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Получаем элементы
-        var dropGrid = document.querySelector('.uk-drop-grid');
-        var dropdownBg = document.querySelector('.dropdown-bg');
-    
-        // Функция для добавления класса dropdown-bg-active
-        function addDropdownBgActive() {
-            dropdownBg.classList.add('dropdown-bg-active');
+{% if not user.is_authenticated %}
+<style>
+    @media screen and (max-width: 700px) {
+        .h_right {
+            left: 25%;
+            width: 75%;
         }
-    
-        // Функция для удаления класса dropdown-bg-active
-        function removeDropdownBgActive() {
-            dropdownBg.classList.remove('dropdown-bg-active');
+        .catalog {
+            width: 25.5% !important;
         }
-    
-        // Функция, которая будет вызываться при изменении класса uk-drop-grid
-        function handleDropGridClassChange() {
-            // Проверяем, есть ли у элемента класс uk-grid-stack
-            if (dropGrid.classList.contains('uk-grid-stack')) {
-                removeDropdownBgActive();
-            } else {
-                addDropdownBgActive();
-            }
-        }
-    
-        // Создаем экземпляр MutationObserver
-        var observer = new MutationObserver(function(mutationsList, observer) {
-            // Проходимся по всем мутациям
-            for (var mutation of mutationsList) {
-                // Если класс uk-drop-grid был изменен, вызываем функцию для обработки изменения
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    handleDropGridClassChange();
-                }
-            }
-        });
-    
-        // Настраиваем наблюдатель на отслеживание изменений в атрибутах целевого узла (uk-drop-grid)
-        observer.observe(dropGrid, { attributes: true });
-    
-        // Вызываем функцию при загрузке страницы
-        handleDropGridClassChange();
-    });
-</script>
+    }
+</style>
+{% endif %}

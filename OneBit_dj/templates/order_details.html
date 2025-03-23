@@ -32,15 +32,14 @@
                 <span class="dost-info-det ord-number">№ {{ order.order_number }}</span>
             </div>
             {% if order.errors %}
-            <div class="dost ord-error">
-                <div class="ord-error-img">
-                    <span uk-icon="warning"></span>
+                <div class="dost ord-error">
+                    <div class="ord-error-img">
+                        <span uk-icon="warning"></span>
+                    </div>
+                    <div class="ord-err">
+                        <span class="uk-label uk-label-danger">{{ order.errors }}</span>
+                    </div>
                 </div>
-                <div class="ord-err">
-                    <span class="uk-label uk-label-danger">{{ order.errors }}</span>
-                    {% comment %} <span>{{ order.errors }}</span> {% endcomment %}
-                </div>
-            </div>
             {% endif %}
             <div class="dost">
                 <div class="dost-img"><span class="{{ order.dostavka }}-color" uk-icon="icon: location; ratio: 1.5"></span></div>
@@ -75,18 +74,16 @@
             <div class="ord-tovars">
                 {% for tov in order.tovar_order.all %}
                     <div class="ord-tovar">
-                        {% define 1 as count %}
-                        {% for i in img %}
-                            {% if i.tovar == tov.tovar and count == 1 %}
-                                {% summ 1 count as count %}
-                                <div class="ord-tov-img"><a href="{{ tov.tovar.get_absolute_url }}" target="_blank"><img src="{{ i.img.url }}" alt="{{ tov.tovar.slug }}"></a></div>
-                            {% endif %}
-                        {% endfor %}
+                        <div class="ord-tov-img">
+                            <a href="{{ tov.tovar.get_absolute_url }}" target="_blank">
+                                <img src="{{ tov.tovar.images.all|tovar_img_first }}" alt="{{ tov.tovar.slug }}">
+                            </a>
+                        </div>
                         <a href="{{ tov.tovar.get_absolute_url }}" target="_blank" class="ord-tov-info">
                             <div class="ord-tov-cost">
                                 <span class="b-cost">{{tov.t_cost|multiply:tov.t_count|intcomma}}&nbsp;</span>
                                 {% if tov.t_count != 1 %}
-                                    <span class="o-cost">&nbsp;{{ tov.t_count }} x {{ tov.t_cost }}&nbsp;</span>
+                                    <span class="o-cost">&nbsp;{{ tov.t_count }} x {{ tov.t_cost|intcomma }}&nbsp;</span>
                                 {% endif %}
                             </div>
                             <div>{{ tov.tovar.name }}</div>
@@ -113,9 +110,9 @@
         <div class="uk-flex ord-r-all">
             <div class="ord-r-l">
                 <h4>Ваш заказ</h4>
-                <span>{{results.total_count}} товаров</span>
+                <span>{{order.tovar_order.all.count}} {{order.tovar_order.all.count|pluralize_goods}}</span>
             </div>
-            <div class="ord-r-r">{{results.total_cost|intcomma}}&nbsp;</div>
+            <div class="ord-r-r">{{order.total_price|intcomma}}&nbsp;</div>
         </div>
     </div>
 </div>
