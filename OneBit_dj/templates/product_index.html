@@ -32,6 +32,11 @@
   ttt = {{tovar.id}} {# tovar id #}
 </script>
 <script src="{% static 'js/load/load_comments.js' %}"></script>
+{% if user.is_authenticated %}
+  <script src="{% static 'js/ajax/add_favorites.js' %}"></script>
+  <script src="{% static 'js/ajax/add_basket.js' %}"></script>
+  <script src="{% static 'js/ajax/add_edit_comment.js' %}"></script>
+{% endif %}
 <script>
   {# rating #}
   raterJs( {
@@ -39,7 +44,7 @@
     readOnly:true, 
     starSize:28,
     rating:{{tovar.rating|make_list|join:''}}, 
-    element:$("#rater").get(0),
+    element:document.getElementById('rater'),
   });
 </script>
 
@@ -47,6 +52,7 @@
 {% endblock scripts %}
 
 {% block content %}
+<input type="hidden" id="tovar_id" value="{{tovar.id}}">
 
     {% include "html/product.html" %}
     

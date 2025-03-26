@@ -360,7 +360,7 @@ class Order(models.Model):
             date_part = datetime.now().strftime('%Y%m%d')  # Год, месяц, день (например, 20250118)
             time_part = datetime.now().strftime('%H%M%S')  # Часы, минуты, секунды (например, 223512)
             # Получаем ID текущего объекта (сначала None, но после сохранения ID будет доступен)
-            next_id = order.objects.count() + 1
+            next_id = Order.objects.count() + 1
             # Формируем order_number
             self.order_number = f"{date_part}-{time_part}-{next_id}"
         super().save(*args, **kwargs)

@@ -148,25 +148,6 @@ def product(request, slug):
         context['if_basket'] = Basket.objects.filter(user=user, tovar__slug=slug).count()
     return render(request, 'product_index.html', context)
 
-@login_required
-def favorite_check(request):
-    data = { 'check': 'ошибка', }
-    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        user = request.POST.get('User')
-        tovar = request.POST.get('Tovar')
-        Arr = favoritess.objects.filter(user__username=user, tovar__id=tovar)
-        if request.POST.get('checked') == 'true' and not Arr:
-            Arr = favoritess(user=User.objects.get(username=user), tovar=Tovars.objects.get(id=tovar))
-            Arr.save()
-            data['check'] = 'добавлен в'
-        if request.POST.get('checked') == 'false' and Arr:
-            Arr.delete()
-            data['check'] = 'удалён из'
-        data['value'] = favoritess.objects.filter(user__username=user).count()
-    return JsonResponse(data)
-
-# исправить ошибку в авторизации (ошибка email)
-
 def sing_in(request):
     """ Авторизация пользователя """
     # при первом заходе на сайт
@@ -288,58 +269,6 @@ def profile(request):
     if avatar: context['avatar'] = avatar[0].avatar
     return render(request, 'profile.html', context)
 
-def search_text(request):
-    """ Подсказки при вводе в поисковую строку """
-    text = request.GET.get('text')
-    if not text:
-        return JsonResponse({'status': 400, 'message': 'No search text provided'})
-
-    payload = []
-
-    # Поиск категорий и авторов с учётом неточного совпадения
-    categories = fuzzy_search(text, Category, 'category') or Category.objects.filter(category__icontains=text)
-    authors = fuzzy_search(text, Avtor, 'avtor') or Avtor.objects.filter(avtor__icontains=text)
-
-    # Поиск товаров (сначала точное совпадение, затем нечеткое)
-    first_image_ids = (
-        ImgTovar.objects
-        .filter(is_video=False, tovar__name__icontains=text)
-        .values('tovar_id')
-        .annotate(first_image_id=Min('id'))
-        .values_list('first_image_id', flat=True)
-    )
-
-    tovars_all = ImgTovar.objects.filter(id__in=first_image_ids)
-    
-    if not tovars_all:
-        tovars_all = [
-            result for result in ImgTovar.objects.filter(is_video=False)
-            if fuzz.WRatio(result.tovar.name.lower(), text.lower()) >= 50
-        ]
-        # Убираем дублирующиеся товары
-        seen_names = set()
-        tovars_all = [x for x in tovars_all if not (x.tovar.name in seen_names or seen_names.add(x.tovar.name))]
-
-    # Формирование JSON-ответа
-    for cat in categories:
-        payload.append({'name': cat.category, 'slug': cat.slug, 'categ': 'cat', 'gl_cat': cat.main_categories.main_category})
-
-    for avt in authors:
-        payload.append({
-            'name': avt.avtor, 'slug': avt.slug, 'categ': 'avt',
-            'img_url': getattr(avt.img, 'url', None)
-        })
-
-    for tovar in tovars_all:
-        payload.append({
-            'name': tovar.tovar.name,
-            'slug': tovar.tovar.slug,
-            'categ': 'tovar',
-            'img_url': tovar.thumbnail_url  # Используем thumbnail_url
-        })
-
-    return JsonResponse({'status': 200, 'search': payload})
-
 def search(request):
     """ Страница с товарами по запросу (поиск) """
     search_text = request.GET.get('search', '').strip()
@@ -392,10 +321,11 @@ def search(request):
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
     min_rating = request.GET.get('rating')
-
+    print(available_categories)
     if selected_categories:
         tovars = [t for t in tovars if t.category.slug in selected_categories]
         available_avtors = {t.avtor for t in tovars}
+        print(available_avtors)
 
     if selected_avtors:
         tovars = [t for t in tovars if t.avtor.slug in selected_avtors]
@@ -437,10 +367,12 @@ def search(request):
     page_obj = paginator.get_page(page_number)
 
     # Избранное
-    favorites = []
     if request.user.is_authenticated:
+        favorites, if_basket_all = [], []
         favorites = Favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
-    context['favorites'] = favorites
+        if_basket_all = list(Basket.objects.filter(user=request.user).values_list('tovar__id', flat=True))
+        context['favorites'] = favorites
+        context['if_basket_all'] = if_basket_all
 
     # Обновление контекста
     context.update({
@@ -470,9 +402,7 @@ def category(request, cat_slug):
     if not tovars:
         return render(request, 'search.html', {'category': cat, 'title': cat.category, 'tovars': []})
 
-    # Определяем главную категорию и связанные категории
-    gl_category = cat.main_categories
-    related_categories = Category.objects.filter(main_categories=gl_category)
+    related_categories = Category.objects.all()
 
     # Определение мин/макс цены среди найденных товаров
     price_range = Tovars.objects.filter(category=cat).aggregate(
@@ -531,8 +461,10 @@ def category(request, cat_slug):
 
     # Избранное
     favorites = []
+    if_basket_all = []
     if request.user.is_authenticated:
         favorites = Favoritess.objects.filter(user=request.user).values_list('tovar__id', flat=True)
+        if_basket_all = list(Basket.objects.filter(user=request.user).values_list('tovar__id', flat=True))
 
     context = {
         'category': cat,
@@ -549,44 +481,11 @@ def category(request, cat_slug):
         'selected_min_price': request.GET.get('min_price'),
         'selected_max_price': request.GET.get('max_price'),
         'selected_rating': min_rating or 0,
-        'favorites': favorites if request.user.is_authenticated else [],
+        'favorites': favorites,
+        'if_basket_all': if_basket_all
     }
 
     return render(request, 'search.html', context)
-
-def filter_update(request):
-    """ Динамическое обновление производителей и количества товаров """
-    search_query = request.GET.get('search', '')
-    selected_categories = request.GET.getlist('category[]')
-    selected_avtors = request.GET.getlist('avtor[]')
-
-    # Поиск всех товаров по запросу
-    tovars_by_name = Tovars.objects.filter(name__icontains=search_query)
-    tovars_with_char = search_tovars_by_characteristics(search_query)
-    all_tov = list(set(tovars_by_name) | set(tovars_with_char))
-
-    # Фильтрация товаров по выбранным категориям и производителям
-    filtered_tov = all_tov
-    if selected_categories:
-        filtered_tov = [t for t in filtered_tov if t.category.slug in selected_categories]
-
-    if selected_avtors:
-        filtered_tov = [t for t in filtered_tov if t.avtor.slug in selected_avtors]
-
-    # Логика для производителей:
-    # Производители из выбранных категорий (даже если выбран один производитель)
-    if selected_categories:
-        updated_avtors = {t.avtor for t in all_tov if t.category.slug in selected_categories}
-    else:
-        updated_avtors = {t.avtor for t in filtered_tov}
-
-    # Ответ в формате JSON (только производители и общее количество товаров)
-    response_data = {
-        'total_products': len(filtered_tov),
-        'avtors': [{'slug': avtor.slug, 'name': avtor.avtor} for avtor in updated_avtors]
-    }
-
-    return JsonResponse(response_data)
 
 @login_required
 def baskett(request):
@@ -605,159 +504,60 @@ def baskett(request):
     return render(request, 'basket.html', context)
 
 @login_required
-def basket_add_del(request):
-    """ Удаление и добавление в корзину """
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        user = request.POST.get('User')
-        tovar = request.POST.get('Tovar')
-        data = {'check': 'ошибка'}
-        
-        try:
-            user_obj = User.objects.get(username=user)
-            tovar_obj = Tovars.objects.get(id=tovar)
-        except (User.DoesNotExist, Tovars.DoesNotExist):
-            return JsonResponse(data)
-
-        basket_item = basket.objects.filter(user=user_obj, tovar=tovar_obj).first()
-        
-        if basket_item:
-            basket_item.delete()
-            data['check'] = 'удалён из'
-        else:
-            basket.objects.create(user=user_obj, tovar=tovar_obj, t_count=1)
-            data['check'] = 'добавлен в'
-        
-        data['value'] = basket.objects.filter(user=user_obj).count()
-        return JsonResponse(data, status=200)
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-@login_required
-def basket_count(request):
-    """ добавление количества товаров """
-    data = {'check': 'ошибка'}
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        t = request.POST.get('Tovar')
-        c = int(request.POST.get('count'))
-        tov = basket.objects.get(user=request.POST.get('User'), tovar__id=t)
-        if c > 0 and c < 101:
-            tov.t_count=c
-            tov.save()
-            data['check'] = 'добавлено'
-            return JsonResponse(data)
-        else:
-            return JsonResponse({'error': 'Invalid request'}, status=400)
-    else:   return JsonResponse({'error': 'Invalid request'}, status=400)
-
-@login_required
-def basket_if_select(request):
-    """ выбор товара """
-
-    data = {'check': 'ошибка'}
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        u = request.POST.get('User')
-        s = request.POST.get('Select').title()
-        if_all = request.POST.get('if_all') == 'true'
-        if if_all:  # Если запрос на выбор всех товаров
-            query = basket.objects.filter(user__username=u)
-            for q in query:
-                q.if_select = s
-                q.save()
-        else:   # Если запрос на выбор одного товара
-            t = request.POST.get('Tovar')
-            b = basket.objects.get(user__username=u, tovar__id=t)
-            b.if_select = s
-            b.save()
-        data['check'] = 'добавлено'
-        return JsonResponse(data)
-    else:
-        return JsonResponse({'error': 'Invalid request'}, status=400)
-
-@login_required
 def add_order(request):
     """ Добавление в заказ """
     
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        spos = request.POST.get('Sposob')
-        if spos == "Pochta": # если выбрана почта россии
-            FCs = request.POST.get('FCs')
-            if FCs and FCs[0] != ' ' and len(FCs) > 6 and 3 > FCs.count(" ") >= 1 and len(FCs) != FCs.rfind(" ")+1: # проверка ФИО
-                address = request.POST.get('address') # адрес пользователя
-                p_address = request.POST.get('postal-address') # адрес почтового отделения
-                if not p_address or p_address[0] == ' ' or len(p_address) < 15: return JsonResponse({'code':'postal-address'}, status=400) # проверка адреса пользователя
-                if not address or address[0] == ' ' or len(address) < 15: return JsonResponse({'code':'address'}, status=400) # проверка почтового адреса
-            else:
-                return JsonResponse({'code':'FCs'}, status=400)
-                # JsonResponse({'error': 'Ошибка в ФИО','code':'FCs'}, status=400)
-        elif spos == "pickup": # если выбран самовывоз
-            coords = request.POST.get('coords-map')
-            if not coords: return JsonResponse({'code':'coords'}, status=400)
-        else: return JsonResponse({'error': 'Invalid request'}, status=400)
+    if request.method != "POST" or not request.user.is_authenticated:
+        return JsonResponse({"error": "Вы не авторизованы!"}, status=400)
 
-        card = request.POST.get('card-number')
-        mm = request.POST.get('mm')
-        yy = request.POST.get('yy')
-        cvv = request.POST.get('cvv')
-        if not card or 12 > len(card) > 20:  return JsonResponse({'code':'card'}, status=400)
-        if not mm or 2 > len(mm) == 0 or mm == '0' or mm == '00':  return JsonResponse({'code':'mm'}, status=400)
-        if not yy or 2 > len(yy) == 0:  return JsonResponse({'code':'yy'}, status=400)
-        if not cvv or 3 > len(cvv) == 0:  return JsonResponse({'code':'cvv'}, status=400)
+    data = request.POST
+    sposob_opl = data.get("Sposob")
 
-        us = request.user
-        bask = basket.objects.filter(if_select=True, user=us)
+    # Проверка типа доставки
+    if sposob_opl == "Pochta":
+        full_name = data.get("FCs", "").strip()
+        address = data.get("address", "").strip()
+        postal_address = data.get("postal-address", "").strip()
 
-        # if spos == "Pochta": print(f"{bask}\n Способ - {spos} \n ФИО - {FCs} \n адрес пользователя - {p_address} \n почтовый адрес - {address} \n \n Номер - {card} \n mm - {mm} \n yy - {yy} \n cvv - {cvv}")
-        # else: print(f"{bask}\n Способ - {spos} \n Магазин - {coords} \n  \n Номер - {card} \n mm - {mm} \n yy - {yy} \n cvv - {cvv}")
-        
-        if bask:
-            o_t = []
-            for i in bask:
-                t_cost = 0
-                if i.tovar.skidka_cost: t_cost = i.tovar.skidka_cost
-                else: t_cost = i.tovar.cost
-                if order_tovars.objects.filter(tovar=i.tovar,t_count=i.t_count,user=us, t_cost=t_cost):
-                    continue
-                order_tovars.objects.create(
-                    tovar=i.tovar,
-                    t_count=i.t_count,
-                    user=us,
-                    t_cost=t_cost
-                ).save()
-            if spos == "Pochta": # если почта
-                ordd = order.objects.create(
-                    user = us,
-                    dostavka = 'collect',
-                    sposob_dostavka = spos,
-                    adress = address,
-                    adress_mail = p_address,
-                    FCs = FCs,
-                    card_number = card,
-                    mm = mm,
-                    yy = yy,
-                    cvv = cvv
-                )
-            else: # если самовывоз
-                ordd = order.objects.create(
-                    user = us,
-                    dostavka = 'collect',
-                    sposob_dostavka = spos,
-                    coords = coords,
-                    card_number = card,
-                    mm = mm,
-                    yy = yy,
-                    cvv = cvv
-                )
-            for i in bask:
-                t_cost = 0
-                if i.tovar.skidka_cost: t_cost = i.tovar.skidka_cost
-                else: t_cost = i.tovar.cost
-                ordd.tovar_order.add(order_tovars.objects.get(user=us, tovar=i.tovar, t_count=i.t_count, t_cost=t_cost))
-            ordd.save()
-            bask.delete()
-        else:   return JsonResponse({'error': 'Invalid request'}, status=400)
-        return JsonResponse({'error': 'Данные Добавлены'}, status=200)
+        if not full_name:
+            return JsonResponse({"error": "Введите ФИО!", "code": "FCs"}, status=400)
+        if not address:
+            return JsonResponse({"error": "Введите адрес!", "code": "address"}, status=400)
+        if not postal_address:
+            return JsonResponse({"error": "Введите почтовый адрес!", "code": "postal-address"}, status=400)
+
+    elif sposob_opl == "pickup":
+        coords = data.get("coords-map", "").strip()
+        if not coords:
+            return JsonResponse({"error": "Выберите адрес магазина!", "code": "coords"}, status=400)
     else:
-        return JsonResponse({'error': 'Invalid request XMLH'}, status=400)
+        return JsonResponse({"error": "Некорректный способ доставки!"}, status=400)
+
+    # Получаем товары из корзины
+    basket_items = Basket.objects.filter(user=request.user, if_select=True)
+    if not basket_items.exists():
+        return JsonResponse({"error": "ВЫберите товары!"}, status=400)
+
+    # Создание заказа
+    order = Order.objects.create(
+        user=request.user,
+        dostavka='collect',
+        sposob_dostavka=sposob_opl,
+        FCs=full_name if sposob_opl == "Pochta" else "",
+        adress=address if sposob_opl == "Pochta" else "",
+        adress_mail=postal_address if sposob_opl == "Pochta" else "",
+        coords=coords if sposob_opl == "pickup" else "",
+    )
+
+    # Перемещение товаров из корзины в заказ
+    for item in basket_items:
+        price = item.tovar.skidka_cost if item.tovar.skidka_cost else item.tovar.cost
+        order.tovar_order.create(tovar=item.tovar, t_cost=price, t_count=item.t_count, user=request.user)
+
+    # Очистка корзины
+    basket_items.delete()
+
+    return JsonResponse({"redirect": "/orderlist/"})
 
 @login_required
 def order_confirmation(request):
@@ -811,37 +611,6 @@ def order_details(request, order_number):
 
     return render(request, 'order_details.html', context)
 
-@login_required
-def comm_add_edit(request):
-    """ Добавление и изменение в комментариях """
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        tovar_id = request.POST.get('Tovar')
-        rating = request.POST.get('rating')
-        text = request.POST.get('text')
-        if not all([request.user, tovar_id, rating]): return JsonResponse({'error': 'Invalid request'}, status=400)
-
-        tovar = get_object_or_404(Tovars, id=tovar_id)
-
-        # Проверяем существует ли уже комментарий
-        comment, created = comments.objects.get_or_create(
-            user=request.user,
-            tovar=tovar,
-            defaults={
-                'comment': text,
-                'star': rating
-            }
-        )
-
-        if not created:
-            # Обновляем существующий комментарий
-            comment.comment = text 
-            comment.star = rating
-            comment.save()
-
-        return JsonResponse({'success': True}, status=200)
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
 def faq(request):
     """Render the FAQ page."""
 
@@ -849,6 +618,206 @@ def faq(request):
 
 
 # ajax
+
+def search_text(request):
+    """ Подсказки при вводе в поисковую строку """
+    text = request.GET.get('text')
+    if not text:
+        return JsonResponse({'status': 400, 'message': 'No search text provided'})
+
+    payload = []
+
+    # Поиск категорий и авторов с учётом неточного совпадения
+    categories = fuzzy_search(text, Category, 'category') or Category.objects.filter(category__icontains=text)
+    authors = fuzzy_search(text, Avtor, 'avtor') or Avtor.objects.filter(avtor__icontains=text)
+
+    # Поиск товаров (сначала точное совпадение, затем нечеткое)
+    first_image_ids = (
+        ImgTovar.objects
+        .filter(is_video=False, tovar__name__icontains=text)
+        .values('tovar_id')
+        .annotate(first_image_id=Min('id'))
+        .values_list('first_image_id', flat=True)
+    )
+
+    tovars_all = ImgTovar.objects.filter(id__in=first_image_ids)
+    
+    if not tovars_all:
+        tovars_all = [
+            result for result in ImgTovar.objects.filter(is_video=False)
+            if fuzz.WRatio(result.tovar.name.lower(), text.lower()) >= 50
+        ]
+        # Убираем дублирующиеся товары
+        seen_names = set()
+        tovars_all = [x for x in tovars_all if not (x.tovar.name in seen_names or seen_names.add(x.tovar.name))]
+
+    # Формирование JSON-ответа
+    for cat in categories:
+        payload.append({'name': cat.category, 'slug': cat.slug, 'categ': 'cat', 'gl_cat': cat.main_categories.main_category})
+
+    for avt in authors:
+        payload.append({
+            'name': avt.avtor, 'slug': avt.slug, 'categ': 'avt',
+            'img_url': getattr(avt.img, 'url', None)
+        })
+
+    for tovar in tovars_all:
+        payload.append({
+            'name': tovar.tovar.name,
+            'slug': tovar.tovar.slug,
+            'categ': 'tovar',
+            'img_url': tovar.thumbnail_url  # Используем thumbnail_url
+        })
+
+    return JsonResponse({'status': 200, 'search': payload})
+
+def filter_update(request):
+    """ Динамическое обновление производителей и количества товаров """
+    
+    selected_categories = request.GET.getlist("category[]")
+    filters = Q()
+    if selected_categories:
+        filters &= Q(category__slug__in=selected_categories)
+
+    filtered_tovars = Tovars.objects.filter(filters).distinct()
+
+    # Получаем список доступных производителей по отфильтрованным товарам
+    avtors = Avtor.objects.filter(tovars__in=filtered_tovars).distinct().values("avtor", "slug")
+
+    return JsonResponse({
+        "avtors": list(avtors)}, status=200)
+
+@login_required
+def favorite_check(request):
+    """ AJAX функция для добавления/удаления товара в Избранное """
+
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        tovar_id = request.POST.get('Tovar')
+        tovar = get_object_or_404(Tovars, id=tovar_id)
+
+        favorite, created = Favoritess.objects.get_or_create(user=request.user, tovar=tovar)
+        if not created:
+            favorite.delete()
+
+        count_favorite = Favoritess.objects.filter(user=request.user).count()
+
+        return JsonResponse({'count_favorite': count_favorite}, status=200)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@login_required
+def basket_if_select(request):
+    """ выбор товара """
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        if_all = request.POST.get("if_all") == "true"
+        check = request.POST.get("check") == "true"
+        basket_id = request.POST.get("basket_id")
+
+        if if_all:
+            Basket.objects.filter(user=request.user).update(if_select=check)
+
+        elif basket_id:
+            basket_item = Basket.objects.filter(user=request.user, id=basket_id).first()
+            if basket_item:
+                basket_item.if_select = check
+                basket_item.save()
+
+        return JsonResponse({'check': 'добавлено'})
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@login_required
+def basket_count(request):
+    """ добавление количества товаров """
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        basket_id = request.POST.get("basket_id")
+        count = request.POST.get("count")
+
+        if not basket_id or not count:
+            return JsonResponse({'error': 'Некорректные данные'}, status=400)
+        
+        try:
+            count = int(count)
+            if count < 1 or count > 99:
+                return JsonResponse({'error': 'Количество должно быть больше 0 и не больше 99'}, status=400)
+        except ValueError:
+            return JsonResponse({'error': 'Некорректные количество'}, status=400)
+        
+        basket_item = Basket.objects.filter(user=request.user, id=basket_id).first()
+        if not basket_item:
+            return JsonResponse({'error': 'Товар не найден'}, status=404)
+        
+        basket_item.t_count = count
+        basket_item.save()
+        
+        return JsonResponse({},status=200)
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@login_required
+def basket_add_del(request):
+    """ Удаление и добавление в корзину """
+
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        data = request.POST.get('Tovar')
+        t_list = request.POST.get('list')
+
+        if not data and t_list == 'false':
+            return JsonResponse({"error": "Не переданы товары"}, status=400)
+        
+        if t_list == 'false': # 1 товар для удаления или добавления
+            tovar = get_object_or_404(Tovars, id=data)
+            basket_item, created = Basket.objects.get_or_create(user=request.user, tovar=tovar)
+
+            
+            if not created:
+                basket_item.delete()
+                in_basket = False
+            else:
+                in_basket = True
+            
+        else: # несколько товаров для удаления
+            Basket.objects.filter(user=request.user, if_select=True).delete()
+            in_basket = False
+
+        count_basket = Basket.objects.filter(user=request.user).count()
+
+        return JsonResponse({'in_basket': in_basket, 'count_basket': count_basket}, status=200)
+
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@login_required
+def comm_add_edit(request):
+    """ Добавление и изменение в комментариях """
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        tovar_id = request.POST.get("tovar_id")
+        rating = request.POST.get("rating")
+        text = request.POST.get("text", "").strip()
+        
+        if not tovar_id or not rating:
+            return JsonResponse({'error': 'Отсутствуют обязательные параметры'}, status=400)
+        
+        try:
+            rating = int(rating)
+            if rating < 1 or rating > 5:
+                return JsonResponse({'error': 'Некорректное значение рейтинга'}, status=400)
+        except ValueError:
+            return JsonResponse({'error': 'Некорректное значение рейтинга'}, status=400)
+        
+        tovar = get_object_or_404(Tovars, id=tovar_id)
+
+        comment, created = Comments.objects.update_or_create(
+            user=request.user, tovar=tovar,
+            defaults={'star': rating, 'text': text}
+        )
+        
+        return JsonResponse({}, status=200)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+# load content
 
 def load_tovars(request):
     """

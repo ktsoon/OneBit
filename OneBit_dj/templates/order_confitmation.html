@@ -18,6 +18,9 @@
   const DJANGO_STATIC_URL = '{{ STATIC_URL_CARD }}';
 </script>
 <script src="{% static 'js/order_confit.js' %}"></script>
+
+<script src="{% static 'js/ajax/del_select_ord_conf.js' %}"></script>
+<script src="{% static 'js/ajax/conf_order.js' %}"></script>
 {% endblock scripts %}
     
 
@@ -128,24 +131,24 @@
       <div id="product-container" class="list_tov grid-view" >
         
         {% for tov in tovars %}
-          <div class="tov" id="{{tov.tovar.id}}">
+          <div class="tov" id="{{tov.id}}">
               <div class="images">
-                <div class="ord-t-del" id="{{tov.tovar.id}}"><a uk-icon="close"></a></div>
+                <div class="ord-t-del" id="{{tov.id}}"><a uk-icon="close"></a></div>
                 <img src="{{ tov.tovar.images.all|tovar_img_first }}" alt="{{ tov.tovar.slug }}">
                 <div class="count-t"><span>{{ tov.t_count }} шт.</span></div>
               </div>
               <div class="t-bottom">
                 <div style="gap:0" class="cost">
                   {% if not tov.tovar.skidka_cost %}
-                    <span data-cost='{{tov.tovar.cost}}'>{{ tov.tovar.cost|multiply:tov.t_count|intcomma }}</span>
+                    <span data-cost='{{tov.tovar.cost}}'>{{ tov.tovar.cost|multiply:tov.t_count|floatformat:0|intcomma }}</span>
                   {% else %}
-                    <span data-cost='{{tov.tovar.skidka_cost}}' data-bes-skidkoi="{{tov.tovar.cost}}">{{ tov.tovar.skidka_cost|multiply:tov.t_count|intcomma }}</span>
+                    <span data-cost='{{tov.tovar.skidka_cost}}' data-bes-skidkoi="{{tov.tovar.cost}}">{{ tov.tovar.skidka_cost|multiply:tov.t_count|floatformat:0|intcomma }}</span>
                   {% endif %}
                   <div class="cost_all">
                     {% if not tov.tovar.skidka_cost %}
-                    {{ tov.tovar.cost|intcomma }}
+                    {{ tov.tovar.cost|floatformat:0|intcomma }}
                     {% else %}
-                    {{ tov.tovar.skidka_cost|intcomma }}
+                    {{ tov.tovar.skidka_cost|floatformat:0|intcomma }}
                     {% endif %}
                     &#8381;
                     <sub style="font-weight:500">/шт.</sub>

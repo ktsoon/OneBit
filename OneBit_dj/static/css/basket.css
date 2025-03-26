@@ -170,7 +170,7 @@ input.uk-checkbox{
 }
 #basket-container{display: none}
 .clear_all{
-    display: block;
+    display: block !important;
     margin-top: 10vh;
     text-align: center;
     pointer-events: none;
@@ -194,6 +194,9 @@ input.uk-checkbox{
         margin-left: -15px;
         border-bottom-left-radius:0;
         border-bottom-right-radius:0;
+    }
+    .right-bar div.uk-card:has(.dis_but){
+        margin-bottom: -49px;
     }
     .left-bar{margin-bottom: 80px}
     .main:has(.right-bar>div>a>button:not(.dis_but)) .left-bar{margin-bottom: 145px !important}

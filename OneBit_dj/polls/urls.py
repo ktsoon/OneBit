@@ -15,7 +15,6 @@ def robots_txt(request):
 urlpatterns = [
     path('', views.index, name='home'), # главная
     path('product/<str:slug>/', views.product, name='product'), # отдельный товар
-    path('product_comm_add_edit/', views.comm_add_edit, name='comm_add_edit'), # отдельный товар
     path('login/', views.sing_in, name="login"), # авторизация
     path('register/', views.sing_up, name="register"), # регистрация
     path('favorites/', views.favorites, name='favorites'), # избранные товары
@@ -31,6 +30,7 @@ urlpatterns = [
     # ---------------------------AJAX---------------------------
     path('sing_out/', views.sing_out, name="logout"), # выйти из аккаунта ajax
     path('favorite_check/', views.favorite_check, name='favorite_check'), # проверка на отправку избранных ajax
+    path('product_comm/', views.comm_add_edit, name='comm_add_edit'), # отдельный товар
     path('search_text/', views.search_text, name='search_text'), # поисковая строка ajax
     path('search/filters/', views.filter_update, name='filter_update'),  # обновления фильтров ajax
     path('basket_add_del/', views.basket_add_del, name='basket_add_del'), # корзина. удаление и добавление ajax

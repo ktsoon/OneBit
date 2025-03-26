@@ -8,11 +8,12 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/favorites.css' %}">
 <link rel="stylesheet" href="{% static 'css/flex-tovars.css' %}">
-{% comment %} <link rel="stylesheet" href="{% static 'css/search.css' %}"> {% endcomment %}
 {% endblock css %}
 
 {% block scripts %}
-  <script> // галочка в выбраном фильтре
+<script src="{% static 'js/ajax/add_favorites.js' %}"></script>
+<script src="{% static 'js/ajax/add_basket.js' %}"></script>
+<script> // галочка в выбраном фильтре
     var text = "{{ sorting }}";
     // Находим все элементы <a> внутри <ul> с указанным классом
     var links = document.querySelectorAll(".uk-nav.uk-dropdown-nav a");
@@ -29,7 +30,7 @@
             link.appendChild(spanElement);
         }
     });
-  </script>
+</script>
 {% endblock scripts %}
 
 {% block content %}
@@ -65,8 +66,7 @@
                     <div class="but-heart but-heart-tovar">
                         <input
                         type="checkbox"
-                        id="heart-clip-{{ favorit.tovar.id }}"
-                        class="heart-clip-t"
+                        class="heart-clip"
                         data-product="{{ favorit.tovar.id }}"
                         checked>
                         <svg class="heart-main" viewBox="0 0 512 512" width="25" title="heart">
@@ -128,12 +128,12 @@
                 </a>
                 </div>
                 {% if favorit.tovar.id in if_basket_all %}
-                    <button class="uk-button button-buy-f" id="{{favorit.tovar.id}}">
+                    <button class="uk-button button-buy" id="IntoBasket" data-product="{{favorit.tovar.id}}">
                         <span uk-icon="icon: cart; ratio: 1.2"></span>
                         <div>В&nbsp;корзинe</div>
                     </button>
                 {% else %}
-                    <button class="uk-button uk-button-onebit button-buy-f" id="{{favorit.tovar.id}}">
+                    <button class="uk-button uk-button-onebit button-buy" id="IntoBasket" data-product="{{favorit.tovar.id}}">
                         <span uk-icon="icon: cart; ratio: 1.2"></span>
                         <div>Добавить в&nbsp;корзину</div>
                     </button>

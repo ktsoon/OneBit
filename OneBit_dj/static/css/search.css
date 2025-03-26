@@ -263,7 +263,7 @@ hr{margin: 10px 0}
     align-items: end;
     margin-right: var(--heart-size);
 }
-.button-buy-p{
+.button-buy{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -292,7 +292,7 @@ hr{margin: 10px 0}
         }
         .right-top{margin: 0}
         .cost{justify-content: start}
-        .button-buy-p{
+        .button-buy{
             margin: 0;
             width: 100%;
         }

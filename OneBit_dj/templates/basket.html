@@ -11,10 +11,15 @@
 {% endblock css %}
 
 {% block scripts %}
-<script src="{% static 'js/jquery/jquery-3.7.1.min.js' %}"></script>
 <script src="{% static 'js/jquery/jquery.easing.min.js' %}"></script>
 
 <script src="{% static 'js/basket.js' %}" async></script>
+
+<script src="{% static 'js/ajax/add_favorites.js' %}"></script>
+<script src="{% static 'js/ajax/del_basket.js' %}"></script>
+<script src="{% static 'js/ajax/select_basket.js' %}"></script>
+<script src="{% static 'js/ajax/select_count_basket.js' %}"></script>
+
 {% endblock scripts %}
 
 {% block content %}
@@ -25,7 +30,7 @@
       <button class="uk-modal-close-default" type="button" uk-close></button>
       <h2 class="uk-modal-title">Удалить товар</h2>
       <p>Вы точно хотите удалить выбранный товар? Отменить данное действие будет невозможно.</p>
-      <button class="uk-button uk-button-danger uk-modal-close" type="button">Удалить</button>
+      <button class="uk-button uk-button-danger uk-modal-close" id="modal-del-tovar" type="button">Удалить</button>
   </div>
 </div>
 
@@ -58,7 +63,7 @@
       </div>
 
       <div class="uk-modal-footer uk-text-right">
-          <button class="uk-button uk-button-danger uk-modal-close" type="button">Удалить</button>
+          <button class="uk-button uk-button-danger uk-modal-close" id="modal-delete-selected" type="button">Удалить</button>
       </div>
   </div>
 </div>
@@ -82,7 +87,7 @@
     <div class="left-bar">
       <h1 class="uk-h1" id="basket-container"></h1>
       {% for tovar in tovars_in_basket %}
-        <div class="tovar-srch" id="bask-{{tovar.id}}">
+        <div class="tovar-srch" id="bask-{{tovar.tovar.id}}">
           <div>
             <div class="cheachbox-t">
               <input class="uk-checkbox tovar_b" type="checkbox" 
@@ -171,10 +176,10 @@
                             class="uk-input uk-form-width-xsmall" 
                             inputmode="numeric" 
                             type="number" 
-                            min="1" max="100"
+                            min="1" max="99"
                             id="inp_count"
                             name="tov_count"
-                            data-id="{{ tovar.id }}"
+                            data-product="{{ tovar.id }}"
                             value="{{ tovar.t_count }}">
                             
                             <button 
@@ -184,7 +189,7 @@
                             ></button>
                           </div>
                           <div class="p-buttons">
-                              <button id="t-{{tovar.id}}" class="del-bask uk-button uk-button-danger" uk-toggle="target: #modal-close-default">
+                              <button id="tovar-del" data-product="{{ tovar.tovar.id }}" class="del-bask uk-button uk-button-danger" uk-toggle="target: #modal-close-default">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 0 24 24" fill="none">
                                   <path d="M10 11V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                   <path d="M14 11V17" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -196,9 +201,8 @@
                               <div class="but-heart">
                                   <input 
                                   type="checkbox" 
-                                  id="heart-clip-{{ tovar.id }}"
-                                  class="heart-clip-t" 
-                                  data-product="{{ tovar.id }}"
+                                  class="heart-clip" 
+                                  data-product="{{ tovar.tovar.id }}"
                                   {% if tovar.tovar.id in favorites %} checked {% endif %}>
                                   <svg class="heart-main" viewBox="0 0 512 512" width="40" title="heart">
                                       <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
@@ -217,7 +221,7 @@
 
     <div class="right-bar uk-position-z-index" {# uk-sticky="end: !.main; offset: 20" #} >
       <div class="uk-card uk-card-default" id="zakaz">
-        <a href="{% url 'order_confirmation' %}"><button class="uk-button button-buy-p dis_but">Выберите товары</button></a>
+        <a href="{% url 'order_confirmation' %}"><button class="uk-button button-buy button-buy-p dis_but uk-margin-remove-top">Выберите товары</button></a>
         <hr style="display: none;">
         <div class="itogi" style="display: none">
           <h4>Итого<sub>0</sub></h4>

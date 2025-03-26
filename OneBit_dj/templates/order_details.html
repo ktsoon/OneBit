@@ -11,6 +11,9 @@
 
 {% block scripts %}
 <script src="{% static 'js/order.js' %}"></script>
+{% if user.is_authenticated %}
+    <script src="{% static 'js/ajax/add_favorites.js' %}"></script>
+{% endif %}
 {% endblock scripts %}
 
 {% block content %}
@@ -92,8 +95,7 @@
                             <div class="but-heart">
                                 <input 
                                 type="checkbox" 
-                                id="heart-clip-{{ tov.tovar.id }}"
-                                class="heart-clip-t" 
+                                class="heart-clip" 
                                 data-product="{{ tov.tovar.id }}"
                                 {% if tov.tovar.id in favorites %} checked {% endif %}>
                                 <svg class="heart-main" viewBox="0 0 512 512" width="40" title="heart">

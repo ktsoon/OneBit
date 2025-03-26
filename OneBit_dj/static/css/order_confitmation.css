@@ -6,6 +6,7 @@ h1>sup {
     color: gray;
     font-size: 1.875rem;
 }
+.suggestions-promo{display: none !important}
 .uk-button-default{background-color: transparent}
 .danger-map{animation: danger .5s}
 @keyframes danger {

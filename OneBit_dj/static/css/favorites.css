@@ -36,7 +36,7 @@ sup{
 /* товары */
 .tovars-flex{margin-top: 15px}
 .t-bottom{margin-bottom: 5px}
-.button-buy-f{
+.button-buy{
     margin-top: auto;
     border-radius: 10px;
     width: 100%;
@@ -65,6 +65,6 @@ sup{
 }
 @media screen and (max-width: 380px) {.h_fav{margin-top: 2.5px !important}}
 
-@media screen and (max-width:850px){.button-buy-f{font-size: .8rem}}
-@media screen and (max-width:768px){.button-buy-f{font-size: 1rem}}
-@media screen and (max-width:450px){.button-buy-f{font-size: 3vw}}
+@media screen and (max-width:850px){.button-buy{font-size: .8rem}}
+@media screen and (max-width:768px){.button-buy{font-size: 1rem}}
+@media screen and (max-width:450px){.button-buy{font-size: 3vw}}

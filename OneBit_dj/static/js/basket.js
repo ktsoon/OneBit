@@ -12,7 +12,7 @@ $(document).ready(function() {
         var selectedCount = 0;
         var totalNormalCost = 0;
         var totalSkidkaCost = 0;
-
+    
         var dostavka = $('#dostavka');
         var zakaz = $('#zakaz');
         var button_z = zakaz.find('button');
@@ -33,20 +33,23 @@ $(document).ready(function() {
             button_z.prop("disabled", false);
             button_z.text('Заказать');
         }
-
+    
         $('.tovar_b:checked').each(function() {
             selectedCount++;
             var $parent = $(this).closest('.tovar-srch');
             var normalCost = parseInt($parent.find('#n-cost').text().replace(/\s/g, '').replace(/&nbsp;/g, ''));
             var skidkaCost = parseInt($parent.find('#s-cost').text().replace(/\s/g, '').replace(/&nbsp;/g, ''));
             var quantity = parseInt($parent.find('input[type="number"]').val()) || 1;
-
+            
+            // Ограничиваем количество 99
+            quantity = Math.min(quantity, 99);
+    
             totalNormalCost += (isNaN(normalCost) ? 0 : normalCost) * quantity;
             totalSkidkaCost += (isNaN(skidkaCost) ? 0 : skidkaCost) * quantity;
         });
-
+    
         $('.itogi h4 sub').text(selectedCount);
-
+    
         function animateValue($element, start, end, duration) {
             $element.prop('Counter', start).animate({
                 Counter: end
@@ -58,13 +61,13 @@ $(document).ready(function() {
                 }
             });
         }
-
+    
         var currentCost1 = parseInt($('.cost1').text().replace(/\s/g, '').replace(/&nbsp;/g, '')) || 0;
         var currentCost2 = parseInt($('.cost2').text().replace(/\s/g, '').replace(/&nbsp;/g, '')) || 0;
-
+    
         animateValue($('.cost1'), currentCost1, totalNormalCost, 300);
         animateValue($('.cost2'), currentCost2, totalSkidkaCost, 300);
-
+    
         if (totalSkidkaCost === 0) {
             setTimeout(function() { $('.cost2').hide() }, 300);
         } else {
@@ -100,6 +103,13 @@ $(document).ready(function() {
 
 
 
+    // для передачи id товара в model удаления
+    $('button#tovar-del').click(function() {
+        const idd = + $(this).data('product');
+        var $modal = $('#modal-close-default #modal-del-tovar');
+        $modal.attr('data-product', idd);
+    });
+
     // удаление сразу нескольких из корзины
     function updateModalItemList(){
         var itemList = $('#modal-close-default-ch ul');
@@ -119,9 +129,10 @@ $(document).ready(function() {
                 </li>
             `;
             itemList.append(listItem); // Добавление элемента в список
+
         });
     }
-    $('#delete-selected').on('click', function() {
+    $('#delete-selected').click(function() {
         if ($('.tovar_b:checked').length === 0){
             UIkit.notification({message: 'Выберите хотя бы один товар для удаления!', status: 'warning'}); // Уведомление
         } else {
@@ -157,21 +168,6 @@ $(document).ready(function() {
         moveCostAndTInfoToTTRight();
         }
 
-
-    // uk-sticky bottom
-    function forceStickyUpdate() {
-        UIkit.update(); // Принудительно обновляем UIkit, чтобы он пересчитал позиционирование
-    }
-
-    // Отслеживание изменений внутри .right-bar (изменение высоты)
-    var observer = new MutationObserver(function () {
-        forceStickyUpdate();
-    });
-
-    observer.observe($('.right-bar')[0], { childList: true, subtree: true, attributes: true });
-
-    updateSticky(); // Вызываем при загрузке
-    $(window).on('resize', updateSticky); // Отслеживаем изменение размера экрана
 
 });
 // uk-sticky bottom

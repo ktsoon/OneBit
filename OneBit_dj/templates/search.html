@@ -6,19 +6,7 @@
 {% block title %}{{ title }} на OneBit{% endblock %}
 
 {% block seo_description %}{{ title }} – покупайте на OZON по выгодным ценам! Быстрая и бесплатная доставка, большой ассортимент продуктов. Распродажи, скидки и акции. Реальные отзывы покупателей.{% endblock seo_description %}
-{% block seo_keywords %}
-    {% if request.resolver_match.url_name == "category" %}
-        {{category.category.Gl_category.seo}},{{category.category.seo}},
-    {% else %}
-    {{seo_category.0.Gl_category.seo}},
-
-        {% for seo in seo_category %}
-            {{seo.seo}},
-        {% endfor %}
-            
-    {% endif %}
-доставка комплектующих, недорогие комплектующие, комплектующие для компьютера, купить комплектующие онлайн, лучшие цены на комплектующие, комплектующие для игр, комплектующие для офиса, комплектующие для серверов, комплектующие для домашнего использования, комплектующие для профессиональной работы, комплектующие для монтажа видео, комплектующие для стриминга, комплектующие для майнинга, комплектующие для VR{% endblock seo_keywords %}
-
+{% block seo_keywords %}доставка комплектующих, недорогие комплектующие, комплектующие для компьютера, купить комплектующие онлайн, лучшие цены на комплектующие, комплектующие для игр, комплектующие для офиса, комплектующие для серверов, комплектующие для домашнего использования, комплектующие для профессиональной работы, комплектующие для монтажа видео, комплектующие для стриминга, комплектующие для майнинга, комплектующие для VR{% endblock seo_keywords %}
 {% block link_title %}{{ title }} - купить на OZON{% endblock %}
 {% block link_url %}{{ request.path }}{% endblock %}
 {% block link_image %}{% static 'img/logo2.png' %}{% endblock %}
@@ -39,6 +27,14 @@
 
 
 {% block scripts %}
+{% if user.is_authenticated %}
+    <script>
+        const text = '{{title|safe}}'
+    </script>
+    <script src="{% static 'js/ajax/add_favorites.js' %}"></script>
+    <script src="{% static 'js/ajax/add_basket.js' %}"></script>
+    <script src="{% static 'js/ajax/filter.js' %}"></script>
+{% endif %}
 <script>
     let minPrice = {{ min_price }};
     let maxPrice = {{ max_price }};
@@ -68,6 +64,7 @@
 
 
 {% block content %}
+
 <div class="title-h1 title-flex">
     <h1 class="uk-margin-remove uk-h2">{{ title }}</h1>
     <span>{% if tovars %}
@@ -163,11 +160,11 @@
             </div>
         </div>
     </div>
-    {% else %}
+{% else %}
     <div class="filter-sort uk-inline back">
         <a onclick="window.history.back()"><span>➔</span> назад</a>
     </div>
-    {% endif %}
+{% endif %}
 
 <div class="main">
     {% if tovars %}
@@ -227,7 +224,7 @@
                             <div class="t-b-info">
                                 <div class="t-b-otz">
                                     <img src="{% static 'img/icon-aktuelles.png' %}" alt="комент">
-                                    <div>Отзывов пока нет</div>
+                                    <div>0 отзывов</div>
                                 </div>
                             </div>
                             {% endif %}
@@ -242,13 +239,13 @@
                                 {% endif %}
                             </div>
                             <div class="p-buttons">
-                                {% if tovar.name in if_basket_all %}
-                                    <button class="uk-button button-buy-p b-buy-searh" id="{{ tovar.id }}">
+                                {% if tovar.id in if_basket_all %}
+                                    <button class="uk-button button-buy b-buy-searh" id="IntoBasket" data-product="{{ tovar.id }}">
                                         <span uk-icon="icon: cart; ratio: 1"></span>
                                         <div>В&nbsp;корзине</div>
                                     </button>
                                 {% else %}
-                                    <button class="uk-button uk-button-onebit button-buy-p b-buy-searh" id="{{ tovar.id }}"
+                                    <button class="uk-button uk-button-onebit button-buy b-buy-searh" id="IntoBasket" data-product="{{ tovar.id }}"
                                     {% if not user.is_authenticated %} uk-tooltip="Необходимо авторизоваться" {% endif %}>
                                         <span uk-icon="icon: cart; ratio: 1"></span>
                                         <div>Добавить в&nbsp;корзину</div>
@@ -258,8 +255,7 @@
                                     <div class="but-heart">
                                         <input 
                                         type="checkbox" 
-                                        id="heart-clip-{{ tovar.id }}"
-                                        class="heart-clip-t" 
+                                        class="heart-clip" 
                                         data-product="{{ tovar.id }}"
                                         {% if tovar.id in favorites %} checked {% endif %}>
                                         <svg class="heart-main" viewBox="0 0 512 512" title="heart">
@@ -342,8 +338,6 @@
             </ul>
         </nav>
         {% endif %}
-
-
 
     </div>
 </div>

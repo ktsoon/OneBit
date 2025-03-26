@@ -1,3 +1,20 @@
+(function ( $ ) { /* JQ для добавления и удаления классов */
+  $.fn.addClassAndRemove = function(classAdd, timeAdd, timeRemove) {
+    let element = this;
+    let addIt = function(){
+         element.addClass(classAdd);
+      };
+    let removeIt = function(){
+         element.removeClass(classAdd);
+      };
+    setTimeout(function() { addIt(); setTimeout(removeIt, timeRemove); }, timeAdd);
+    return this;
+  };
+}( jQuery ));
+
+
+
+
 // HvrSlider: небольше 5
 var tImgDivs = document.querySelectorAll('div.t-img');
 // --------------HvrSlider--------------

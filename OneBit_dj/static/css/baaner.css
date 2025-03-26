@@ -1,7 +1,7 @@
 .baner{
     margin: 50px 0;
     width: 100%;
-    .uk-slider{margin-left: 0}
+    /* .uk-slider{margin-left: 0}
     .uk-panel{height: 100%}
     .uk-position-center h2, 
     .uk-position-center p {
@@ -16,7 +16,7 @@
     }
     .uk-slider>a{
         background: none;
-    }
+    } */
 }
 .baner img{
     border-radius: 25px;
@@ -26,14 +26,15 @@
     height: 100%;
 }
 @media screen and (max-width:768px){
+    .baner{margin: 0}
     .baner img{border-radius: 5px}
-    .baner .uk-position-center h2, 
+    /* .baner .uk-position-center h2, 
     .baner .uk-position-center p {
         font-size: 0.81em;
     }
     .uk-position-center {
         max-width: 100% !important
-    }
+    } */
 }
 @media screen and (max-width: 468px) {
     .baner{
