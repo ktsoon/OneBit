@@ -1,9 +1,17 @@
+:root{
+    --heart-size: 40px;
+}
 label{
     cursor: pointer;
     font-weight: 500;
     input{cursor: pointer}
 }
-.main{padding: 0}
+.main{
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    width: 100%;
+}
 /* modal */
 .uk-modal-dialog{
     border-radius: 10px;
@@ -41,7 +49,11 @@ label{
     flex: 1 0 auto;
     padding-left: 10px;
 }
-.t-img{border-left: 2px transparent solid}
+.but-heart-div{height: 200px}
+.t-img{
+    width: 170px;
+    border-left: 2px transparent solid;
+}
 .cheachbox-t{
     margin: auto 0;
     margin-right: 10px;
@@ -51,7 +63,42 @@ input.uk-checkbox{
     border-radius: 5px;
 }
 .tovar-srch{padding: 10px 0}
-.t-t-rght{width: 100%}
+.t-name:hover,
+.tovar-srch>div>a:hover ~ .t-t-rght .t-name{
+    color: var(--color-all);
+}
+.tovar-srch>div{
+    display: flex;
+    position: relative;
+}
+.t-name{
+    color: black;
+    font-weight: 500;
+}
+.t-t-rght{
+    padding-left: 10px;
+    width: 100%;
+}
+.t-center{
+    display: flex;
+    gap: 10px;
+    .s-char{
+        line-height: 25px;
+        font-weight: 500;
+        & span:nth-child(1){color: grey}
+    }
+    .t-b-info{
+        svg, img{
+            text-align: center;
+            width: 17px;
+            height: 17px;
+        }
+    }
+    .right-top{
+        margin-left: auto;
+        margin-top: auto;
+    }
+}
 .p-buttons>.del-bask{
     display: flex;
     align-items: center;
@@ -59,10 +106,19 @@ input.uk-checkbox{
     border-radius: 10px;
     padding: 2.5px;
 }
-.charc{max-width: 400px}
-.right-top{min-width: auto !important}
-.uk-flex.uk-flex-right{gap: 10px}
-.but-heart{margin-left: 12.5px}
+.cost{
+    justify-content: flex-end
+}
+.charc{
+    max-width: 400px
+}
+.uk-flex.uk-flex-right{
+    gap: 10px
+}
+.but-heart{
+    margin-left: 10px;
+    transform: translateY(calc(var(--heart-size) * -1))
+}
 .p-b-count{
     display: flex;
     justify-content: flex-end;
@@ -91,6 +147,11 @@ input.uk-checkbox{
     input[type="number"]::-webkit-inner-spin-button {
 	    display: none;
     }
+}
+.p-buttons{
+    display: flex;
+    align-items: end;
+    margin-right: var(--heart-size);
 }
 .uk-b-minus{
     margin-right: -2px;
@@ -124,6 +185,18 @@ input.uk-checkbox{
     font-size: 24px;
     font-weight: 600;
     width: 100%;
+}
+.button-buy{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 10px;
+    margin: 10px 0 0 auto;
+    padding: 10px 10px;
+    border: 1px solid transparent;
+    div{margin-left: 5px}
 }
 .itogi{
     display: flex;
@@ -238,14 +311,46 @@ input.uk-checkbox{
             left: 2px;
         }
     }
+    .tovar-srch{
+        .t-center{
+            flex-direction: column;
+            gap: 0;
+        }
+        .right-top{margin: 0}
+        .cost{justify-content: start}
+        .button-buy{
+            margin: 0;
+            width: 100%;
+        }
+    }
 }
 
 @media screen and (max-width:700px){
     .right-bar .uk-card:not(.uk-active){opacity: 0}
     .h_right{border-top-right-radius:0}
     .catalog{border-top-left-radius:0}
-
-    .h_bask div{border: 2px solid violet}
-    .bask{display:none}
+    .right-bar hr{display: none !important}
 }
-@media screen and (max-width: 380px) {.h_bask{margin-top: 2.5px !important}}
+
+@media (max-width: 600px) {
+    .t-img, .but-heart-div{
+        height: 120px !important;
+        width: 120px;
+    }
+    .t-t-rght > a{
+        display: flex;
+        flex-direction: column;
+        height: 120px;
+    }
+    .cost span:nth-child(1){color: #000}
+    .t-name{-webkit-line-clamp: 3 !important}
+    .t-center{margin-left: -130px}
+}
+
+@media (max-width: 468px) {
+    .t-s-char{
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 10px;
+    }
+}

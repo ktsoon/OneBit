@@ -1,7 +1,6 @@
 :root{
     --filter: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2214%22%20fill%3D%22none%22%3E%3Cpath%20fill%3D%22%23fff%22%20fill-rule%3D%22evenodd%22%20d%3D%22M12%20.5c.406%200%20.735.332.735.74v9.732l2.01-2.027a.73.73%200%200%201%201.04%200%20.745.745%200%200%201%200%201.047l-3.265%203.291a.73.73%200%200%201-1.033.007l-.007-.007-3.265-3.291a.745.745%200%200%201%200-1.047.73.73%200%200%201%201.04%200l2.01%202.027V1.24c0-.41.33-.741.735-.741ZM4%2013.5a.738.738%200%200%200%20.735-.74V3.027l2.01%202.027a.73.73%200%200%200%201.04%200%20.745.745%200%200%200%200-1.047L4.52.717a.73.73%200%200%200-1.04%200L.215%204.008a.745.745%200%200%200%200%201.047.73.73%200%200%200%201.04%200l2.01-2.027v9.731c0%20.41.33.741.735.741Z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E);
     --checkbox: url(data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23fff%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%20%2F%3E%0A%3C%2Fsvg%3E%0A);
-    --heart-size: 40px;
 }
 hr{margin: 10px 0}
 .back{font-size: large}
@@ -38,13 +37,6 @@ hr{margin: 10px 0}
 }
 
 
-.main{
-    box-sizing: border-box;
-    position: relative;
-    display: flex;
-    width: 100%;
-    padding: 24px 0;
-}
 .filter-sort{
     display: flex;
     gap: 25px;
@@ -216,115 +208,22 @@ hr{margin: 10px 0}
 }
 /* -----/left/----- */
 
-/* -----right----- */
-.right-main{width: 100%}
-.t-img{width: 170px}
-
-.t-name:hover,
-.tovar-srch>div>a:hover ~ .t-t-rght .t-name{
-    color: var(--color-all);
-}
-.tovar-srch>div{
-    display: flex;
-    position: relative;
-}
-.t-name{
-    color: black;
-    font-weight: 500;
-}
-.t-t-rght{
-    padding-left: 10px;
-    width: 100%;
-}
-.t-center{
-    display: flex;
-    gap: 10px;
-    .s-char{
-        line-height: 25px;
-        font-weight: 500;
-        & span:nth-child(1){color: grey}
-    }
-    .t-b-info{
-        svg, img{
-            text-align: center;
-            width: 17px;
-            height: 17px;
-        }
-    }
-    .right-top{
-        min-width: 250px;
-        margin-left: auto;
-        margin-top: auto;
-    }
-}
-.cost{justify-content: flex-end}
-.p-buttons{
-    display: flex;
-    align-items: end;
-    margin-right: var(--heart-size);
-}
+.tovars-flex{margin-top: 15px}
+.t-bottom{margin-bottom: 5px}
 .button-buy{
+    margin-top: auto;
+    border-radius: 10px;
+    width: 100%;
+    font-weight: 600;
+    font-size: .923rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 10px;
-    margin: 10px 0 0 auto;
-    padding: 10px 10px;
     border: 1px solid transparent;
-    div{margin-left: 5px}
+    gap: 5px;
+    padding: 10px;
 }
-.but-heart{
-    margin-left: 10px;
-    transform: translateY(calc(var(--heart-size) * -1))
-}
-.but-heart-div{height: 200px}
-/* -----/right/----- */
 
-
-
-@media (max-width: 768px) {
-    .tovar-srch{
-        .t-center{
-            flex-direction: column;
-            gap: 0;
-        }
-        .right-top{margin: 0}
-        .cost{justify-content: start}
-        .button-buy{
-            margin: 0;
-            width: 100%;
-        }
-    }
-}
-@media (max-width: 600px) {
-    .t-img, .but-heart-div{
-        height: 120px !important;
-        width: 120px;
-    }
-    .t-t-rght > a{
-        display: flex;
-        flex-direction: column;
-        height: 120px;
-    }
-    .cost span:nth-child(1){color: #000}
-    .t-name{-webkit-line-clamp: 3 !important}
-    .t-center{margin-left: -130px}
-    .filter-sort{gap: 10px}
-}
-@media (max-width: 640px) {.off-bar-filter .btn-close{margin-top: 10px}}
-@media (max-width: 468px) {
-    .t-s-char{
-        display: flex;
-        flex-wrap: wrap;
-        column-gap: 10px;
-    }
-}
-@media (max-width: 360px) {
-    .filter-sort{
-        font-size: 0.863em;
-        button.uk-button-onebit{height: 100%}
-        button.uk-button-onebit::before{top: 9px}
-    }
-}
+@media screen and (max-width:850px){.button-buy{font-size: .8rem}}
+@media screen and (max-width:768px){.button-buy{font-size: 1rem}}
+@media screen and (max-width:450px){.button-buy{font-size: 3vw}}

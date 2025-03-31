@@ -32,32 +32,4 @@ $(document).ready(function() {
         $("#cost-do").val($("#cost-do").val().replace(/\s+/g, ''));
     });
 
-
-    // Функция для перемещения .cost и .t-b-info в .t-t-rght > a
-    function moveCostAndTInfoToTTRight() {
-    $('.tovar-srch').each(function() {
-        var $cost = $(this).find('.cost');
-        var $tBInfo = $(this).find('.t-b-info');
-        var $tTRightA = $(this).find('.t-t-rght > a');
-        
-        if ($cost.length && $tBInfo.length && $tTRightA.length) {
-        $tTRightA.append($cost); // Перемещаем .cost в .t-t-rght > a
-        $tTRightA.append($tBInfo); // Перемещаем .t-b-info в .t-t-rght > a
-        }
-    });
-    }
-
-    // Проверка ширины окна при изменении размера
-    $(window).resize(function() {
-    if ($(window).width() <= 600) {
-        moveCostAndTInfoToTTRight();
-    }
-    });
-
-    // Начальная проверка
-    if ($(window).width() <= 600) {
-    moveCostAndTInfoToTTRight();
-    }
-
-
 });

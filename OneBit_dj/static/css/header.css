@@ -177,6 +177,11 @@ header {
 }
 /* ------------/search/------------ */
 /* ------------right------------ */
+.user-auth-img{
+  object-fit: contain;
+  border-radius:10px;
+  max-width:80px
+}
 .h_right {
   display: flex;
   gap: 15px;
@@ -201,9 +206,9 @@ header {
     border-radius: 10px;
     box-shadow: var(--shadow-black);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
     padding: 0 5px;
     span {
       font-size: 14px;
@@ -256,6 +261,26 @@ header {
   }
   .h_order {
     display: none !important;
+  }
+  .catalog button,
+  .h_right > a > div {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #fff;
+  }
+  .catalog button{
+    flex-direction: column;
+    font-size: 14px;
+  }
+  .h_right > a > div span:nth-last-child(1),
+  .catalog .uk-button span:nth-last-child(1),
+  .h-admin,
+  .h-admin2 {
+    display: block;
+  }
+  .uk-badge{
+    background-color: var(--color-all-light);
   }
   .autocomplete-result-list {
     margin-left: 10px;
@@ -327,16 +352,8 @@ header {
   }
 }
 @media screen and (max-width: 380px) {
-  .h_right > a > div,
-  .catalog > button {
-    width: 50px;
-    height: 50px;
-  }
-}
-@media screen and (max-width: 300px) {
-  .h_right > a > div,
-  .catalog > button {
-    width: 45px;
-    height: 45px;
+  .h_right > a > div span,
+  .catalog > button span {
+    font-size: 12px !important;
   }
 }

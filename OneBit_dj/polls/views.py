@@ -321,11 +321,10 @@ def search(request):
     min_price = request.GET.get('min_price')
     max_price = request.GET.get('max_price')
     min_rating = request.GET.get('rating')
-    print(available_categories)
+
     if selected_categories:
         tovars = [t for t in tovars if t.category.slug in selected_categories]
         available_avtors = {t.avtor for t in tovars}
-        print(available_avtors)
 
     if selected_avtors:
         tovars = [t for t in tovars if t.avtor.slug in selected_avtors]
@@ -362,7 +361,7 @@ def search(request):
         sorting = "По релевантности"
 
     # Пагинация
-    paginator = Paginator(tovars, 10)
+    paginator = Paginator(tovars, 30)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -386,8 +385,8 @@ def search(request):
         'max_price': max_price_all,
         'selected_categories': selected_categories,
         'selected_avtors': selected_avtors,
-        'selected_min_price': request.GET.get('min_price'),
-        'selected_max_price': request.GET.get('max_price'),
+        'selected_min_price': request.GET.get('min_price') or min_price_all,
+        'selected_max_price': request.GET.get('max_price') or max_price_all,
         'selected_rating': min_rating or 0,
     })
 
@@ -455,7 +454,7 @@ def category(request, cat_slug):
         sorting = "По релевантности"
 
     # Пагинация
-    paginator = Paginator(tovars, 10)
+    paginator = Paginator(tovars, 30)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -478,8 +477,8 @@ def category(request, cat_slug):
         'min_price': min_price_all,
         'max_price': max_price_all,
         'selected_avtors': selected_avtors,
-        'selected_min_price': request.GET.get('min_price'),
-        'selected_max_price': request.GET.get('max_price'),
+        'selected_min_price': request.GET.get('min_price') or min_price_all,
+        'selected_max_price': request.GET.get('max_price') or max_price_all,
         'selected_rating': min_rating or 0,
         'favorites': favorites,
         'if_basket_all': if_basket_all

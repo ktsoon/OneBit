@@ -1,5 +1,8 @@
 h4{margin: 0}
 p{margin: 6px 0}
+main{
+    margin-bottom: 60px;
+}
 /* фильтры */
 button.uk-button-onebit-transparent{
     color: var(--color-all) !important;
@@ -58,12 +61,6 @@ sup{
     height: calc(90vh - var(--height-bottom-menu));
     width: 100vw;
 }
-
-@media screen and (max-width:700px){
-    .h_fav div{border: 2px solid violet}
-    .favorit{display:none}
-}
-@media screen and (max-width: 380px) {.h_fav{margin-top: 2.5px !important}}
 
 @media screen and (max-width:850px){.button-buy{font-size: .8rem}}
 @media screen and (max-width:768px){.button-buy{font-size: 1rem}}

@@ -151,8 +151,6 @@ window.addEventListener('DOMContentLoaded', function() {
   // handleWidthChange(mq); // Проверяем ширину при загрузке страницы
   handleResize(); // Проверяем и добавляем атрибуты при загрузке страницы
   window.addEventListener('resize', handleResize); // Проверяем и добавляем атрибуты при изменении размера окна
-
-
 });
 
 // category

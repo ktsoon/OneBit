@@ -44,7 +44,7 @@ def review_word(count):
     else:
         return "отзывов"
     
-"""Возвращает правильное окончание для слова 'товар'."""
+""" Возвращает правильное окончание для слова 'товар' """
 @register.filter
 def pluralize_goods(count):
     count = abs(int(count))
@@ -58,4 +58,20 @@ def pluralize_goods(count):
     else:
         return "товаров"
     
+""" Переводит список Авторов в строку """
+@register.filter
+def ArrAvtors(arr):
+    if not arr: return ''
+    str_arr = '&'
+    for i in arr:
+        str_arr += 'avtor=' + i + '&'
+    return str_arr
 
+""" Переводит список Категорий в строку """
+@register.filter
+def ArrCategories(arr):
+    if not arr: return ''
+    str_arr = '&'
+    for i in arr:
+        str_arr += 'category=' + i + '&'
+    return str_arr

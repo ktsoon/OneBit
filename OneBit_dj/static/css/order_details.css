@@ -177,15 +177,18 @@
 @media (max-width: 1220px) {
     .ord-all{
         gap: 0;
-        flex-direction: column;
+        flex-direction: column-reverse;
         margin-bottom: 55px;
+    }
+    .ord-number{
+        top: -115px;
     }
 }
 @media (max-width: 600px) {
     .ord-title h3{font-size: 1.234em}
 }
 @media (max-width: 450px) {
-    .ord-all{margin-top: 44px}
+    .ord-all{margin-top: 30px}
     .ord-number{
         left: 0;
         right: unset;

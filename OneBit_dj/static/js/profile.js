@@ -37,7 +37,8 @@ $('#exit').click(function() {
     const but = $('#exit_href');
     
     if (clickCount === 0) {
-        but.find('span').text('Вы уверены?');
+        but.find('span').html('Вы\u00A0уверены?');
         clickCount++;
     } else {    window.location.href = but.attr('click_href')   }
 });
+
