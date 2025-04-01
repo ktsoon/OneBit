@@ -41,7 +41,9 @@ urlpatterns = [
     path('load_tovars/', views.load_tovars, name='load_tovars'), # AJAX загрузка товаров
     path('load_comments/<int:product_id>/', views.load_comments, name='load_comments'), # AJAX загрузка товаров
 
-
-    path('robots.txt', robots_txt, name='robots_txt') # robots.txt 
+    # ---------------------------seo---------------------------
+    path('robots.txt', robots_txt, name='robots_txt'), # robots.txt 
+    path('yandex_26fe0f1d1ef9ebba.html', views.yandex_seo, name='yandex_txt'), # robots.txt 
+    path('googlec6ef7980068add75.html', views.google_seo, name='google_txt'), # robots.txt 
 ] 
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

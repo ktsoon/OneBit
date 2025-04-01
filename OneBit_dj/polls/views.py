@@ -903,3 +903,13 @@ def load_comments(request, product_id):
         "has_next": comments_page.has_next(),
     })
 
+
+
+
+# seo
+
+def yandex_seo(request):
+    return render(request, 'yandex_26fe0f1d1ef9ebba.html')
+
+def google_seo(request):
+    return render(request, 'googlec6ef7980068add75.html')
