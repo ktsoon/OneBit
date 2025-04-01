@@ -1,6 +1,7 @@
 {% extends "layout/layout.html" %}
 {% load static %}
 {% load humanize %}
+{% load polls_tags %}
 
 {% block title %}Заказы — OneBit{% endblock %}
 
@@ -87,11 +88,7 @@
                     <div class="ord-r">
                     <a href="{% url 'order_details' ord.order_number %}" target="_blank">
                         {% for tov in ord.tovar_order.all %}
-                            {% for img in tov.tovar.images.all|slice:"1" %}
-                            {% if not img.is_video %}
-                                    <img src="{{ img.medium_url }}" alt="{{ tov.tovar.slug }}">
-                                {% endif %}
-                            {% endfor %}
+                            <img src="{{ tov.tovar.images.all|tovar_img_first }}" alt="{{ tov.tovar.slug }}">
                         {% endfor %}
                         <div class="ord-arrow {{ord.dostavka}}-bot">&#10132;</div>
                     </a>

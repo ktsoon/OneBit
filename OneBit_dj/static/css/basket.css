@@ -190,7 +190,6 @@ input.uk-checkbox{
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
     font-weight: 600;
     border-radius: 10px;
     margin: 10px 0 0 auto;
@@ -241,6 +240,7 @@ input.uk-checkbox{
         margin-left: 10px;
     }
 }
+.right-bar hr{margin: 10px 0}
 #basket-container{display: none}
 .clear_all{
     display: block !important;
